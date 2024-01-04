@@ -1,3 +1,4 @@
+// "use client"
 import type { Metadata } from "next";
 import { useState } from "react";
 import { Inter } from "next/font/google";
@@ -16,28 +17,43 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [search, setSearch] = useState<string|number>("");
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-  
-
+  // const [search, setSearch] = useState<string | number>("");
+  // const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearch(e.target.value);
+  // };
   return (
     <html lang="en">
-      <div>
-        <div>
-          <span></span>
+      <div className="mt-[10px] px-[10px">
+        <div className="flex flex-row justify-between">
+          <div>
+            <span>로고</span>
+          </div>
+          <div>
+            <input
+              className="w-[300px] h-[30px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
+              // onChange={(e) => {
+              //   handleOnChange(e);
+              // }}
+              type="text"
+            ></input>
+          </div>
+          <ul className="flex flex-row">
+            <li>로그인</li>
+            <li>장바구니</li>
+          </ul>
         </div>
-        <div>
-          <input
-            onChange={(e) => {
-              handleOnChange(e);
-            }}
-            type="text"
-          ></input>
-        </div>
-        <div>
-          <div>로그인</div>
-          <div>장바구니</div>
+        <div className="flex flex-row mt-[20px]">
+          <div className="w-[100px]">
+            <span>카테고리</span>
+          </div>
+          <ul className="flex flex-row justify-center items-center">
+            <li className="px-10">NEW</li>
+            <li className="px-10">WOMEN</li>
+            <li className="px-10">BEAUTY</li>
+            <li className="px-10">LIFE</li>
+            <li className="px-10">SALE</li>
+            <li className="px-10">DESIGNER</li>
+          </ul>
         </div>
       </div>
       <body className={inter.className}>{children}</body>
