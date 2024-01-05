@@ -1,8 +1,12 @@
+"use client";
 import Image from "next/image";
+import Slider from "./slider";
+import Link from "next/link";
 
 export default function Home() {
-  return <div>
-
-    {/* <h4>머릿말</h4> */}
-  </div>;
+  return (
+    <div>
+      <Slider></Slider>
+    </div>
+  );
 }
