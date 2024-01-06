@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div>
+    <div className="mt-[20px]">
       <Slider></Slider>
     </div>
   );

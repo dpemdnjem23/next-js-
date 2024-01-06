@@ -26,16 +26,15 @@ export default function DotIndication({
     );
   }
 
+  //   style={{
+  //     position: "abso",
+  //     bottom: "10px",
+  //     // left: "50%",
+  //     transform: "translateX(-50%)",
+  //     display: "flex",
+  //   }}
   return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: "10px",
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex",
-      }}
-    >
+    <div className="  ">
       {dots}
     </div>
   );

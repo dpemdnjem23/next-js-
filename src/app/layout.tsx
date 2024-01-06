@@ -20,7 +20,7 @@ export default function RootLayout({
   //   setSearch(e.target.value);
   // };
   return (
-    <html className="flex-col-reverse flex	" lang="en">
+    <html className="flex-col-reverse flex fixed	" lang="en">
       <div className="right-[0px] mt-[10px] px-[10px]">
         <div className="flex flex-row justify-between">
           <div>
@@ -30,7 +30,7 @@ export default function RootLayout({
           </div>
           <div>
             <input
-              className="w-[300px] h-[30px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
+              className="w-[300px] h-[40px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
               // onChange={(e) => {
               //   handleOnChange(e);
               // }}
