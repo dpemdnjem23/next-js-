@@ -20,9 +20,9 @@ export default function RootLayout({
   //   setSearch(e.target.value);
   // };
   return (
-    <html className="flex-col-reverse flex fixed	" lang="en">
+    <html className="flex-col-reverse flex 	" lang="en">
       <div className="right-[0px] mt-[10px] px-[10px]">
-        <div className="flex flex-row justify-between">
+        <div className="flex  flex-row justify-between">
           <div>
             {/* <Link href="/">
           <span>로고</span>
@@ -30,7 +30,7 @@ export default function RootLayout({
           </div>
           <div>
             <input
-              className="w-[300px] h-[40px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
+              className="w-[300px] h-[30px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
               // onChange={(e) => {
               //   handleOnChange(e);
               // }}
@@ -44,7 +44,7 @@ export default function RootLayout({
             </Link>
           </ul>
         </div>
-        <div className="flex flex-row mt-[20px]">
+        <div className="flex fixed flex-row mt-[20px]">
           <div className="w-[100px]">
             <span>카테고리</span>
           </div>
