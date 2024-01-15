@@ -14,7 +14,7 @@ import ThumbnailList from "./thumbnailList";
 const arr = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
 export default function Home() {
   return (
-    <div className="mt-[80px]">
+    <div className="">
       <Slider>
         <div>
           <Image alt="" src={mainSliderImage}></Image>

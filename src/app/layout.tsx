@@ -3,6 +3,10 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import ScrollButton from "@/components/ScrollButton";
+import loginImage from "../../public/ico_login.svg";
+import cartImage from "../../public/ico_bag.svg";
+import joinImage from "../../public/ico_join.svg";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 //페이지밖, 페이지에서 공유하고싶은것들을 작성한다.
@@ -23,16 +27,16 @@ export default function RootLayout({
   return (
     <html className=" flex flex-col 	" lang="en">
       <body>
-        <div className="right-[0px] mt-[10px] px-[10px]">
-          <div className="flex  flex-row justify-between">
+        <div className="top-0 z-100 h-[80px]  min-w-[1280px] left-0 right-0 relative  w-[100%] mt-[10px] px-[10px]">
+          <div className="relative  pr-[20px] w-[100%] max-w-[1920px] h-[40px] my-0 mx-auto">
             <ScrollButton></ScrollButton>
 
-            <div>
-              {/* <Link href="/">
-          <span>로고</span>
-        </Link> */}
+            <div className="absolute">
+              <Link href="/">
+                <span>로고</span>
+              </Link>
             </div>
-            <div>
+            <div className="absolute">
               <input
                 className="w-[300px] h-[30px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
                 // onChange={(e) => {
@@ -40,29 +44,68 @@ export default function RootLayout({
                 // }}
                 type="text"
               ></input>
+              <button
+                className="block flat-left relative w-[25px]"
+                style={{
+                  background: ` url(https://static.wconcept.co.kr/web/images/common/spr-common.png) no-repeat center 9px/100%`,
+                }}
+              ></button>
             </div>
-            <ul className="flex flex-row">
-              <li>로그인</li>
-              <Link href={"/cart"}>
-                <li>장바구니</li>
-              </Link>
+            <ul className=" float-right pt-[10px] mr-[-17px]  ">
+              <li className=" uppercase float-left text-center">
+                <Link className="  block relative p-[20px]" href={"/"}>
+                  <Image alt="" src={joinImage}></Image>
+                  <strong className="  absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
+                    join
+                  </strong>
+                </Link>
+              </li>
+              <li className=" uppercase float-left text-center">
+                <Link
+                  className=" block relative p-[20px]"
+                  href={"Member/login"}
+                >
+                  <Image
+                    alt=""
+                    className="inline-block w-[30px] h-[30px] vertical-top"
+                    src={loginImage}
+                  ></Image>
+                  <strong className=" absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
+                    login
+                  </strong>
+                </Link>
+              </li>
+              <li className=" uppercase float-left text-center">
+                <Link className=" block relative p-[20px]" href={"/cart"}>
+                  <Image src={cartImage}></Image>
+                  <strong className=" absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
+                    0
+                  </strong>
+                </Link>
+              </li>
             </ul>
           </div>
-          <div className="flex fixed flex-row mt-[20px]">
-            <div className="w-[100px]">
-              <span className="font-bold text-[14px]">카테고리</span>
+          <div className="relative w-[100%] top-0 left-0 right-0 z-[100] min-w-[1280px] border-b-[1px] border-[#e9e9e9]">
+            <div className="max-w-[1920px] h-[80px] mx-[0] my-auto px-0 py-[20px]">
+              <div className=" pl-[170px]">
+                <div>
+                  <div className="w-[100px]">
+                    <span className="font-bold text-[14px]">카테고리</span>
+                  </div>
+                  <ul className="flex flex-row justify-center items-center">
+                    <li className="px-10 font-bold text-[14px]">NEW</li>
+                    <li className="px-10 font-bold text-[14px]">WOMEN</li>
+                    <li className="px-10 font-bold text-[14px]">BEAUTY</li>
+                    <li className="px-10 font-bold text-[14px]">LIFE</li>
+                    <li className="px-10 font-bold text-[14px]">SALE</li>
+                    <li className="px-10 font-bold text-[14px]">DESIGNER</li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            <ul className="flex flex-row justify-center items-center">
-              <li className="px-10 font-bold text-[14px]">NEW</li>
-              <li className="px-10 font-bold text-[14px]">WOMEN</li>
-              <li className="px-10 font-bold text-[14px]">BEAUTY</li>
-              <li className="px-10 font-bold text-[14px]">LIFE</li>
-              <li className="px-10 font-bold text-[14px]">SALE</li>
-              <li className="px-10 font-bold text-[14px]">DESIGNER</li>
-            </ul>
           </div>
-          {children}
         </div>
+        {children}
       </body>
     </html>
   );
