@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-.custom-dots-class {
-  bottom: 20px;
+/* .custom-dots-class {
+  bottom: 25px;
+} */
+.active {
+  background-position: -360px 0 !important;
 }

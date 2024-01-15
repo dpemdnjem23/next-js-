@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import ScrollButton from "@/components/ScrollButton";
 
 const inter = Inter({ subsets: ["latin"] });
 //페이지밖, 페이지에서 공유하고싶은것들을 작성한다.
@@ -20,45 +21,49 @@ export default function RootLayout({
   //   setSearch(e.target.value);
   // };
   return (
-    <html className="flex-col-reverse flex 	" lang="en">
-      <div className="right-[0px] mt-[10px] px-[10px]">
-        <div className="flex  flex-row justify-between">
-          <div>
-            {/* <Link href="/">
+    <html className=" flex flex-col 	" lang="en">
+      <body>
+        <div className="right-[0px] mt-[10px] px-[10px]">
+          <div className="flex  flex-row justify-between">
+            <ScrollButton></ScrollButton>
+
+            <div>
+              {/* <Link href="/">
           <span>로고</span>
         </Link> */}
+            </div>
+            <div>
+              <input
+                className="w-[300px] h-[30px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
+                // onChange={(e) => {
+                //   handleOnChange(e);
+                // }}
+                type="text"
+              ></input>
+            </div>
+            <ul className="flex flex-row">
+              <li>로그인</li>
+              <Link href={"/cart"}>
+                <li>장바구니</li>
+              </Link>
+            </ul>
           </div>
-          <div>
-            <input
-              className="w-[300px] h-[30px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
-              // onChange={(e) => {
-              //   handleOnChange(e);
-              // }}
-              type="text"
-            ></input>
+          <div className="flex fixed flex-row mt-[20px]">
+            <div className="w-[100px]">
+              <span className="font-bold text-[14px]">카테고리</span>
+            </div>
+            <ul className="flex flex-row justify-center items-center">
+              <li className="px-10 font-bold text-[14px]">NEW</li>
+              <li className="px-10 font-bold text-[14px]">WOMEN</li>
+              <li className="px-10 font-bold text-[14px]">BEAUTY</li>
+              <li className="px-10 font-bold text-[14px]">LIFE</li>
+              <li className="px-10 font-bold text-[14px]">SALE</li>
+              <li className="px-10 font-bold text-[14px]">DESIGNER</li>
+            </ul>
           </div>
-          <ul className="flex flex-row">
-            <li>로그인</li>
-            <Link href={"/cart"}>
-              <li>장바구니</li>
-            </Link>
-          </ul>
+          {children}
         </div>
-        <div className="flex fixed flex-row mt-[20px]">
-          <div className="w-[100px]">
-            <span>카테고리</span>
-          </div>
-          <ul className="flex flex-row justify-center items-center">
-            <li className="px-10">NEW</li>
-            <li className="px-10">WOMEN</li>
-            <li className="px-10">BEAUTY</li>
-            <li className="px-10">LIFE</li>
-            <li className="px-10">SALE</li>
-            <li className="px-10">DESIGNER</li>
-          </ul>
-        </div>
-        <body>{children}</body>
-      </div>
+      </body>
     </html>
   );
 }
