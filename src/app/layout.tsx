@@ -6,6 +6,8 @@ import ScrollButton from "@/components/ScrollButton";
 import loginImage from "../../public/ico_login.svg";
 import cartImage from "../../public/ico_bag.svg";
 import joinImage from "../../public/ico_join.svg";
+import logoImage from "../../public/ico_gnb_logo_176.svg";
+import arrowImage from "../../public/ico_cat_arrow_open_12.svg";
 import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -27,29 +29,31 @@ export default function RootLayout({
   return (
     <html className=" flex flex-col 	" lang="en">
       <body>
-        <div className="top-0 z-100 h-[80px]  min-w-[1280px] left-0 right-0 relative  w-[100%] mt-[10px] px-[10px]">
-          <div className="relative  pr-[20px] w-[100%] max-w-[1920px] h-[40px] my-0 mx-auto">
+        <div className="top-0 z-100 h-[150px]   min-w-[1280px] left-0 right-0 relative  w-[100%] mt-[10px] px-[10px]">
+          <div className="relative  pr-[20px] w-[100%] max-w-[1920px] h-[103px] my-0 mx-auto">
             <ScrollButton></ScrollButton>
 
-            <div className="absolute">
+            <div className="absolute top-[32px] left-[20px]">
               <Link href="/">
-                <span>로고</span>
+                <Image alt="" src={logoImage}></Image>
               </Link>
             </div>
-            <div className="absolute">
+            <div className="absolute z-[101] left-[40%] top-[9px] w-[392px] h-[70px] px-[11px]">
               <input
-                className="w-[300px] h-[30px] border-b-[1px] focus:outline-none border-[black] pb-[5px]"
+                className="w-[340px] h-[40px] block bg-[none] text-[14px] border-b-[1px] float-left focus:outline-none p-[0] border-[black] leading-[44px]"
                 // onChange={(e) => {
                 //   handleOnChange(e);
                 // }}
                 type="text"
               ></input>
               <button
-                className="block flat-left relative w-[25px]"
+                className="block flat-left relative w-[25px] h-[45px] right-[25px] overflow-hidden indent-[-9999px] vertical-middle"
                 style={{
-                  background: ` url(https://static.wconcept.co.kr/web/images/common/spr-common.png) no-repeat center 9px/100%`,
+                  background: ` url(https://static.wconcept.co.kr/web/images/common/svg/ico_search_25.svg) no-repeat center 9px/100%`,
                 }}
-              ></button>
+              >
+                검색
+              </button>
             </div>
             <ul className=" float-right pt-[10px] mr-[-17px]  ">
               <li className=" uppercase float-left text-center">
@@ -77,7 +81,7 @@ export default function RootLayout({
               </li>
               <li className=" uppercase float-left text-center">
                 <Link className=" block relative p-[20px]" href={"/cart"}>
-                  <Image src={cartImage}></Image>
+                  <Image alt="" src={cartImage}></Image>
                   <strong className=" absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
                     0
                   </strong>
@@ -85,27 +89,34 @@ export default function RootLayout({
               </li>
             </ul>
           </div>
-          <div className="relative w-[100%] top-0 left-0 right-0 z-[100] min-w-[1280px] border-b-[1px] border-[#e9e9e9]">
-            <div className="max-w-[1920px] h-[80px] mx-[0] my-auto px-0 py-[20px]">
-              <div className=" pl-[170px]">
-                <div>
-                  <div className="w-[100px]">
-                    <span className="font-bold text-[14px]">카테고리</span>
-                  </div>
-                  <ul className="flex flex-row justify-center items-center">
-                    <li className="px-10 font-bold text-[14px]">NEW</li>
-                    <li className="px-10 font-bold text-[14px]">WOMEN</li>
-                    <li className="px-10 font-bold text-[14px]">BEAUTY</li>
-                    <li className="px-10 font-bold text-[14px]">LIFE</li>
-                    <li className="px-10 font-bold text-[14px]">SALE</li>
-                    <li className="px-10 font-bold text-[14px]">DESIGNER</li>
-                  </ul>
-                </div>
+          <div className="relative block w-[100%] top-0 left-0 right-0 z-[100] min-w-[1280px] border-b-[1px] border-[#e9e9e9]">
+            <div className="max-w-[1920px] h-[57px] my-[0] mx-auto px-[20px] py-0 flex flex-start justify-center">
+              <div className="flex justify-center"></div>
+              <ul className=" m-0 p-0 flex flex-row  items-center justify-center">
+                <li className="px-10 font-bold text-[14px]">NEW</li>
+                <li className="px-10 font-bold text-[14px]">WOMEN</li>
+                <li className="px-10 font-bold text-[14px]">BEAUTY</li>
+                <li className="px-10 font-bold text-[14px]">LIFE</li>
+                <li className="px-10 font-bold text-[14px]">SALE</li>
+                <li className="px-10 font-bold text-[14px]">DESIGNER</li>
+              </ul>
+            </div>
+            <div>
+              <div
+                className="
+                  cursor-pointer  w-[180px] py-0 pl-[14px] font-bold text-[14px] block absolute top-0 leading-[46px] border-[1px] border-[#e9e9e9] text-left overflow-hidden"
+              >
+                CATEGORY
+                <Image
+                  alt=""
+                  className="w-[12px] h-[12px] top-[50%] absolute block mt-[-7px] right-[17px]"
+                  src={arrowImage}
+                ></Image>
               </div>
             </div>
           </div>
         </div>
-        {children}
+        <div className="mt-[-13px]">{children}</div>
       </body>
     </html>
   );
