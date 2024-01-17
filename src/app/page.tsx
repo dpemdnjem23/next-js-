@@ -9,7 +9,7 @@ import mainSliderImage3 from "../../public/pc08_1920x600_pre_20240104180340.jpg"
 import mainSliderImage4 from "../../public/pc10_1920x600_pre_20240104180425.jpg";
 import mainSliderImage5 from "../../public/pc11_1920x600_pre_20240104180452.jpg";
 import { useEffect, useState } from "react";
-import ThumbnailList from "./thumbnailList";
+import ThumbnailList from "../components/thumbnailList";
 
 const arr = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
 export default function Home() {

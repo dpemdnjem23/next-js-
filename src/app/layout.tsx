@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+
 import ScrollButton from "@/components/ScrollButton";
 import loginImage from "../../public/ico_login.svg";
 import cartImage from "../../public/ico_bag.svg";
 import joinImage from "../../public/ico_join.svg";
 import logoImage from "../../public/ico_gnb_logo_176.svg";
-import arrowImage from "../../public/ico_cat_arrow_open_12.svg";
 import Image from "next/image";
+// import { useState } from "react";
+import Category from "../components/category";
+import ReduxProvider from "@/reducers";
 
 const inter = Inter({ subsets: ["latin"] });
 //페이지밖, 페이지에서 공유하고싶은것들을 작성한다.
@@ -22,13 +25,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const handleOnFocus = () => {
+  //   setIsFocus(!isFocus);
+  // };
+
   // const [search, setSearch] = useState<string | number>("");
   // const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   setSearch(e.target.value);
   // };
   return (
-    <html className=" flex flex-col 	" lang="en">
-      <body>
+    <html lang="en">
+      <body className={inter.className}>
         <div className="top-0 z-100 h-[150px]   min-w-[1280px] left-0 right-0 relative  w-[100%] mt-[10px] px-[10px]">
           <div className="relative  pr-[20px] w-[100%] max-w-[1920px] h-[103px] my-0 mx-auto">
             <ScrollButton></ScrollButton>
@@ -101,19 +108,7 @@ export default function RootLayout({
                 <li className="px-10 font-bold text-[14px]">DESIGNER</li>
               </ul>
             </div>
-            <div>
-              <div
-                className="
-                  cursor-pointer  w-[180px] py-0 pl-[14px] font-bold text-[14px] block absolute top-0 leading-[46px] border-[1px] border-[#e9e9e9] text-left overflow-hidden"
-              >
-                CATEGORY
-                <Image
-                  alt=""
-                  className="w-[12px] h-[12px] top-[50%] absolute block mt-[-7px] right-[17px]"
-                  src={arrowImage}
-                ></Image>
-              </div>
-            </div>
+            <Category></Category>
           </div>
         </div>
         <div className="mt-[-13px]">{children}</div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Slider from "../components/slider";
+import Slider from "./slider";
 import Link from "next/link";
 
 import { useEffect, useState } from "react";
@@ -50,7 +50,7 @@ export default function ThumbnailList({ title, child, link }: any) {
                   background: ` url(https://static.wconcept.co.kr/web/images/common/spr-common.png) -330px 0`,
                 }}
                 className={`w-[18px] top-[10px] right-[10px] z-1 h-[17px] 
-                ${buttonStates[index+1] ? "active" : ""}
+                ${buttonStates[index + 1] ? "active" : ""}
               
               `}
               ></button>
