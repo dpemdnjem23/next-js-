@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 
-import ScrollButton from "@/components/ScrollButton";
+import ScrollButton from "@/app/(baselayout)/components/ScrollButton";
 import loginImage from "../../public/ico_login.svg";
 import cartImage from "../../public/ico_bag.svg";
 import joinImage from "../../public/ico_join.svg";
 import logoImage from "../../public/ico_gnb_logo_176.svg";
 import Image from "next/image";
 // import { useState } from "react";
-import Category from "../components/category";
+import Category from "./(baselayout)/components/category";
 import ReduxProvider from "@/reducers";
+import { MSWComponent } from "@/app/_component/MSWcomponent";
+import Header from "@/app/_component/header";
+import AuthSession from "@/app/_component/AuthSession";
 
 const inter = Inter({ subsets: ["latin"] });
 //페이지밖, 페이지에서 공유하고싶은것들을 작성한다.
@@ -25,94 +29,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const handleOnFocus = () => {
-  //   setIsFocus(!isFocus);
-  // };
-
-  // const [search, setSearch] = useState<string | number>("");
-  // const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSearch(e.target.value);
-  // };
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="top-0 z-100 h-[150px]   min-w-[1280px] left-0 right-0 relative  w-[100%] mt-[10px] px-[10px]">
-          <div className="relative  pr-[20px] w-[100%] max-w-[1920px] h-[103px] my-0 mx-auto">
-            <ScrollButton></ScrollButton>
+    <ReduxProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <Header></Header>
 
-            <div className="absolute top-[32px] left-[20px]">
-              <Link href="/">
-                <Image alt="" src={logoImage}></Image>
-              </Link>
-            </div>
-            <div className="absolute z-[101] left-[40%] top-[9px] w-[392px] h-[70px] px-[11px]">
-              <input
-                className="w-[340px] h-[40px] block bg-[none] text-[14px] border-b-[1px] float-left focus:outline-none p-[0] border-[black] leading-[44px]"
-                // onChange={(e) => {
-                //   handleOnChange(e);
-                // }}
-                type="text"
-              ></input>
-              <button
-                className="block flat-left relative w-[25px] h-[45px] right-[25px] overflow-hidden indent-[-9999px] vertical-middle"
-                style={{
-                  background: ` url(https://static.wconcept.co.kr/web/images/common/svg/ico_search_25.svg) no-repeat center 9px/100%`,
-                }}
-              >
-                검색
-              </button>
-            </div>
-            <ul className=" float-right pt-[10px] mr-[-17px]  ">
-              <li className=" uppercase float-left text-center">
-                <Link className="  block relative p-[20px]" href={"/"}>
-                  <Image alt="" src={joinImage}></Image>
-                  <strong className="  absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
-                    join
-                  </strong>
-                </Link>
-              </li>
-              <li className=" uppercase float-left text-center">
-                <Link
-                  className=" block relative p-[20px]"
-                  href={"Member/login"}
-                >
-                  <Image
-                    alt=""
-                    className="inline-block w-[30px] h-[30px] vertical-top"
-                    src={loginImage}
-                  ></Image>
-                  <strong className=" absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
-                    login
-                  </strong>
-                </Link>
-              </li>
-              <li className=" uppercase float-left text-center">
-                <Link className=" block relative p-[20px]" href={"/cart"}>
-                  <Image alt="" src={cartImage}></Image>
-                  <strong className=" absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
-                    0
-                  </strong>
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="relative block w-[100%] top-0 left-0 right-0 z-[100] min-w-[1280px] border-b-[1px] border-[#e9e9e9]">
-            <div className="max-w-[1920px] h-[57px] my-[0] mx-auto px-[20px] py-0 flex flex-start justify-center">
-              <div className="flex justify-center"></div>
-              <ul className=" m-0 p-0 flex flex-row  items-center justify-center">
-                <li className="px-10 font-bold text-[14px]">NEW</li>
-                <li className="px-10 font-bold text-[14px]">WOMEN</li>
-                <li className="px-10 font-bold text-[14px]">BEAUTY</li>
-                <li className="px-10 font-bold text-[14px]">LIFE</li>
-                <li className="px-10 font-bold text-[14px]">SALE</li>
-                <li className="px-10 font-bold text-[14px]">DESIGNER</li>
-              </ul>
-            </div>
-            <Category></Category>
-          </div>
-        </div>
-        <div className="mt-[-13px]">{children}</div>
-      </body>
-    </html>
+          {children}
+        </body>
+      </html>
+    </ReduxProvider>
   );
 }

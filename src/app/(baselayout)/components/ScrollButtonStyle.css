@@ -1,0 +1,46 @@
+#scroll_menu .side_bar.middle .direction > button {
+  max-height: 42px;
+  margin-top: 6px;
+}
+
+#scroll_menu .side_bar .direction > button {
+  display: block;
+  overflow: hidden;
+  transition: all ease-in-out 0.4s;
+  margin-top: 3px;
+}
+
+#scroll_menu .side_bar.top .direction .to_top {
+  max-height: 0;
+}
+
+#scroll_menu .side_bar .direction .to_top {
+  max-height: 0;
+}
+.active2 {
+  right: 0px !important;
+}
+.active2::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: -1;
+}
+
+#scroll_menu {
+  position: fixed;
+  top: 0;
+  right: -340px;
+  width: 340px;
+  z-index: 100;
+  height: 100%;
+  min-height: 360px;
+  transition: right 0.3s ease-in-out;
+}

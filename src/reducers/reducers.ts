@@ -1,8 +1,10 @@
+"use client"
 import { combineReducers } from "redux";
-import { HomeReducer } from "./slices/HomeSlice";
+import HomeReducer from "./slices/HomeSlice";
 
-const rootReducer = combineReducers({
+
+
+export const rootReducer = combineReducers({
   home: HomeReducer,
 });
 
-export default rootReducer;

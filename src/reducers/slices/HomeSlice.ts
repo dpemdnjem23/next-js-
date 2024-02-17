@@ -1,22 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface Home {
-  focus: boolean;
-}
+type Home = {
+  isHeader: boolean;
+  isModal: boolean;
+};
 const initialState: Home = {
-  focus: false,
+  isHeader: false,
+  isModal: false,
 };
 
 const HomeSlice = createSlice({
   name: "home",
   initialState,
   reducers: {
-    setIsFocus(state) {
-      state.focus = !state.focus;
+    setIsHeader(state, action) {
+      state.isHeader = action.payload;
+    },
+    setIsModal(state, action) {
+      state.isModal = action.payload;
     },
   },
 });
 
-export const { setIsFocus } = HomeSlice.actions;
+export const { setIsHeader, setIsModal } = HomeSlice.actions;
 // export const selectCount = (state) => state.counter.value;
 export default HomeSlice.reducer;

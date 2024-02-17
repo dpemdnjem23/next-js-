@@ -28,8 +28,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/middleware.js",
-    "src/app/api/auth/[...nextauth]/route.js",
-    "src/mocks/handlers.js"
-, "src/model/User.js"  ],
+    "src/app/api/auth/[...nextauth]/route.ts",
+    "src/mocks/handlers.ts",
+    "src/model/User.ts"
+  ],
   "exclude": ["node_modules"]
 }
