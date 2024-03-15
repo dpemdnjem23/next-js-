@@ -69,7 +69,7 @@ export default function SlickSlider({ children, width }: any) {
   };
 
   return (
-    <div style={{ width: windowWidth }} className={` relative block m-0 p-0`}>
+    <div style={{ width: windowWidth }} className={`mt-[-25px]`}>
       <Slick ref={sliderRef} {...settings}>
         {children}
       </Slick>

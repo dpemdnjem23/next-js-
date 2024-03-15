@@ -54,7 +54,6 @@ export default function ThumbnailList({ title, child, link }: props) {
     checkLoginStatus();
   };
 
-
   //하트를 클릭할때 로그인되어있지 않으면 alert창
   return (
     <div className="w-[100%] relative overflow-hidden">
@@ -79,12 +78,12 @@ export default function ThumbnailList({ title, child, link }: props) {
               className="
               list
               w-[216px] float-left mb-[50px] mr-[22px] relative"
-              key={el.postId}
+              key={el.id}
             >
               <button
                 onClick={() => handleClickHeart(index)}
                 id="heart"
-                value={el.postId}
+                value={el.id}
                 style={{
                   background: ` url(https://static.wconcept.co.kr/web/images/common/spr-common.png) -330px 0`,
                 }}
@@ -93,13 +92,15 @@ export default function ThumbnailList({ title, child, link }: props) {
               
               `}
               ></button>
-              <Link href={`/product/${el.productId}`}>
+              <Link href={`/product/${el.product_code}`}>
                 <div className="relative mb-[16px] h-[260px] overflow-hidden">
-                  <img
+                  <Image
+                    width={200}
+                    height={50}
                     className="block w-[100%] h-[100%] object-cover"
                     alt="벽"
-                    src={el?.image}
-                  ></img>
+                    src={el?.thumbnail}
+                  ></Image>
                 </div>
                 <div className="h-[190px] pl-[4px] pr-[6px] ">
                   <div className="h-[100px]">
@@ -110,31 +111,38 @@ export default function ThumbnailList({ title, child, link }: props) {
                       {el.front}
                     </div>
                     <div className="h-[32px] break-all  text-[12px] leading-[16px] mb-[16px] overflow-hidden text-[#777]">
-                      {el.product_line}
+                      {el.front_multiline}
                     </div>
                   </div>
                   <div className="relative leading-normal flex justify-start items-baseline">
                     <span className="text-[16px] font-bold mr-[6px]">
-                      {el.discount_price}
+                      {((1 - el.discount / 100) * el.price).toLocaleString()}
                     </span>
                     <span className="text-[12px] line-through text-[#aaa] ">
-                      {el.price}
+                      {el.price.toLocaleString()}
                     </span>
                     <span className="block absolute font-[600] top-0 right-0 text-[16px] text-[#ff4000]">
-                      {el.discount_rate}%
+                      {el.discount}%
                     </span>
                   </div>
 
                   <div className="mt-[10px] mb-[5px] max-h-[45px] overflow-hidden">
                     <p className="block overflow-hidden m-0">
-                      <span
-                        className="
+                      {el.general_info.lable.map(
+                        (el: string[], index: number) => {
+                          return (
+                            <span
+                              key={index}
+                              className="
                         after:top-0  after:left-0 after:bottom-0 after:right-0 after:absolute after:border-[#95959] border-[1px]
                       float-left block h-[20px] overflow-hidden indent-0 mr-[5px] mb-[5px] ml-0 px-[5px] py-[2px]
                       bg-[#fff] text-[#888] w-auto text-[11px] leading-[14px] min-w-[30px] relative"
-                      >
-                        {el.generalInfo}
-                      </span>
+                            >
+                              {el}
+                            </span>
+                          );
+                        }
+                      )}
                     </p>
                   </div>
                 </div>

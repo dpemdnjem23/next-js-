@@ -17,85 +17,89 @@ import { setIsHeader } from "@/reducers/slices/HomeSlice";
 import { result } from "lodash";
 import { Post } from "@/model/Post";
 import ShoppingHistoryModal from "../@ modal/shoppingHistory/page";
-const arr = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
+import { supabase } from "@/lib";
 const Home = () => {
-  // const [product, setProduct] = useState<Post[]>([]);
-  // const isModal = useSelector((state) => state?.home.isModal);
-  // useEffect(() => {
-  //   try {
-  //     const result = async () => {
-  //       const response = await fetch(`http://localhost:8080/post/product`, {
-  //         method: "get",
-  //       });
-  //       setProduct(await response.json());
-  //     };
-  //     result();
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }, []);
-  // console.log(isModal);
-  // return (
-  //   <div className="">
-  //     <Slider>
-  //       <Image className="block h-[600px]" alt="" src={mainSliderImage}></Image>
-  //       <Image
-  //         className="block h-[600px]"
-  //         alt=""
-  //         src={mainSliderImage2}
-  //       ></Image>
-  //       <Image
-  //         className="block h-[600px]"
-  //         alt=""
-  //         src={mainSliderImage3}
-  //       ></Image>
-  //       <Image
-  //         className="block h-[600px]"
-  //         alt=""
-  //         src={mainSliderImage4}
-  //       ></Image>
-  //       <Image
-  //         className="block h-[600px]"
-  //         alt=""
-  //         src={mainSliderImage5}
-  //       ></Image>
-  //     </Slider>
-  //     <div className=" w-[1350px]">
-  //       <ThumbnailList
-  //         title={"MEN"}
-  //         child={product.filter((el) => el.category === "men")}
-  //         link={"/men"}
-  //       ></ThumbnailList>
-  //       <ThumbnailList
-  //         title={"WOMEN"}
-  //         child={product.filter((el) => el.category === "women")}
-  //         link={"/women"}
-  //       ></ThumbnailList>
-  //       <ThumbnailList
-  //         title={"LIFE"}
-  //         child={product.filter((el) => el.category === "life")}
-  //         link={"/life"}
-  //       ></ThumbnailList>
-  //       <ThumbnailList
-  //         title={"BEAUTY"}
-  //         child={product.filter((el) => el.category === "beauty")}
-  //         link={"/beauty"}
-  //       ></ThumbnailList>
-  //       <ThumbnailList
-  //         title={"NEW"}
-  //         child={product.filter((el) => el.category === "women")}
-  //         link={"/new"}
-  //       ></ThumbnailList>
-  //     </div>
-  //     <div
-  //       //   // ref={ref}
-  //       id="scroll_menu"
-  //       className={`   ${isModal ? "active2" : ""}  `}
-  //     >
-  //       <ScrollButton></ScrollButton>
-  //       <ShoppingHistoryModal></ShoppingHistoryModal>
-  //     </div>
-  //   </div>
-  // );
+  const [product, setProduct] = useState<any>([]);
+  const isModal = useSelector((state) => state?.home.isModal);
+  useEffect(() => {
+    try {
+      const result = async () => {
+        const { data: product, error } = await supabase.from("product").select(`
+        brand,front,front_multiline,price,discount,imageArr,general_info,thumbnail,option,product_code,
+        category(id, category_name
+        )
+      
+        `);
+        setProduct(product);
+      };
+      result();
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+  console.log(product);
+
+  return (
+    <div className="">
+      <Slider>
+        <Image className="block h-[600px]" alt="" src={mainSliderImage}></Image>
+        <Image
+          className="block h-[600px]"
+          alt=""
+          src={mainSliderImage2}
+        ></Image>
+        <Image
+          className="block h-[600px]"
+          alt=""
+          src={mainSliderImage3}
+        ></Image>
+        <Image
+          className="block h-[600px]"
+          alt=""
+          src={mainSliderImage4}
+        ></Image>
+        <Image
+          className="block h-[600px]"
+          alt=""
+          src={mainSliderImage5}
+        ></Image>
+      </Slider>
+      <div className=" w-[1350px]">
+        <ThumbnailList
+          title={"MEN"}
+          child={product.filter((el) => el.category.category_name === "men")}
+          link={"/men"}
+        ></ThumbnailList>
+        <ThumbnailList
+          title={"WOMEN"}
+          child={product.filter((el) => el.category.category_name === "women")}
+          link={"/women"}
+        ></ThumbnailList>
+        <ThumbnailList
+          title={"LIFE"}
+          child={product.filter((el) => el.category.category_name === "life")}
+          link={"/life"}
+        ></ThumbnailList>
+        <ThumbnailList
+          title={"BEAUTY"}
+          child={product.filter((el) => el.category.category_name === "beauty")}
+          link={"/beauty"}
+        ></ThumbnailList>
+        <ThumbnailList
+          title={"NEW"}
+          child={product.filter((el) => el.category.category_name === "women")}
+          link={"/new"}
+        ></ThumbnailList>
+      </div>
+      <div
+        //   // ref={ref}
+        id="scroll_menu"
+        className={`   ${isModal ? "active2" : ""}  `}
+      >
+        <ScrollButton></ScrollButton>
+        <ShoppingHistoryModal></ShoppingHistoryModal>
+      </div>
+    </div>
+  );
 };
 export default Home;

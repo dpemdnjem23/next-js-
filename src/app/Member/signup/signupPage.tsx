@@ -1,7 +1,6 @@
 "use client";
-import { hardPassword } from "@/app/api/auth";
 // import { signup } from "@/app/api/auth/page";
-import { supabase } from "@/lib/supbabase/index";
+import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 // import { cookies } from "next/headers";
 import { useRouter } from "next/navigation";
@@ -40,37 +39,37 @@ export default function Signup() {
   const router = useRouter();
 
   //아이디 확인
-  const handleUserBlur = async () => {
-    //유효성 검사 모두 통과한후
-    if (isValidEmail(formData.email) && idLength(formData.email)) {
-      try {
-        const { data, error } = await supabase
-          .from("user")
-          .select("user")
-          .eq("user", formData.email);
+  // const handleUserBlur = async () => {
+  //   //유효성 검사 모두 통과한후
+  //   if (isValidEmail(formData.email) && idLength(formData.email)) {
+  //     try {
+  //       const { data, error } = await supabase
+  //         .from("auth.Users")
+  //         .select("user")
+  //         .eq("email", formData.email);
+  //       console.log(data, error);
 
-        if (data?.length === 0) {
-          setAlertData({
-            ...alertData,
-            emailAlert: "사용가능한 아이디 입니다.",
-          });
-          setEmailState(true);
-          return;
+  //       if (data?.length === 0) {
+  //         setAlertData({
+  //           ...alertData,
+  //           emailAlert: "사용가능한 아이디 입니다.",
+  //         });
+  //         setEmailState(true);
+  //         return;
 
-          //check했을때 이메일이 존재하지 않는경우
-        }
-        console.log("중복된아이디 아님");
-        setAlertData({
-          ...alertData,
-          emailAlert: "중복된 아이디 입니다.",
-        });
-        setEmailState(false);
-      } catch (err) {
-        console.error(err);
-        throw err;
-      }
-    }
-  };
+  //         //check했을때 이메일이 존재하지 않는경우
+  //       }
+  //       setAlertData({
+  //         ...alertData,
+  //         emailAlert: "중복된 아이디 입니다.",
+  //       });
+  //       setEmailState(false);
+  //     } catch (err) {
+  //       console.error(err);
+  //       throw err;
+  //     }
+  //   }
+  // };
 
   const handleUserPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -212,68 +211,42 @@ export default function Signup() {
     e.preventDefault();
 
     //모든 요소를 만족하고, 닉네임읋 확인했을때
-
+    console.log("zmfflr");
     if (
       passwordLength(formData.password) &&
       strongPassword(formData.password) &&
       isValidEmail(formData.email) &&
-      idLength(formData.email) &&
-      emailState
+      idLength(formData.email)
     ) {
-      console.log("가입전 닉네임확인");
       try {
-        const nickCheck: any = await supabase
-          .from("user")
-          .select("*")
-          .eq("nickname", formData.nickname);
+        const { data, error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              first_name: "John",
+              age: 27,
+            },
+          },
+        });
 
-        console.log(nickCheck);
-
-        if (!formData.nickname) {
+        if (error) {
           setAlertData({
             ...alertData,
-            nicknameAlert: "닉네임 입력해주세요.",
+            emailAlert: "이미 등록된 이메일 입니다.",
           });
-        } else if (nickCheck?.data[0]) {
-          setAlertData({
-            ...alertData,
-            nicknameAlert: "중복된 닉네임입니다.",
-          });
-        } else {
-          setAlertData({
-            ...alertData,
-            nicknameAlert: "",
-          });
-
-          console.log(
-            formData,
-            formData.password,
-            await hardPassword(formData.password)
-          );
-          try {
-            const { data, error } = await supabase.from("user").insert({
-              user: formData.email,
-              nickname: formData.nickname,
-              password: await hardPassword(formData.password),
-            });
-
-            if (error) {
-              console.log(error);
-            }
-            router.push("/");
-          } catch (error) {
-            setAlertData({
-              ...alertData,
-              emailAlert: "이미 등록된 이메일 입니다.",
-            });
-            console.error("Error signing up:", error.message);
-          }
-
-          //회원가입 성공
+          throw error;
         }
-      } catch (err) {
-        throw err;
+        router.push("/");
+      } catch (error) {
+        setAlertData({
+          ...alertData,
+          emailAlert: "이미 등록된 이메일 입니다.",
+        });
+        console.error("Error signing up:", error.message);
       }
+
+      //회원가입 성공
     } else if (!formData.email) {
       console.log("username");
       setAlertData({
@@ -378,7 +351,7 @@ export default function Signup() {
                   <input
                     placeholder="아이디"
                     name="email"
-                    onBlur={handleUserBlur}
+                    // onBlur={handleUserBlur}
                     onPaste={handleUserPaste}
                     value={formData.email}
                     onChange={handleUserChange}
@@ -550,65 +523,6 @@ export default function Signup() {
                 ) : (
                   ""
                 )}
-              </td>
-            </tr>
-            <tr>
-              <th className="h-[70px] pl-[42px] font-sans font-light text-[14px] text-left border-t-[1px] border-[#d9d9d9]">
-                닉네임
-                <span className=" inline-block text-[#ff1414] pt-[2px]">*</span>
-              </th>
-
-              <td className="py-0 px-[19px] text-[14px] border-t-[1px] border-[#d9d9d9]">
-                <p className=" align-middle inline-block">
-                  <input
-                    name="nickname"
-                    onChange={handleNickChange}
-                    maxLength={7}
-                    placeholder="ex) 박다이"
-                    value={formData.nickname}
-                    className=" w-[400px] h-[40px] leading-[38px] bg-[#f2f2f2] border-[1px] border-[#f2f2f2] text-[14px] font-sans font-light"
-                    type="text"
-                  ></input>
-                </p>
-                {alertData.nicknameAlert ? (
-                  <p className="text-[12px] text-[#fa5500] inline-block">
-                    <svg
-                      className="inline-block align-text-top mt-[1px] mb- ml-[16px] mr-[4px]"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="11"
-                      height="11"
-                      viewBox="0 0 11 11"
-                    >
-                      <g
-                        data-name="Rectangle 104"
-                        style={{ fill: "#fff", stroke: "#fa5500" }}
-                      >
-                        <rect
-                          width="11"
-                          height="11"
-                          rx="5.5"
-                          style={{ stroke: "none" }}
-                        />
-                        <rect
-                          x=".5"
-                          y=".5"
-                          width="10"
-                          height="10"
-                          rx="5"
-                          style={{ fill: "none " }}
-                        />
-                      </g>
-                      <path
-                        data-name="Union 7"
-                        d="M9163 5V2h1v3zm0-4V0h1v1z"
-                        transform="translate(-9158 3)"
-                        style={{ fill: "#fa5500" }}
-                      />
-                    </svg>
-
-                    <label>{alertData.nicknameAlert}</label>
-                  </p>
-                ) : null}
               </td>
             </tr>
           </tbody>

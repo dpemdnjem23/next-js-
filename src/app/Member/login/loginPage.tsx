@@ -4,18 +4,25 @@ import {
   ChangeEventHandler,
   FormEventHandler,
   MouseEventHandler,
+  useDebugValue,
   useState,
 } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supbabase";
+import { supabase } from "@/lib";
 import { comparePassword } from "@/app/api/auth";
+import { sign } from "@/utils/jwtUitls";
+import { refresh } from "../../../utils/jwtUitls";
+import { useDispatch } from "react-redux";
+import { cookieCreate } from "@/utils/cookieUtils";
+import { setIsLogin } from "@/reducers/slices/UserSlice";
 
 export default function LoginPage() {
   const [id, setId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const onSubmit: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
@@ -29,32 +36,28 @@ export default function LoginPage() {
 
       //아이디로 우선 검증한다. 아이디를 못찾는경우 아이디를 검색할수 없다.
       //아이디를 찾는경우 비밀번호 검증으로
-      if (id) {
-        const { data, error }: any = await supabase
-          .from("user")
-          .select()
-          .eq("user", id)
-          .single();
+
+      console.log(id, password);
+      if (id && password) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: id,
+          password: password,
+        });
+
         console.log(data);
-
-        if (!data) {
+        if (error) {
           setMessage(
             "아이디 또는 비밀번호가 일치하지 않습니다. 다시 입력해주세요"
           );
+          throw error;
         }
+
+        const user = await supabase.auth.getUser();
+        console.log(user, "session");
+
         setMessage("");
-
-        //비밀번호가 일치하는 경우
-        if (await comparePassword(password, data.password)) {
-          console.log("일치");
-
-          //비밀번호가 일치하면  로그인상태를 유지한다.
-        } else {
-          console.log("불일치");
-          setMessage(
-            "아이디 또는 비밀번호가 일치하지 않습니다. 다시 입력해주세요"
-          );
-        }
+        dispatch(setIsLogin(true));
+        location.assign('/')
         //비밀번호가 일치하지 않는경우
 
         // }
@@ -63,8 +66,12 @@ export default function LoginPage() {
         //   } else {
         //     router.replace("/");
         //   }
-      } else {
+      } else if (!id && !password) {
         setMessage("아이디를 입력해주세요");
+      } else if (!id && password) {
+        setMessage("아이디를 입력해주세요");
+      } else if (!password && id) {
+        setMessage("비밀번호를 입력해주세요");
       }
     } catch (err) {
       console.error(err);

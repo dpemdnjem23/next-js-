@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+"use client";
+import { createSlice,PayloadAction } from "@reduxjs/toolkit";
 
 type Home = {
   isHeader: boolean;
@@ -13,10 +14,10 @@ const HomeSlice = createSlice({
   name: "home",
   initialState,
   reducers: {
-    setIsHeader(state, action) {
+    setIsHeader(state, action:PayloadAction<boolean>) {
       state.isHeader = action.payload;
     },
-    setIsModal(state, action) {
+    setIsModal(state, action:PayloadAction<boolean>) {
       state.isModal = action.payload;
     },
   },

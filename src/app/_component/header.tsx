@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import loginImage from "../../../public/ico_login.svg";
+import mypageImage from "../../../public/ico_mypage.svg";
 import cartImage from "../../../public/ico_bag.svg";
 import joinImage from "../../../public/ico_join.svg";
 import logoImage from "../../../public/ico_gnb_logo_176.svg";
@@ -13,14 +14,21 @@ import LogoutButton from "@/app/(baselayout)/components/signout";
 import { useInView } from "react-intersection-observer";
 import { setIsHeader } from "@/reducers/slices/HomeSlice";
 
+type s = {
+  login: boolean;
+};
 export default function Header() {
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
 
   const [observer, setObserver] = useState(null);
+
+  const userLogin= JSON.parse(localStorage.getItem("userLogin"))?.login
+  
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    const observer: IntersectionObserver | null = new IntersectionObserver(
       (entries) => {
         // IntersectionObserverEntry 객체를 통해 감시중인 요소가 화면 안에 들어오는지 여부를 확인합니다.
         entries.forEach((entry) => {
@@ -90,19 +98,33 @@ export default function Header() {
               </strong>
             </Link>
           </li>
-
+          {userLogin=== true ? (
+            <li className=" uppercase float-left text-center">
+              <LogoutButton></LogoutButton>
+            </li>
+          ) : (
+            <li className=" uppercase float-left text-center">
+              <Link className=" block relative p-[20px]" href={"/Member/login"}>
+                <Image
+                  alt=""
+                  className="inline-block w-[30px] h-[30px] vertical-top"
+                  src={loginImage}
+                ></Image>
+                <strong className=" absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
+                  login
+                </strong>
+              </Link>
+            </li>
+          )}
           <li className=" uppercase float-left text-center">
-            <LogoutButton></LogoutButton>
-          </li>
-          <li className=" uppercase float-left text-center">
-            <Link className=" block relative p-[20px]" href={"/Member/login"}>
+            <Link className=" block relative p-[20px]" href={"/Member/mypage"}>
               <Image
                 alt=""
                 className="inline-block w-[30px] h-[30px] vertical-top"
-                src={loginImage}
+                src={mypageImage}
               ></Image>
               <strong className=" absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
-                login
+                my
               </strong>
             </Link>
           </li>
