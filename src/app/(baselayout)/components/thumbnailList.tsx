@@ -12,6 +12,7 @@ import { getSession } from "next-auth/react";
 
 import { useEffect, useState } from "react";
 import { Post } from "@/model/Post";
+import { onClickProduct } from "@/lib/historyLocalstorage";
 
 interface props {
   title: string;
@@ -36,9 +37,7 @@ export default function ThumbnailList({ title, child, link }: props) {
       const session = await getSession();
 
       if (session) {
-        console.log(index);
         setButtonStates((prevStates) => {
-          console.log(prevStates);
           const newStates = [...prevStates];
           newStates[index + 1] = !newStates[index + 1];
           return newStates;
@@ -75,6 +74,7 @@ export default function ThumbnailList({ title, child, link }: props) {
         {child.map((el: Post, index: number) => {
           return (
             <li
+              onClick={() => onClickProduct(child)}
               className="
               list
               w-[216px] float-left mb-[50px] mr-[22px] relative"
@@ -128,7 +128,7 @@ export default function ThumbnailList({ title, child, link }: props) {
 
                   <div className="mt-[10px] mb-[5px] max-h-[45px] overflow-hidden">
                     <p className="block overflow-hidden m-0">
-                      {el.general_info.lable.map(
+                      {el.general_info.label.map(
                         (el: string[], index: number) => {
                           return (
                             <span

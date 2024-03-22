@@ -14,6 +14,8 @@ import Image from "next/image";
 import Category from "./(baselayout)/components/category";
 import Header from "@/app/_component/header";
 import dynamic from "next/dynamic";
+import { useSelector } from "react-redux";
+import ShoppingHistoryModal from "./@ modal/shoppingHistory/page";
 
 const ReduxProvider = dynamic(() => import("@/reducers"), {
   ssr: false,
@@ -31,11 +33,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const isModal = useSelector((state) => state?.home.isModal);
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
           <Header></Header>
+          <ScrollButton></ScrollButton>
+          <ShoppingHistoryModal></ShoppingHistoryModal>
 
           {children}
         </ReduxProvider>

@@ -54,10 +54,12 @@ export default function LoginPage() {
 
         const user = await supabase.auth.getUser();
         console.log(user, "session");
+        localStorage.setItem("userInfo", JSON.stringify(user.data));
 
         setMessage("");
         dispatch(setIsLogin(true));
-        location.assign('/')
+
+        location.assign("/");
         //비밀번호가 일치하지 않는경우
 
         // }

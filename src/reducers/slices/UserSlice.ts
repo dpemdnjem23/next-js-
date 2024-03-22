@@ -4,9 +4,16 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type Home = {
   isLogin: boolean;
+  isHeart: [];
+  personalHeart: [] | null;
+
+  // isHeart: [{user_id:string, product_id:number,id:number}]
 };
 const initialState: Home = {
   isLogin: false,
+  personalHeart: [],
+
+  isHeart: [],
 };
 
 const UserSlice = createSlice({
@@ -25,9 +32,18 @@ const UserSlice = createSlice({
       localStorage.setItem("userLogin", data2);
       localStorage.removeItem("userLogin");
     },
+
+    setIsHeart(state, action: PayloadAction<[]>) {
+      state.isHeart = action.payload;
+    },
+
+    setPersonalHeart(state, action: PayloadAction<{}>) {
+      state.personalHeart = action.payload;
+    },
   },
 });
 
-export const { setIsLogin, setIsLogout } = UserSlice.actions;
+export const { setIsLogin, setIsLogout, setIsHeart, setPersonalHeart } =
+  UserSlice.actions;
 // export const selectCount = (state) => state.counter.value;
 export default UserSlice.reducer;

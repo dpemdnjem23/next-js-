@@ -14,6 +14,7 @@ const ScrollButton = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [showTopButton, setShowTopButton] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const isModal = useSelector((state) => state?.home.isModal);
 
   const dispatch = useDispatch();
   const isHeader = useSelector((state) => state?.home.isHeader);
@@ -26,15 +27,15 @@ const ScrollButton = () => {
   };
 
   const openModal = () => {
-    console.log("클릭");
     dispatch(setIsModal(true));
   };
 
-  
   return (
     <div
-      className={`fixed block 
-        ${isHeader ? "top" : "middle"} side_bar
+      className={`fixed block z-[999]
+        ${isHeader ? "top" : "middle"}
+        ${isModal ? "hidden" : "block"}
+        side_bar
    right-[22px] bottom-[47px]`}
     >
       <button
@@ -44,7 +45,10 @@ const ScrollButton = () => {
         <Image alt="" src={timeImage}></Image>
       </button>
       <div className="direction flex justify-center flex-col">
-        <button onClick={scrollToTop} className={`to_top`}>
+        <button
+          onClick={scrollToTop}
+          className={`to_top max-h-[42px] mt-[6px]`}
+        >
           <Image
             className={`            
 w-[42px] h-[42px] bg-[white]  border-[1px] rounded-[50%]`}
@@ -53,7 +57,10 @@ w-[42px] h-[42px] bg-[white]  border-[1px] rounded-[50%]`}
           ></Image>
         </button>
 
-        <button onClick={scrollToBottom} className=" to_bottom">
+        <button
+          onClick={scrollToBottom}
+          className=" to_bottom max-h-[42px] mt-[6px]"
+        >
           <Image
             className={`w-[42px] h-[42px] bg-[white]  border-[1px] rounded-[50%]`}
             alt=""

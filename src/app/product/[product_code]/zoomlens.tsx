@@ -23,22 +23,17 @@ function ZoomLens() {
     (state: { product: string }) => state?.product.image
   );
 
-  console.log(selectedImage);
   const [bgPosition, setbgPosition] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
-  console.log(selectedImage, "selected");
 
   const onMouseEnter = () => {
     //들어갈때 left와 top을 조정한다.
 
-    console.log(window.innerWidth);
     //innerWidth 1px당 left0.5
 
     if (innerWidth > 1255) {
-      console.log((innerWidth - 1255) * 0.5);
-
       setPosition({ x: (innerWidth - 1255) * 0.5, y: 220 });
     } else if (innerWidth <= 1255) {
       setPosition({ x: 0, y: 220 });
@@ -61,11 +56,9 @@ function ZoomLens() {
 
     let cx = lensRef?.current.offsetWidth / cursorRef?.current.offsetWidth;
     let cy = lensRef?.current.offsetHeight / cursorRef?.current.offsetHeight;
-    console.log(cx, cy, "cx");
 
     switch (true) {
       case x <= boundary.xMin && y <= boundary.yMin:
-        console.log(5);
         setLensPosition({ x: 0, y: 0 });
         setbgPosition({
           x: 0,
@@ -75,8 +68,6 @@ function ZoomLens() {
         break;
 
       case x > boundary.xMin && x < boundary.xMax && y <= boundary.yMin:
-        console.log(1);
-
         setLensPosition({ x: coord.x, y: 0 });
 
         setbgPosition({
@@ -87,7 +78,6 @@ function ZoomLens() {
         break;
 
       case x >= boundary.xMax && y <= boundary.yMin:
-        console.log(6);
         setLensPosition({ x: 180, y: 0 });
         setbgPosition({
           x: -332,
@@ -97,7 +87,6 @@ function ZoomLens() {
         break;
 
       case x <= boundary.xMin && y > boundary.yMin && y < boundary.yMax:
-        console.log(3);
         setLensPosition({ x: 0, y: coord.y });
         setbgPosition({
           x: 0,
@@ -107,13 +96,11 @@ function ZoomLens() {
         break;
 
       case x <= boundary.xMin && y >= boundary.yMax:
-        console.log(7);
         setLensPosition({ x: 0, y: 315 });
 
         break;
 
       case x > boundary.xMin && x < boundary.xMax && y >= boundary.yMax:
-        console.log(2);
         setLensPosition({ x: coord.x, y: 315 });
 
         setbgPosition({
@@ -124,7 +111,6 @@ function ZoomLens() {
         break;
 
       case x >= boundary.xMax && y >= boundary.yMax:
-        console.log(8);
         setLensPosition({ x: 180, y: 315 });
         setbgPosition({
           x: -332,
@@ -156,7 +142,6 @@ function ZoomLens() {
 
   // 마우스를 이용하여 렌즈 위치를 설정하는 함수
 
-  console.log(bgPosition, lensPosition);
   return (
     <div
       ref={imageRef}

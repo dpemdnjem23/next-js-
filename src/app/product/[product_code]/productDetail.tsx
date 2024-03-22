@@ -17,6 +17,8 @@ import {
   setIsShowLens,
   setLensPosition,
   setPointsInfoModal,
+  setProduct,
+  setSelectOption,
 } from "@/reducers/slices/ProductSlice";
 import ButtonBox from "./_component/button";
 import Description from "./_component/description";
@@ -52,22 +54,27 @@ type image = {
 };
 
 export default function ProductDetail() {
-  const [product, setProduct] = useState<props>();
-  const [key, setKey] = useState<number>(0);
+  // const [product, setProduct] = useState<props>();
+  const product = useSelector((state) => state?.product.product);
   const { product_code } = useParams();
+
+  const [key, setKey] = useState<number>(0);
   //option창을 여는것
   const [showOption, setShowOption] = useState<boolean>(false);
 
+  const selectOption = useSelector((state) => state?.product.selectOption);
   //option창을 열고 option 선택했을때 option엔 price, quantity, name
-  const [selectOption, setSelectOption] = useState([]);
 
   //imageArr  갯수만큼 id가 생성되어야 한다.
   const [isActive, setIsActive] = useState<any>({ 0: true });
-  const selectedImage = useSelector(
-    (state: { product: string }) => state?.product.image
-  );
+  // const selectedImage = useSelector(
+  //   (state: { product: string }) => state?.product.image
+  // )
   const dispatch = useDispatch();
+
   useEffect(() => {
+    let ignore = false;
+
     try {
       const result = async () => {
         const { data, error }: any = await supabase
@@ -75,18 +82,27 @@ export default function ProductDetail() {
           .select()
           .eq("product_code", product_code)
           .single();
+        console.log(data);
+
         if (error) {
           throw error;
         }
 
-        setProduct(data);
-        dispatch(setIsImage(data.imageArr.image[key]));
+        if (!ignore) {
+          dispatch(setProduct(data));
+          dispatch(setIsImage(data.imageArr.image[key]));
+        }
       };
       result();
+
+      return () => {
+        ignore = true;
+      };
     } catch (err) {
       throw err;
     }
-  }, [product_code]);
+  }, [product?.id]);
+
   //클릭하면 active 변화를주어 css변화를 준다.
   //active 된 이미지를 메인화면에 띄워준다.
 
@@ -95,7 +111,6 @@ export default function ProductDetail() {
     //   ...prevState,
     //   [index]: !prevState[index],
     // }));
-    const active = { 0: true };
 
     //이게 먼저 업데이트 되도록한다.
     setIsActive((prevState: any) => {
@@ -161,7 +176,6 @@ export default function ProductDetail() {
 
   const handleSelectOption = (el: string, index: number) => {
     //option을 추가한다. 기존에 옵션이 있다면 추가하지 않는다.
-    console.log("select클릭");
     const newItem = {
       index,
       quantity: 1,
@@ -178,49 +192,47 @@ export default function ProductDetail() {
 
       return;
     }
-    setSelectOption((prevItems) => [...prevItems, newItem]);
+
+    dispatch(setSelectOption([...selectOption, newItem]));
 
     setShowOption(false);
   };
   //삭제
   const handleDeleteOption = (index: number) => {
-    console.log(index);
     const updatedItems = selectOption.filter((item) => item.index !== index);
 
-    console.log(updatedItems);
-
-    setSelectOption(updatedItems);
+    dispatch(setSelectOption(updatedItems));
   };
-
-  console.log(selectOption);
 
   //버튼을 클릭하여 수량을 조절한다. 수량은 stock을 따른다. stock은
 
   const handleQuantityUp = (index: number) => {
     //index에 해당하는 quantity 수량을 조절한다.
 
-    setSelectOption((prevItems: any) =>
-      prevItems.map((item: { index: number }) => {
+    const item = selectOption.map(
+      (item: { index: number; quantity: number }) => {
         if (item.index === index) {
-          console.log({ ...item });
           return { ...item, quantity: item.quantity + 1 };
         }
         return item;
-      })
+      }
     );
+
+    setSelectOption(item);
   };
   const handleQuantityDown = (index: number) => {
     //index에 해당하는 quantity 수량을 조절한다.
 
-    setSelectOption((prevItems: any) =>
-      prevItems.map((item: { index: number }) => {
+    const item = selectOption.map(
+      (item: { index: number; quantity: number }) => {
         if (item.index === index) {
           console.log({ ...item });
           return { ...item, quantity: Math.max(1, item.quantity - 1) };
         }
         return item;
-      })
+      }
     );
+    setSelectOption(item);
   };
 
   const handlePointsModalOn = () => {
@@ -230,6 +242,7 @@ export default function ProductDetail() {
   const handleCardModalOn = () => {
     dispatch(setCardInfoModal(true));
   };
+
   // console.log(product[0].imageArr);
   return (
     <div
@@ -245,12 +258,12 @@ export default function ProductDetail() {
                   height={700}
                   width={525}
                   alt=""
-                  src={product?.imageArr.image[findTrueKeys()]}
+                  src={product?.imageArr?.image[findTrueKeys()]}
                 ></Image>
               </div>
               <div className="mt-[20px] h-[80px] overflow-hidden">
                 <ul className="max-w-[520px]">
-                  {product?.imageArr.image.map((el: string, index: number) => {
+                  {product?.imageArr?.image.map((el: string, index: number) => {
                     return (
                       <li
                         onClick={() => handleImageClick(index)}
@@ -316,7 +329,7 @@ export default function ProductDetail() {
                   text-[#ccc] text-[14px] h-[40px] leading-[18px] py-[7px] px-0 line-through"
                   >
                     <em className="text-[#ccc] leading-[18px] h-[32px] py-[7px] px-0 text-[18px]">
-                      {product?.price.toLocaleString()}
+                      {product?.price?.toLocaleString()}
                     </em>{" "}
                     원
                   </dd>

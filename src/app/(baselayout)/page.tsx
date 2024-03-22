@@ -13,23 +13,25 @@ import ThumbnailList from "./components/thumbnailList";
 import { useInView } from "react-intersection-observer";
 import ScrollButton from "@/app/(baselayout)/components/ScrollButton";
 import Header from "../_component/header";
-import { setIsHeader } from "@/reducers/slices/HomeSlice";
+import { setIsHeader, setIsModal } from "@/reducers/slices/HomeSlice";
 import { result } from "lodash";
 import { Post } from "@/model/Post";
 import ShoppingHistoryModal from "../@ modal/shoppingHistory/page";
 import { supabase } from "@/lib";
 const Home = () => {
+  const dispatch = useDispatch();
   const [product, setProduct] = useState<any>([]);
-  const isModal = useSelector((state) => state?.home.isModal);
   useEffect(() => {
     try {
       const result = async () => {
         const { data: product, error } = await supabase.from("product").select(`
-        brand,front,front_multiline,price,discount,imageArr,general_info,thumbnail,option,product_code,
+        id,brand,front,front_multiline,price,discount,imageArr,general_info,thumbnail,option,product_code,
         category(id, category_name
         )
       
         `);
+
+        console.log(product);
         setProduct(product);
       };
       result();
@@ -38,6 +40,10 @@ const Home = () => {
     }
   }, []);
   console.log(product);
+
+  // const closeModal = () => {
+  //   dispatch(setIsModal(false));
+  // };
 
   return (
     <div className="">
@@ -90,14 +96,6 @@ const Home = () => {
           child={product.filter((el) => el.category.category_name === "women")}
           link={"/new"}
         ></ThumbnailList>
-      </div>
-      <div
-        //   // ref={ref}
-        id="scroll_menu"
-        className={`   ${isModal ? "active2" : ""}  `}
-      >
-        <ScrollButton></ScrollButton>
-        <ShoppingHistoryModal></ShoppingHistoryModal>
       </div>
     </div>
   );
