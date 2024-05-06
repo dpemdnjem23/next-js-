@@ -13,18 +13,50 @@ import ReduxProvider from "@/reducers";
 import LogoutButton from "@/app/(baselayout)/components/signout";
 import { useInView } from "react-intersection-observer";
 import { setIsHeader } from "@/reducers/slices/HomeSlice";
+import {
+  InfiniteData,
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+} from "@tanstack/react-query";
+import { supabase } from "@/lib";
 
 type s = {
   login: boolean;
 };
 export default function Header() {
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
+  const [count, setCount] = useState<number>(0);
+  const [work, setWork] = useState<boolean>(false);
 
   const [observer, setObserver] = useState(null);
 
-  const userLogin= JSON.parse(localStorage.getItem("userLogin"))?.login
-  
+  const queryClient = useQueryClient();
+  const userLogin = JSON.parse(localStorage.getItem("userLogin"))?.login;
 
+  const getItem = async () => {
+    const response = await supabase
+      .from("cart")
+      .select(
+        `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
+      );
+    setWork(!work);
+
+    return response;
+  };
+  const {
+    data: cartItems,
+    isLoading,
+    error,
+    isSuccess,
+    refetch,
+  } = useQuery({ queryKey: ["carts"], queryFn: getItem });
+
+  // if (isSuccess) {
+  //   setWork(!work);
+  //   return;
+  // }
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -62,6 +94,20 @@ export default function Header() {
     };
   }, []);
 
+  const countCart = () => {
+    let count = 0;
+
+    cartItems?.data?.map((el) => {
+      count = count + el.options.length - 1;
+    });
+
+    setCount(count);
+  };
+
+  useEffect(() => {
+    countCart();
+  }, [cartItems, work]);
+
   // 스크롤 이벤트를 추가합니다.
   return (
     <div className="z-100 h-[161px]   min-w-[1280px] top-0 left-0 right-0 relative w-[100%]">
@@ -98,7 +144,7 @@ export default function Header() {
               </strong>
             </Link>
           </li>
-          {userLogin=== true ? (
+          {userLogin === true ? (
             <li className=" uppercase float-left text-center">
               <LogoutButton></LogoutButton>
             </li>
@@ -132,7 +178,7 @@ export default function Header() {
             <Link className=" block relative p-[20px]" href={"/cart"}>
               <Image alt="" src={cartImage}></Image>
               <strong className=" absolute bottom-0 left-0 right-0 text-[12px] line-[12px]">
-                0
+                {count}
               </strong>
             </Link>
           </li>

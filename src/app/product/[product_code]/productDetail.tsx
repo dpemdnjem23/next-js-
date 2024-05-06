@@ -82,7 +82,6 @@ export default function ProductDetail() {
           .select()
           .eq("product_code", product_code)
           .single();
-        console.log(data);
 
         if (error) {
           throw error;
@@ -218,7 +217,7 @@ export default function ProductDetail() {
       }
     );
 
-    setSelectOption(item);
+    dispatch(setSelectOption(item));
   };
   const handleQuantityDown = (index: number) => {
     //index에 해당하는 quantity 수량을 조절한다.
@@ -232,7 +231,7 @@ export default function ProductDetail() {
         return item;
       }
     );
-    setSelectOption(item);
+    dispatch(setSelectOption(item));
   };
 
   const handlePointsModalOn = () => {
@@ -507,7 +506,7 @@ export default function ProductDetail() {
                             선택해 주세요.
                           </button>
                         </li>
-                        {product?.option.size.map((el, index) => {
+                        {product?.option.size.map((el, index: number) => {
                           return (
                             <li
                               onClick={() => handleSelectOption(el, index)}

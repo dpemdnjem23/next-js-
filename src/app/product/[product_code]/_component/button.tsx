@@ -1,5 +1,7 @@
 "use client";
 import Image from "next/image";
+import { v4 as uuidv4 } from "uuid";
+
 import giftImage from "../../../../../public/ico_prod_gift.svg";
 import heartOffImage from "../../../../../public/ico_prod_heart_off.svg";
 import heartOnImage from "../../../../../public/ico_prod_heart_on.svg";
@@ -9,7 +11,15 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { getSession } from "next-auth/react";
 import { setIsHeart, setPersonalHeart } from "@/reducers/slices/UserSlice";
 import { setCartCheckModal } from "@/reducers/slices/ProductSlice";
-import { addToCart } from "@/lib/cookieAddCart";
+import {
+  InfiniteData,
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+} from "@tanstack/react-query";
+import { cookieCreate, cookieGet } from "@/utils/cookieUtils";
+import Cookies from "js-cookie";
 
 interface props {
   id: number;
@@ -17,19 +27,70 @@ interface props {
   user_id: number;
 }
 export default function ButtonBox() {
+  const name = "cartId";
   //옵션 이 있을때 구매가 가능하도록한다.
   const product = useSelector((state) => state?.product.product);
   const isHeart = useSelector((state) => state?.user.isHeart);
   const selectOption = useSelector((state) => state?.product.selectOption);
-
+  console.log(selectOption);
   //만약 personalHeart에 변화가 생겼다면
 
   const personalHeart = useSelector((state) => state?.user.personalHeart);
 
-  const [prevHeart, setPrevHeart] = useState<boolean>(personalHeart);
-
   const userLogin = JSON.parse(localStorage.getItem("userLogin")) || [];
   const userInfo = JSON.parse(localStorage.getItem("userInfo")) || [];
+
+  const queryClient = useQueryClient();
+
+  //
+  const fetchData = async () => {
+    let cartId = await cookieGet("cartId");
+
+    const optionsArr = selectOption?.map((el) => {
+      return el.name;
+    });
+    const quantityArr = selectOption?.map((el) => {
+      return Number(el.quantity);
+    });
+
+    const select = {
+      product_id: product.id,
+      user_id: userInfo?.user?.id || null,
+      quantity: quantityArr,
+      cart_id: cartId,
+      options: [...optionsArr, "end"],
+    };
+
+    //option이 여러개
+    const response = await supabase.from("cart").insert(select);
+
+    return response;
+  };
+
+  const mutation = useMutation({
+    mutationFn: fetchData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["carts"] });
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+
+  const addToCart = async (item) => {
+    //cart에 추가할때 cookie를 추가한다.
+
+    let cartId = await cookieGet("cartId");
+    let cart;
+
+    //cartId가 없는경우
+    if (!cartId) {
+      await cookieCreate("cartId");
+      // mutation.mutate();
+    }
+
+    mutation.mutate();
+  };
 
   const dispatch = useDispatch();
   //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기
@@ -119,6 +180,7 @@ export default function ButtonBox() {
       throw err;
     }
   };
+  // const query = useQuery({queryKey:['cart']})
 
   const openCartCheckModal = () => {
     // console.log("dllddlltlfgod");
@@ -127,8 +189,9 @@ export default function ButtonBox() {
     //옵션에 해당하는 product를 넣는다.
     //
     if (selectOption.length >= 1) {
+      addToCart(product);
+
       dispatch(setCartCheckModal(true));
-      addToCart(product)
     } else if (selectOption.length < 1) {
       //옵션이 0개인경우
       alert("옵션을 선택해주세요");

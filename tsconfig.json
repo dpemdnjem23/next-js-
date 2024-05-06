@@ -30,7 +30,8 @@
     "src/middleware.js",
     "src/app/api/auth/[...nextauth]/route.ts",
     "src/mocks/handlers.ts",
-    "src/model/User.ts"
+    "src/model/User.ts",
+    "src/lib/intersectionObserver.ts"
   ],
   "exclude": ["node_modules"]
 }

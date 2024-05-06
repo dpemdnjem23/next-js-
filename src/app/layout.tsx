@@ -16,6 +16,8 @@ import Header from "@/app/_component/header";
 import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
 import ShoppingHistoryModal from "./@ modal/shoppingHistory/page";
+import ReactQueryProviders from "@/lib/hooks/useReactQuery";
+import Footer from "./_component/footer";
 
 const ReduxProvider = dynamic(() => import("@/reducers"), {
   ssr: false,
@@ -39,11 +41,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
-          <Header></Header>
-          <ScrollButton></ScrollButton>
-          <ShoppingHistoryModal></ShoppingHistoryModal>
+          <ReactQueryProviders>
+            <Header></Header>
+            <ScrollButton></ScrollButton>
+            <ShoppingHistoryModal></ShoppingHistoryModal>
 
-          {children}
+            {children}
+            <Footer></Footer>
+          </ReactQueryProviders>
         </ReduxProvider>
       </body>
     </html>

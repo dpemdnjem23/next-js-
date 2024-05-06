@@ -1,97 +1,260 @@
-import Image from "next/image";
-import Link from "next/link";
+"use client";
+
+import { supabase } from "@/lib";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import CartButton from "./component/cartButton";
+
+import { useDispatch, useSelector } from "react-redux";
+import { Cart, setBoxObj } from "@/reducers/slices/CartSlice";
+import { update } from "lodash";
+import CartPayment from "./cartpaymet";
+import useIntersectionObserver from "@/lib/useIntersectionObserver";
+import { root } from "postcss";
+import CartTable from "./component/cartTable";
 
 export default function CartItem() {
+  const [work, setWork] = useState<boolean>(false);
 
+  const targetRef = useRef();
+  const targetRef2 = useRef();
+  //버튼 활성화 밑 색깔 바꾸기
+  const [count, setCount] = useState<number>(0);
+
+  const [isIntersecting, setIsIntersecting] = useState<boolean>(false);
+  const [absoluteIntersecting, setAbsoluteIntersecting] =
+    useState<boolean>(false);
+    const controlQuantity = useSelector(state=>state.cart?.controlQuantity)
+
+  const getItem = async () => {
+    const response = await supabase
+      .from("cart")
+      .select(
+        `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
+      )
+      .order("id", { ascending: true });
+    setWork(!work);
+
+    console.log(response, "response");
+
+    return response;
+  };
+
+  const {
+    data: cartItems,
+    isLoading,
+    error,
+    isSuccess,
+    refetch,
+    isRefetching,
+    isError,
+  } = useQuery({
+    queryKey: ["carts"],
+    queryFn: getItem,
+  });
+  if (isError) {
+    throw error;
+  }
+  
+  //캐싱 쿼리를 사용하는경우 querykey를
+
+  // if (isRefetching) {
+  //   checkAll();
+  // }
+  //수량
+  const dispatch = useDispatch();
+
+  const checkAll = () => {
+    const allCheck = cartItems?.data?.reduce(
+      (
+        acc: unknown,
+
+        curr
+      ) => [
+        ...acc,
+        ...curr?.options.map((option: string, index: number) => ({
+          id: curr?.id,
+          option,
+          price: curr?.product_id?.price,
+          discount: curr?.product_id?.discount,
+          quantity: curr.quantity[index],
+          isChecked: true,
+        })),
+      ],
+      []
+    );
+
+    //모두 체크 해제하기 조건 - 모든 체크가 들어와있으면
+    //모든 체크가 들어와있는지 확인하는 방법
+    //arr length 를 계산
+
+    //모두 체크하기
+    //새로고침할때는 문제
+
+    dispatch(setBoxObj(allCheck));
+  };
+
+
+  const check = checkAll();
+  if (isSuccess) {
+    check;
+  }
+
+  const countCart = () => {
+    let count = 0;
+
+    cartItems?.data?.map((el) => {
+      count = count + el.options.length - 1;
+    });
+
+    setCount(count);
+  };
+  // const cartCount  = countCart()
+  useEffect(() => {
+    countCart();
+  }, [cartItems, work]);
 
   
-  //cartItem
+  const queryClient = useQueryClient();
+
+
+  const [rootMargin, setRootMargin] = useState("0px");
+
+  useEffect(() => {
+    const handleResize = () => {
+      // viewport의 너비를 가져옵니다.
+      const viewportHeight = window.innerHeight;
+      // rootMargin 값을 동적으로 설정합니다.
+
+      if (viewportHeight <= 396) {
+        const newRootMargin = `0px 0px 20px 0px`;
+        setRootMargin(newRootMargin);
+        return;
+      }
+      const newRootMargin = `0px 0px ${-viewportHeight * 0.57}px 0px`; // 예: 너비의 10%
+
+      setRootMargin(newRootMargin);
+    };
+    handleResize();
+
+    // resize 이벤트를 수신하여 viewport의 크기가 변경될 때마다 rootMargin을 조정합니다.
+    window.addEventListener("resize", handleResize);
+    // 컴포넌트가 언마운트될 때 resize 이벤트 핸들러를 제거합니다.
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const options: { root: null; rootMargin: string; threshold: number } =
+    useMemo(
+      () => ({
+        root: null,
+        rootMargin: rootMargin,
+        threshold: 0,
+      }),
+      [rootMargin]
+    );
+
+  const options2: { root: null; rootMargin: string; threshold: number[] } =
+    useMemo(
+      () => ({
+        root: null,
+        rootMargin: "-90% 0px 0px 0px",
+        threshold: [0, 1],
+      }),
+      []
+    );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setAbsoluteIntersecting(false);
+        setIsIntersecting(true);
+
+        // if (entry.intersectionRatio >= 0 && entry.intersectionRatio < 0.15) {
+        // }
+        // else if (entry.intersectionRatio >= 0.15) {
+        //   console.log("absolute");
+        //   setIsIntersecting(false);
+        //   setAbsoluteIntersecting(true);
+        // }
+      } else {
+        setAbsoluteIntersecting(true);
+        setIsIntersecting(false);
+      }
+    }, options2);
+
+    const target = targetRef2.current;
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) {
+        observer.unobserve(target);
+      }
+    };
+  }, [targetRef, options2]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        // console.log("fixed");
+        setIsIntersecting(true);
+        setAbsoluteIntersecting(false);
+      } else {
+        setIsIntersecting(false);
+        setAbsoluteIntersecting(false);
+      }
+    }, options);
+
+    const target = targetRef.current;
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) {
+        observer.unobserve(target);
+      }
+    };
+  }, [targetRef, options]);
+
+  //
+
+  // console.log(isIntersecting, absoluteIntersecting, "sdfasfsadfsadfabosdf");
   return (
     <section>
-      <div className="pt-[70px] pb-[36px] relative min-w-[1240px]">
+      <div
+        id="cart_header"
+        className="pt-[70px] pb-[36px] relative min-w-[1240px]"
+      >
         <h2 className=" text-[#000] font-sans font-thin text-[44px] leading-[44px] text-center uppercase">
           SHOPPING BAG
         </h2>
       </div>
-      <div className="w-[1240px] mx-auto my-0">
+
+      <div ref={targetRef2} className="w-[1240px] mx-auto my-0">
         <ul className="w-[305px] my-[80px] "></ul>
 
-        <div className="relative mb-[60px]">
-          <div className="flat-left w-[920px]">
+        <div className="relative  mb-[60px] after:clear-both after:block">
+          <div ref={targetRef} className="float-left w-[920px]">
             <h3 className="relative mb-[15px] text-[24px] leading-[34px]">
               쇼핑백 상품
+              {`(${count > 0 ? count : 0})`}
             </h3>
-            <table>
-              <colgroup>
-                <col className="w-[20px]"></col>
-                <col></col>
-                <col className="w-[80px]"></col>
-                <col className="w-[150px]"></col>
-                <col className="w-[150px]"></col>
-                <col className="w-[130px]"></col>
-                <col className="w-[30px]"></col>
-              </colgroup>
-              <thead>
-                <tr>
-                  {/* 체크박스 */}
-                  <th
-                    className="
-                  h-[68px] font-sans font-medium text-[14px] text-[#000] text-center align-middle
-                  py-[25px] border-[#d9d9d9] border-b-[1px]"
-                  >
-                    <span className="w-[17px] mr-0 inline-block relative">
-                      <input
-                        type="checkbox"
-                        className=" opacity-0  w-[20px] h-[20px]"
-                      ></input>
-                      <label></label>
-                    </span>
-                    {/* <input></input> */}
-                  </th>
-                  <th className=" h-[68px] text-[14px] text-[#000] text-center align-middle py-[25px] border-[#d9d9d9] border-b-[1px]">
-                    상품정보
-                  </th>
-
-                  <th className="h-[68px] text-[14px] text-[#000] text-center align-middle py-[25px] border-[#d9d9d9] border-b-[1px]">
-                    수량
-                  </th>
-                  <th className="h-[68px] text-[14px] text-[#000] text-center align-middle py-[25px] border-[#d9d9d9] border-b-[1px]">
-                    가격
-                  </th>
-                  <th className="h-[68px] text-[14px] text-[#000] text-center align-middle py-[25px] border-[#d9d9d9] border-b-[1px]">
-                    쿠폰할인
-                  </th>
-                  <th
-                    colSpan={2}
-                    className="h-[68px] text-[14px] text-[#000] text-center align-middle py-[25px] border-[#d9d9d9] border-b-[1px]"
-                  >
-                    선택
-                  </th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td></td>
-                  <td
-                    className="py-[20px] float-left font-sans h-auto 
-                  text-[14px] text-[#000]
-                  border-t-[0]
-                  
-                  flex justify-start items-start  px-[10px]"
-                  >
-                    <div className="w-[80px] relative mr-[16px] "></div>
-                    <div className="w-[calc(100% - 96px)]"></div>
-                  </td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
+            <CartTable></CartTable>
+            <CartButton></CartButton>
           </div>
+          <CartPayment
+            absoluteIntersecting={absoluteIntersecting}
+            targetRef2={targetRef}
+            isIntersecting={isIntersecting}
+          ></CartPayment>
         </div>
       </div>
     </section>

@@ -6,12 +6,14 @@ type Home = {
   isLogin: boolean;
   isHeart: [];
   personalHeart: [] | null;
+  isLoading: boolean;
 
   // isHeart: [{user_id:string, product_id:number,id:number}]
 };
 const initialState: Home = {
   isLogin: false,
   personalHeart: [],
+  isLoading: false,
 
   isHeart: [],
 };
@@ -37,13 +39,21 @@ const UserSlice = createSlice({
       state.isHeart = action.payload;
     },
 
-    setPersonalHeart(state, action: PayloadAction<{}>) {
+    setPersonalHeart(state, action: PayloadAction<[]>) {
       state.personalHeart = action.payload;
+    },
+    setIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
     },
   },
 });
 
-export const { setIsLogin, setIsLogout, setIsHeart, setPersonalHeart } =
-  UserSlice.actions;
+export const {
+  setIsLogin,
+  setIsLogout,
+  setIsHeart,
+  setIsLoading,
+  setPersonalHeart,
+} = UserSlice.actions;
 // export const selectCount = (state) => state.counter.value;
 export default UserSlice.reducer;

@@ -40,7 +40,7 @@ export default function ProductBuyingPage() {
         const { data, error }: any = await supabase
           .from("favorite")
           .select()
-          .eq("user_id", userInfo.user.id)
+          .eq("user_id", userInfo?.user?.id)
           .eq("product_id", product?.id);
 
         // if (response.error) {
