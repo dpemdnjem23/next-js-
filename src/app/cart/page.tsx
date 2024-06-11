@@ -2,13 +2,16 @@
 import Image from "next/image";
 import CartItem from "./cartItem";
 import { Suspense, useEffect, useState } from "react";
+import * as PortOne from "@portone/browser-sdk/v2";
 
 // import { Router } from "next/router";
 import FullScreenLoading from "../_component/fullScreenLoading";
 import { useSelector } from "react-redux";
 export default function Cart() {
-  const isLoading = useSelector((state) => state?.cart?.pageRouterLoading);
+  const isLoading = useSelector((state) => state?.cart.pageRouterLoading);
   //cartItem
+
+ 
   return (
     // <div className="relative mb-[60px]">
     <div>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import downArrow from "../../../../../public/down-arrow.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +24,12 @@ export default function NumberList() {
   const dispatch = useDispatch();
 
   const handleNumberClick = (el: string) => {
-    dispatch(setPhoneNumber(el));
+    dispatch(
+      setPhoneNumber({
+        ...phoneNumber,
+        part1: el,
+      })
+    );
   };
 
   const handlesShowOption = () => {
@@ -66,7 +71,7 @@ export default function NumberList() {
         pr-[25.5px]
         "
         >
-          {phoneNumber}
+          {phoneNumber.part1}
         </span>
         <Image
           width={20}

@@ -1,6 +1,6 @@
 "use client";
 import { setMessage } from "@/reducers/slices/OrderSlice";
-import { InputHTMLAttributes, useEffect, useRef, useState } from "react";
+import React, { InputHTMLAttributes, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const messageList = [
@@ -58,6 +58,7 @@ export default function Message() {
       dispatch(setMessage(item));
     }
   };
+
 
   return (
     <div

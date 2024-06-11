@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef, useDebugValue } from "react";
 import timeImage from "../../../../public/icons8-time-32.png";
-import downArrow from "../../../../public/arrow-up.png";
-import upArrow from "../../../../public/down-arrow.png";
+import upArrow from "../../../../public/arrow-up.png";
+import downArrow from "../../../../public/down-arrow.png";
 import { useInView } from "react-intersection-observer";
 import "./ScrollButtonStyle.css";
 import Image from "next/image";
@@ -15,9 +15,12 @@ const ScrollButton = () => {
   const [showTopButton, setShowTopButton] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const isModal = useSelector((state) => state?.home.isModal);
+  const isFooter = useSelector((state) => state?.home.isFooter);
 
   const dispatch = useDispatch();
   const isHeader = useSelector((state) => state?.home.isHeader);
+
+  console.log(isHeader, isFooter);
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -46,25 +49,41 @@ const ScrollButton = () => {
       </button>
       <div className="direction flex justify-center flex-col">
         <button
+          style={{
+            display: "block",
+            overflow: "hidden",
+            transition: "all  ease-in-out .4s",
+          }}
           onClick={scrollToTop}
-          className={`to_top max-h-[42px] mt-[6px]`}
+          className={`
+          ${isHeader ? "max-h-[0px]" : "max-h-[42px] mt-[6px]"}
+          to_top  `}
         >
           <Image
-            className={`            
+            className={`      
+      
 w-[42px] h-[42px] bg-[white]  border-[1px] rounded-[50%]`}
             alt=""
-            src={downArrow}
+            src={upArrow}
           ></Image>
         </button>
 
         <button
+          style={{
+            display: "block",
+            overflow: "hidden",
+            transition: "all  ease-in-out .4s",
+          }}
           onClick={scrollToBottom}
-          className=" to_bottom max-h-[42px] mt-[6px]"
+          className={` 
+          
+          ${isFooter ? "max-h-[0px]" : "max-h-[42px] mt-[6px]"}
+          to_bottom `}
         >
           <Image
             className={`w-[42px] h-[42px] bg-[white]  border-[1px] rounded-[50%]`}
             alt=""
-            src={upArrow}
+            src={downArrow}
           ></Image>
         </button>
       </div>

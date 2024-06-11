@@ -248,7 +248,11 @@ export default function ProductDetail() {
       onClick={handleShowOptionFalse}
       className="relative w-[1240px] pt-[40px] my-0 mx-auto"
     >
-      <div className="relative w-[1240px] mt-[20px]">
+      <div
+        className="relative w-[1240px] mt-[20px]
+       after:clear-both after:block
+      "
+      >
         <div className="relative">
           <div className="left float-left w-[520px] relative">
             <div className="relative mb-[30px]">

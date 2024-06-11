@@ -42,6 +42,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ReduxProvider>
           <ReactQueryProviders>
+            
             <Header></Header>
             <ScrollButton></ScrollButton>
             <ShoppingHistoryModal></ShoppingHistoryModal>

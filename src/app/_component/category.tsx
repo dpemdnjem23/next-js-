@@ -4,6 +4,7 @@ import { useState, useRef, MouseEvent, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import arrowImage from "../../../../public/ico_cat_arrow_open_12.svg";
+import menu from "../../../public/ico_menu.svg";
 
 type props = {
   category1: boolean;
@@ -54,34 +55,23 @@ export default function Category() {
   }; //메뉴를 떠날때 메뉴창이 닫히도록하고,
   return (
     <div>
-      <a
+      <Image
         onMouseLeave={closeMenu}
         onMouseEnter={openMenu}
-        className={`${isMenuOpen ? "border-b-0" : ""}
-       cursor-pointer  w-[180px] py-0 pl-[14px] font-bold text-[14px] block absolute top-0 leading-[46px] border-[1px]  border-[#e9e9e9] text-left overflow-hidden
-        `}
-      >
-        CATEGORY
-        {!isMenuOpen ? (
-          <Image
-            alt=""
-            className={`w-[12px] h-[12px] top-[50%] absolute block mt-[-7px] right-[17px]`}
-            src={arrowImage}
-          ></Image>
-        ) : (
-          <Image
-            alt=""
-            className={`w-[12px] h-[12px] top-[50%] rotate-180 absolute block mt-[-7px] right-[17px]`}
-            src={arrowImage}
-          ></Image>
-        )}
-      </a>
+        className={`border-none block
+              h-[70px] p-0 absolute top-0 text-left overflow-hidden`}
+        width={17}
+        height={70}
+        alt=""
+        src={menu}
+      ></Image>
+
       {isMenuOpen ? (
         <div
           onMouseEnter={openMenu}
           onMouseLeave={closeMenu}
-          className={`${isMenuOpen ? `block z-[100]` : `hidden z-[99]`} 
-        top-[46px] left-[-10px]   border-t-[1px] border-t-[#e9e9e9] border-b-[1px] border-b-[#e9e9e9] absolute  cursor-default bg-[white]`}
+          className={`${isMenuOpen ? `block z-[100px]` : `hidden z-[99px]`} 
+        top-[70px] left-[-10px]   border-t-[1px] border-t-[#e9e9e9] border-b-[1px] border-b-[#e9e9e9] absolute  cursor-default bg-[white]`}
         >
           <div
             ref={menuRef}

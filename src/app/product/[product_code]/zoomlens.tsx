@@ -120,7 +120,6 @@ function ZoomLens() {
         break;
 
       case x >= boundary.xMax && y > boundary.yMin && y < boundary.yMax:
-        console.log(4);
         setLensPosition({ x: 180, y: coord.y });
         setbgPosition({
           x: -332,
@@ -152,7 +151,7 @@ function ZoomLens() {
         left: position.x,
         top: position.y,
       }}
-      className={`zoom-container translate-z-0 h-[700px] w-[525px] absolute z-[11]
+      className={`zoom-container translate-z-0 h-[700px] w-[525px] absolute z-[1]
      `}
     >
       {/* {showLens && ( */}

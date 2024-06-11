@@ -2,12 +2,13 @@
 import useIntersectionObserver from "@/lib/useIntersectionObserver";
 import Image from "next/image";
 import Link from "next/link";
-import { root } from "postcss";
 import { useEffect, useRef, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { setPageRouterLoading } from "@/reducers/slices/CartSlice";
+import { supabase } from "@/lib";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 // import { useRouter } from "next/router";
 
 export default function CartPayment({
@@ -17,6 +18,7 @@ export default function CartPayment({
 }) {
   const Router = useRouter();
   const dispatch = useDispatch();
+  const params = useParams();
 
   //cartItema
   //boxObj를 이용하여 가격
@@ -37,9 +39,9 @@ export default function CartPayment({
     }
   });
 
-  if (totalCost <= 30000) {
-    shippingCost = 3000;
-  }
+  const cartItems = boxObj?.filter((item) => {
+    return item.isChecked === true;
+  });
 
   // const targetRef2 = useRef();
 
@@ -55,7 +57,11 @@ export default function CartPayment({
         const newLeft = fixedPosition + (pageWidth - 1255) * 0.5;
         setNewLeft(`${newLeft}px`);
         setNewTop("192px");
+      } else {
+        setNewLeft(`940px`);
+        setNewTop("192px");
       }
+      //만약 페이지가 더작은경우 left를 고정
     };
 
     adjustElementPosition();
@@ -78,20 +84,76 @@ export default function CartPayment({
   // }, [);
 
   //style에 넣고
+  // const userInfo = JSON.parse(localStorage.getItem("userInfo")) || [];
 
-  // function generateRandomInteger() {
-  //   const min = Math.pow(10, 13); // 10의 9제곱(10억)
-  //   const max = Math.pow(10, 14) - 1; // 10의 10제곱 - 1 (9999999999)
-  //   return Math.floor(Math.random() * (max - min + 1)) + min;
-  // }
+  const fetchData = async (random: number) => {
+    const response = await supabase.from("order").insert({
+      id: random,
+      name: "아무개",
+      total_cost: totalCost,
+      item: cartItems,
+      product_code: params.product_code,
+      points: totalCost * 0.1,
+    });
 
-  const RouteOrderPage = () => {
-    // const randomInteger = generateRandomInteger();
-
-    const randomInteger = 1;
-    Router.push(`/Order/${randomInteger}`);
-    dispatch(setPageRouterLoading(true));
+    return response;
   };
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: fetchData,
+
+    onError: (error) => {
+      throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["order"] });
+    },
+  });
+
+  function generateRandomInteger() {
+    const min = Math.pow(10, 13); // 10의 9제곱(10억)
+    const max = Math.pow(10, 14) - 1; // 10의 10제곱 - 1 (9999999999)
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  //boxObj에서 isChecked된 부분만 cartItems
+
+  const RouteOrderPage = async () => {
+    const randomInteger = generateRandomInteger();
+
+    // const randomInteger = 1;
+    // Router.push({
+    //   pathname: `/Order/${randomInteger}`,
+    //   query: { boxObj: JSON.stringify(boxObj) },
+    // });
+
+    Router.push(`/order/${randomInteger}`);
+    dispatch(setPageRouterLoading(true));
+
+    try {
+      const addToOrder = mutation.mutateAsync(randomInteger);
+
+      if (!addToOrder) {
+        throw Error("추가되지 않았습니다.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  //isIntersecting - 정해져있음
+  //absolute true- auto
+
+  console.log(
+    isIntersecting,
+    absoluteIntersecting,
+
+    newLeft,
+    newTop
+  );
+  // ,
 
   return (
     <div
@@ -103,9 +165,7 @@ export default function CartPayment({
           ? "top-auto left-auto bottom-0 right-0 mt-0 absolute"
           : ""
       }
-      ${
-        isIntersecting ? `fixed !mt-[0px] bg-[#fff] top-[192px] ${newLeft}` : ""
-      }      
+      ${isIntersecting ? `fixed !mt-[0px] bg-[#fff]` : ""}      
         `}
     >
       <div className="p-[19px] border-[1px] border-[#e9e9e9]">
@@ -156,6 +216,7 @@ export default function CartPayment({
             </p>
           </li>
         </ul>
+        {/* <Link href={"/Order/1"}> */}
         <button
           type="button"
           onClick={RouteOrderPage}
@@ -165,6 +226,8 @@ export default function CartPayment({
         >
           선택상품 주문하기
         </button>
+        {/* </Link> */}
+
         <button
           type="button"
           className="w-[100%] h-[44px] leading-[42px] text-[#000] bg-[#fff] border-[1px] border-[#000] mt-[10px]"

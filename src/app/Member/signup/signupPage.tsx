@@ -38,39 +38,6 @@ export default function Signup() {
 
   const router = useRouter();
 
-  //아이디 확인
-  // const handleUserBlur = async () => {
-  //   //유효성 검사 모두 통과한후
-  //   if (isValidEmail(formData.email) && idLength(formData.email)) {
-  //     try {
-  //       const { data, error } = await supabase
-  //         .from("auth.Users")
-  //         .select("user")
-  //         .eq("email", formData.email);
-  //       console.log(data, error);
-
-  //       if (data?.length === 0) {
-  //         setAlertData({
-  //           ...alertData,
-  //           emailAlert: "사용가능한 아이디 입니다.",
-  //         });
-  //         setEmailState(true);
-  //         return;
-
-  //         //check했을때 이메일이 존재하지 않는경우
-  //       }
-  //       setAlertData({
-  //         ...alertData,
-  //         emailAlert: "중복된 아이디 입니다.",
-  //       });
-  //       setEmailState(false);
-  //     } catch (err) {
-  //       console.error(err);
-  //       throw err;
-  //     }
-  //   }
-  // };
-
   const handleUserPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -211,7 +178,6 @@ export default function Signup() {
     e.preventDefault();
 
     //모든 요소를 만족하고, 닉네임읋 확인했을때
-    console.log("zmfflr");
     if (
       passwordLength(formData.password) &&
       strongPassword(formData.password) &&
@@ -418,7 +384,7 @@ export default function Signup() {
                     onBlur={handlePasswordBlur}
                     value={formData.password}
                     className=" w-[400px] h-[40px] leading-[38px] bg-[#f2f2f2] border-[1px] border-[#f2f2f2] text-[14px] font-sans font-light"
-                    type="text"
+                    type="password"
                   ></input>
                 </p>
                 {alertData.passwordAlert ? (
@@ -479,7 +445,7 @@ export default function Signup() {
                     onBlur={handlePasswordCheckBlur}
                     value={formData.confirmPassword}
                     className=" w-[400px] h-[40px] leading-[38px] bg-[#f2f2f2] border-[1px] border-[#f2f2f2] text-[14px] font-sans font-light"
-                    type="text"
+                    type="password"
                   ></input>
                 </p>
                 {alertData.confirmPasswordAlert ? (

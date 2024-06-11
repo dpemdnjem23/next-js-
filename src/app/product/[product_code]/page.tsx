@@ -95,7 +95,7 @@ export default function ProductBuyingPage() {
     }
   }, [personalHeart, product?.id]);
   return (
-    <section>
+    <section className=" block">
       {cardModal ? <CardInfoModal></CardInfoModal> : null}
       {pointsModal ? <PointsInfoModal></PointsInfoModal> : null}
       {cartCheckModal ? <CartCheckModal></CartCheckModal> : null}

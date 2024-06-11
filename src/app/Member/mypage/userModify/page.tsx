@@ -1,8 +1,5 @@
-"use client";
-
-import { useEffect } from "react";
-import { handler } from "./api";
-import Mypage from "./mypage";
+import Mypage from "../mypage";
+import Modify from "./modify";
 
 export default function Page() {
   return (
@@ -12,9 +9,8 @@ export default function Page() {
           MY PAGE
         </h2>
       </div>
-      <div>
-        <Mypage></Mypage>
-      </div>
+          <Mypage></Mypage>
+          <Modify></Modify>
     </section>
   );
 }

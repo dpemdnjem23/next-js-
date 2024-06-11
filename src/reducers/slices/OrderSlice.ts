@@ -2,9 +2,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // 로컬 스토리지 사용
 
+export type PhoneNumber = {
+  part1: string;
+  part2: string;
+  part3: string;
+};
 //시군구
-type Order = {
-  phoneNumber: string;
+export type Order = {
+  name: string;
+  phoneNumber: PhoneNumber;
   message: string;
   city: string;
   district: string;
@@ -12,11 +18,18 @@ type Order = {
   roadName: string;
   streetNumber: string;
   pageNum: { 0: number; 1: number };
-  address: { zip: string, road: string }
-  postModal:boolean
+  address: { zip: string; road: string; addressLine: string };
+  postModal: boolean;
+  point: number;
+  paymentMethod:boolean 
 };
 const initialState: Order = {
-  phoneNumber: "선택",
+  name: "",
+  phoneNumber: {
+    part1: "선택",
+    part2: "",
+    part3: "",
+  },
   message: "",
   city: "시/도",
   district: "시/군/구",
@@ -24,8 +37,10 @@ const initialState: Order = {
   isClicked: false,
   streetNumber: "",
   pageNum: { 0: 1, 1: 1 },
-  address: { zip: '', road: '' },
-  postModal:false
+  address: { zip: "", road: "", addressLine: "" },
+  postModal: false,
+  point: 0,
+  paymentMethod: false,
   
 };
 
@@ -33,7 +48,10 @@ const OrderSlice = createSlice({
   name: "order",
   initialState,
   reducers: {
-    setPhoneNumber(state, action: PayloadAction<string>) {
+    setName(state, action: PayloadAction<string>) {
+      state.name = action.payload;
+    },
+    setPhoneNumber(state, action: PayloadAction<PhoneNumber>) {
       state.phoneNumber = action.payload;
     },
     setMessage(state, action: PayloadAction<string>) {
@@ -57,16 +75,28 @@ const OrderSlice = createSlice({
     setRoadName(state, action: PayloadAction<string>) {
       state.roadName = action.payload;
     },
-    setAddress(state, action: PayloadAction<{ zip: string, road: string }>) {
+    setAddress(
+      state,
+      action: PayloadAction<{ zip: string; road: string; addressLine1: string }>
+    ) {
       state.address = action.payload;
     },
     setPostModal(state, action: PayloadAction<boolean>) {
       state.postModal = action.payload;
     },
+    setPoint(state, action: PayloadAction<number>) {
+      state.point = action.payload;
+    },
+
+    setPaymentMethod(state, action: PayloadAction<boolean>) {
+      state.paymentMethod = action.payload;
+    },
+  
   },
 });
 
 export const {
+  setName,
   setPhoneNumber,
   setMessage,
   setCity,
@@ -76,7 +106,9 @@ export const {
   setStreetNumber,
   setRoadName,
   setAddress,
-  setPostModal
+  setPostModal,
+  setPoint,
+  setPaymentMethod
 } = OrderSlice.actions;
 // export const selectCount = (state) => state.counter.value;
 export default OrderSlice.reducer;

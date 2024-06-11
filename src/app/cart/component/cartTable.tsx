@@ -5,55 +5,100 @@ import checkBox from "../../../../public/ico_checkbox_square_s_20.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   Cart,
   setBoxObj,
   setControlQuantity,
 } from "@/reducers/slices/CartSlice";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib";
 
 export default function CartTable() {
   const queryClient = useQueryClient();
 
+  const [controlQuantity, setControlQuantity] = useState<[]>([]);
+  // const cartItems = [];
   const cartItems: any = queryClient.getQueryData(["carts"]);
   const boxObj = useSelector((state) => state.cart?.boxObj);
+  // const boxObj = [];
 
-  const controlQuantity = useSelector(
-    (state) => state?.cart?.controlQuantity
-  );
+  // const controlQuantity = useSelector((state) => state?.cart?.controlQuantity);
   const dispatch = useDispatch();
 
-console.log(controlQuantity,'asdasdsad')
+  const quantityById = () => {
+    let arr = [];
+    cartItems?.data?.forEach((item, index: number) => {
+      arr = [...arr, { id: item?.id, quantity: item?.quantity }];
+    });
+    setControlQuantity(arr);
+  };
+  useEffect(() => {
+    quantityById();
+  }, [cartItems]);
 
-  const updateData = () => {
-    
+  // console.log(boxObj);
 
-    supabase.from('cart').update({
+  const checkToCart = (itemId, option, quantity) => {
+    const updatedCartItems = boxObj?.map((item) => {
+      if (item.id === itemId && item.option === option) {
+        // 해당 아이템의 isChecked 값을 토글합니다.
+        return {
+          ...item,
+          id: itemId,
+          option,
 
+          quantity,
+          isChecked: !item.isChecked,
+        };
+      }
+      return item;
+    });
 
-      con
-    })
+    // const unCheck =
 
-  }
+    // console.log(unCheck);
+    dispatch(setBoxObj(updatedCartItems));
+    //check가 돼있다면 check를 해제한다.
+    //check버
+  };
 
+  const updateData = (itemId: number) => {
+    //update할때 id를 찾아서 일괄적으로 업데잍르ㅡㄹ한다.
+
+    const updatedControlQuantity = controlQuantity.filter(
+      (item: { id: number }) => {
+        return item.id === itemId;
+      }
+    );
+    const response = supabase
+      .from("cart")
+      .update(updatedControlQuantity)
+      .eq("id", itemId);
+
+    return response;
+  };
 
   const mutationUpdate = useMutation({
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["carts"] });
-      // window.location.reload();
+      window.location.reload();
     },
     onError: (err) => {
       console.error(err);
     },
+  });
 
-  
-  })
   const handelButtonAllCheck = () => {
     let arrLength: number = 0;
     let checkLength: number = 0;
+
+    //
 
     const allCheck = cartItems?.data?.reduce(
       (acc: unknown, curr) => [
@@ -61,6 +106,11 @@ console.log(controlQuantity,'asdasdsad')
         ...curr?.options.map((option: string, index: number) => ({
           id: curr?.id,
           option,
+          brand: curr?.product_id?.brand,
+          front_multiline: curr?.product_id?.front_multiline,
+          thumbnail: curr?.product_id?.thumbnail,
+          price: curr?.product_id?.price,
+          discount: curr?.product_id?.discount,
           quantity: curr.quantity[index],
           isChecked: true,
         })),
@@ -74,6 +124,11 @@ console.log(controlQuantity,'asdasdsad')
         ...curr?.options.map((option: string, index: number) => ({
           id: curr?.id,
           option,
+          brand: curr?.product_id?.brand,
+          front_multiline: curr?.product_id?.front_multiline,
+          thumbnail: curr?.product_id?.thumbnail,
+          price: curr?.product_id?.price,
+          discount: curr?.product_id?.discount,
           quantity: curr.quantity[index],
           isChecked: false,
         })),
@@ -109,30 +164,20 @@ console.log(controlQuantity,'asdasdsad')
     }
   };
 
-  const checkToCart = (itemId,item,) => {
-    
-    //선택된 item을 의 check를 false
+  // const checkToCart = (itemId,item,) => {
 
-    //item2sms option을 담고있다.
+  //   //선택된 item을 의 check를 false
 
-    
+  //   //item2sms option을 담고있다.
 
-    const singleCheck 
+  //   const singleCheck
 
-
-  }
-
-  const quantityByID = useMemo(() => {
-    let arr = [];
-    cartItems?.data?.forEach((item, index: number) => {
-      arr = [...arr, { id: item?.id, quantity: item?.quantity }];
-    });
-    dispatch(setControlQuantity(arr));
-  }, [cartItems]);
+  // }
 
   const handleQuantityUp = (index2: number, itemId: number) => {
     //controlQunatity를 불러온다.
     //quantity에서 변할부분만 변화
+    console.log("수량업");
 
     //올리든 내리든 변화가 일어날경우  빨강색으로
 
@@ -148,6 +193,7 @@ console.log(controlQuantity,'asdasdsad')
         });
       }
     );
+    console.log(controlQuantity);
   };
   const handleQuantityDown = (index2: number, itemId: number) => {
     setControlQuantity(
@@ -195,7 +241,8 @@ console.log(controlQuantity,'asdasdsad')
                 {/* checked를 확인했을때 모두 false인 상태면 false 한개라도 true면true  */}
                 {boxObj?.filter((el) => {
                   return el?.isChecked === true;
-                }).length > 1 ? (
+                }).length >
+                boxObj?.length - 1 ? (
                   <Image
                     className="top-[0px] left-[1px] absolute"
                     width={20}
@@ -284,7 +331,7 @@ console.log(controlQuantity,'asdasdsad')
                     <span className="inline-block relative mr-[50px]">
                       <label
                         onClick={() =>
-                          // checkToCart(item?.id, item2, item?.quantity[index2])
+                          checkToCart(item?.id, item2, item?.quantity[index2])
                         }
                         className=" pl-[28px] block text-[#000] text-[14px] leading-[25px] relative"
                       >
@@ -499,18 +546,6 @@ console.log(controlQuantity,'asdasdsad')
             if (number >= item.options.length) {
               let totalCost: number = 0;
               let shipCost: number = 0;
-              // console.log(item?.quantity);
-
-              //반복 하는데 id가 바뀌면 break
-              //boxObj를 사용해서 check된 만큼만 가능하도록 한다.
-
-              //el별로 total정리
-
-              // product_id[0]?.price *
-              // (1 - product_id[0]?.discount / 100
-
-              // setTotalPrice([...totalPrice,{id:item.id,totalPrice:totalPrice}])
-
               item?.quantity.forEach((el) => {
                 totalCost =
                   totalCost +

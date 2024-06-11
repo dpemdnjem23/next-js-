@@ -14,7 +14,7 @@ import { comparePassword } from "@/app/api/auth";
 import { sign } from "@/utils/jwtUitls";
 import { refresh } from "../../../utils/jwtUitls";
 import { useDispatch } from "react-redux";
-import { cookieCreate } from "@/utils/cookieUtils";
+import { cookieCreate, cookieGet } from "@/utils/cookieUtils";
 import { setIsLogin } from "@/reducers/slices/UserSlice";
 
 export default function LoginPage() {
@@ -37,14 +37,12 @@ export default function LoginPage() {
       //아이디로 우선 검증한다. 아이디를 못찾는경우 아이디를 검색할수 없다.
       //아이디를 찾는경우 비밀번호 검증으로
 
-      console.log(id, password);
       if (id && password) {
         const { data, error } = await supabase.auth.signInWithPassword({
           email: id,
           password: password,
         });
 
-        console.log(data);
         if (error) {
           setMessage(
             "아이디 또는 비밀번호가 일치하지 않습니다. 다시 입력해주세요"
@@ -53,21 +51,28 @@ export default function LoginPage() {
         }
 
         const user = await supabase.auth.getUser();
-        console.log(user, "session");
-        localStorage.setItem("userInfo", JSON.stringify(user.data));
 
+        console.log(user?.data?.user?.id);
+        localStorage.setItem("userInfo", JSON.stringify(user.data));
+        //data 중에서 id를 가져온다.
         setMessage("");
         dispatch(setIsLogin(true));
 
-        location.assign("/");
-        //비밀번호가 일치하지 않는경우
+        // window.location.assign("/");
+        let cartId = await cookieGet("cartId");
+        //id를 가져와서 업데이트 동일한 cart_id인경우
+        const select = {
+          user_id: user?.data?.user?.id || null,
+        };
 
-        // }
-        //   if (!response?.ok) {
-        //     setMessage("아이디와 비밀번호가 일치하지 않습니다.");
-        //   } else {
-        //     router.replace("/");
-        //   }
+        //option이 여러개
+        const response = await supabase
+          .from("cart")
+          .update(select)
+          .eq("cart_id", cartId)
+          .select();
+        console.log(response, "update");
+        //비밀번호가 일치하지 않는경우
       } else if (!id && !password) {
         setMessage("아이디를 입력해주세요");
       } else if (!id && password) {

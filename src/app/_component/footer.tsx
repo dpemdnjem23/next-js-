@@ -1,11 +1,60 @@
 "use client";
 
+import { setIsFooter, setIsHeader } from "@/reducers/slices/HomeSlice";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+
 export default function Footer() {
+  const footerRef = useRef(null);
+  const [observer, setObserver] = useState(null);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const observer: IntersectionObserver | null = new IntersectionObserver(
+      (entries) => {
+        // IntersectionObserverEntry 객체를 통해 감시중인 요소가 화면 안에 들어오는지 여부를 확인합니다.
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            console.log("is");
+            dispatch(setIsFooter(true));
+
+            // dispatch(setIsHeader(true));
+            // 여기에 스크롤 끝에 도달했을 때 실행할 작업을 추가합니다.
+          } else {
+            dispatch(setIsFooter(false));
+
+            // dispatch(setIsHeader(false));
+          }
+        });
+      },
+      {
+        // rootMargin을 사용하여 요소가 뷰포트에 얼마나 가까이 있을 때 감지할 것인지를 설정할 수 있습니다.
+        rootMargin: "0px",
+        // threshold는 요소가 뷰포트에 얼마나 많이 보여야 감지할 것인지를 설정합니다.
+        threshold: 0,
+      }
+    );
+    // setObserver(observer)/;
+
+    // 감시할 요소를 설정합니다.
+    if (footerRef.current) {
+      observer.observe(footerRef.current);
+    }
+
+    // 컴포넌트가 언마운트될 때 Intersection Observer를 정리합니다.
+    return () => {
+      if (footerRef.current && observer) {
+        observer.unobserve(footerRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <footer className="pt-[90px] pb-[36px]">
+    <footer className="pt-[90px] block">
       <div>
         <nav className="relative w-full  mt-[70px]">
-          <ul className=" w-[1280px] bg-[#848484] px-[28px] relative mx-auto overflow-hidden">
+          <ul className=" w-[1280px] bg-[rgb(132,132,132)] px-[28px] relative mx-auto overflow-hidden">
             <li className="float-left block text-[#fff] text-[14px] leading-[57px] px-[44px]">
               회사소개
             </li>
@@ -57,6 +106,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      <div ref={footerRef} className=" mt-[36px] h-[5px]"></div>
     </footer>
   );
 }

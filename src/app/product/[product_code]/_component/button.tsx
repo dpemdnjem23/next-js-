@@ -43,6 +43,8 @@ export default function ButtonBox() {
   const queryClient = useQueryClient();
 
   //
+
+  console.log(userInfo.user.id);
   const fetchData = async () => {
     let cartId = await cookieGet("cartId");
 
@@ -52,17 +54,15 @@ export default function ButtonBox() {
     const quantityArr = selectOption?.map((el) => {
       return Number(el.quantity);
     });
+    //해당하는 cart_id를 찾아서 넣기
 
     const select = {
-      product_id: product.id,
       user_id: userInfo?.user?.id || null,
-      quantity: quantityArr,
-      cart_id: cartId,
-      options: [...optionsArr, "end"],
+     
     };
 
     //option이 여러개
-    const response = await supabase.from("cart").insert(select);
+    const response = await supabase.from("cart").update(select);
 
     return response;
   };
@@ -77,11 +77,11 @@ export default function ButtonBox() {
     },
   });
 
-  const addToCart = async (item) => {
+  const addToCart = async () => {
     //cart에 추가할때 cookie를 추가한다.
 
     let cartId = await cookieGet("cartId");
-    let cart;
+    // let cart;
 
     //cartId가 없는경우
     if (!cartId) {
@@ -107,7 +107,6 @@ export default function ButtonBox() {
       if (userLogin.login) {
         //db에 추가하려면, 없어야한다. 있는경우 삭제한다.
 
-        console.log(product?.id);
         const { data, error } = await supabase
           .from("favorite")
           .select()
@@ -118,7 +117,6 @@ export default function ButtonBox() {
           throw error;
         }
         //data가 존재한다. 확인이 된경우 삭제한다.
-        console.log(data[0], "single data");
         if (data[0]) {
           const del = await supabase
             .from("favorite")
@@ -155,7 +153,6 @@ export default function ButtonBox() {
           //추가가되면 personalHeart에도 똑같이 만들어서 넣어줘야된다.
           //추가가됏다는건 가장 마지막 배열이라는것
 
-          console.log(response.data, "response data");
 
           // setPrevHeart(response.data[0]);
           dispatch(setPersonalHeart(response.data));

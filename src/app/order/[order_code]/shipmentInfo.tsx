@@ -7,13 +7,41 @@ import NumberList from "./component/numberList";
 import Message from "./component/message";
 import DaumPostcode from "react-daum-postcode";
 import { useDispatch, useSelector } from "react-redux";
-import { setPostModal } from "@/reducers/slices/OrderSlice";
+import {
+  setAddress,
+  setName,
+  setPhoneNumber,
+  setPostModal,
+} from "@/reducers/slices/OrderSlice";
+import { InputHTMLAttributes, useState } from "react";
 
 export default function ShipmentInfo() {
+  const phoneNumber = useSelector((state) => state.order.phoneNumber);
   const address = useSelector((state) => state.order.address);
-
+  const name = useSelector((state) => state.order.name);
+  const message = useSelector((state) => state.order.message);
   const dispatch = useDispatch();
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    dispatch(
+      setPhoneNumber({
+        ...phoneNumber,
+        [name]: value,
+      })
+    );
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setName(e.target.value));
+  };
+
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setAddress({ ...address, addressLine: e.target.value }));
+  };
+
+ 
   return (
     <div>
       <h3 className="relative mb-[15px] text-[24px] leading-[34px]">
@@ -96,6 +124,8 @@ export default function ShipmentInfo() {
             text-[#000] text-[14px] border-t-[1px]"
             >
               <input
+                onChange={(e) => handleNameChange(e)}
+                value={name}
                 type="text"
                 maxLength={15}
                 className="
@@ -117,15 +147,23 @@ export default function ShipmentInfo() {
                 <NumberList></NumberList>
 
                 <input
+                  onChange={(e) => handlePhoneChange(e)}
+                  value={phoneNumber.part2}
+                  name="part2"
                   type="text"
                   maxLength={4}
+                  pattern="[0-9]{4}"
                   className="
                           focus:bg-[#fff] focus:border-[#000] focus:border-[1px] font-normal
                           w-[124px] h-[40px] leading-[38px] mr-[14px] pl-[20px] bg-[#f2f2f2] border-[#f2f2f2] text-[14px] outline-none"
                 ></input>
                 <input
+                  onChange={(e) => handlePhoneChange(e)}
+                  value={phoneNumber.part3}
+                  name="part3"
                   type="text"
                   maxLength={4}
+                  pattern="[0-9]{4}"
                   className="
                           focus:bg-[#fff] focus:border-[#000] focus:border-[1px] font-normal
                           w-[124px] h-[40px] leading-[38px] pl-[20px] bg-[#f2f2f2] border-[#f2f2f2] text-[14px] outline-none"
@@ -172,6 +210,8 @@ export default function ShipmentInfo() {
                 ></input>
 
                 <input
+                  value={address["addressLine"]}
+                  onChange={(e) => handleAddressChange(e)}
                   type="text"
                   className="
                   focus:bg-[#fff] focus:border-[#000]

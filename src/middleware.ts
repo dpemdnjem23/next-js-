@@ -17,22 +17,6 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
   const res = NextResponse.next();
 
   const supabase = createMiddlewareClient({ req, res });
-
-  // try {
-  //   console.log("삭제");
-  //   const currentTime = new Date();
-  //   const { data: delData, error } = await supabase
-  //     .from("carts")
-  //     .delete()
-  //     .lt("created_at", currentTime);
-  //   if (error) {
-  //     throw error;
-  //   }
-  //   console.log("Expired carts cleaned:", delData?.length);
-  // } catch (error) {
-  //   console.error("Error cleaning expired carts:", error);
-  // }
-
   const {
     data: { session },
     error,

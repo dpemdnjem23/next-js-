@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import loginImage from "../../../public/ico_login.svg";
 import mypageImage from "../../../public/ico_mypage.svg";
 import cartImage from "../../../public/ico_bag.svg";
@@ -12,7 +12,7 @@ import Category from "../(baselayout)/components/category";
 import ReduxProvider from "@/reducers";
 import LogoutButton from "@/app/(baselayout)/components/signout";
 import { useInView } from "react-intersection-observer";
-import { setIsHeader } from "@/reducers/slices/HomeSlice";
+import { setIsHeader, setIsIntersection } from "@/reducers/slices/HomeSlice";
 import {
   InfiniteData,
   useQuery,
@@ -21,29 +21,47 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { supabase } from "@/lib";
+import ResponsiveHeader from "./responsiveHeader";
+import { cookieGet } from "@/utils/cookieUtils";
 
-type s = {
-  login: boolean;
-};
 export default function Header() {
+  const targetRef = useRef<HTMLDivElement | null>(null);
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
   const [count, setCount] = useState<number>(0);
   const [work, setWork] = useState<boolean>(false);
 
+  const isIntersection = useSelector((state) => state.home.isIntersection);
   const [observer, setObserver] = useState(null);
 
   const queryClient = useQueryClient();
   const userLogin = JSON.parse(localStorage.getItem("userLogin"))?.login;
+  const user = JSON.parse(localStorage.getItem("userInfo"))?.user;
 
+  // const cartItems = queryClient.getQueryData(['cart'])
   const getItem = async () => {
-    const response = await supabase
-      .from("cart")
-      .select(
-        `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
-      );
-    setWork(!work);
+    if (userLogin) {
+      const response = await supabase
+        .from("cart")
+        .select(
+          `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
+        )
+        .eq("user_id", user?.id);
+      setWork(!work);
 
-    return response;
+      return response;
+    } else if (!userLogin) {
+      const cookie = await cookieGet("cartId");
+
+      const response = await supabase
+        .from("cart")
+        .select(
+          `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
+        )
+        .eq("cart_id", cookie);
+      setWork(!work);
+
+      return response;
+    }
   };
   const {
     data: cartItems,
@@ -108,10 +126,57 @@ export default function Header() {
     countCart();
   }, [cartItems, work]);
 
+  const options: { root: null; rootMargin: string; threshold: number[] } =
+    useMemo(
+      () => ({
+        root: null,
+        rootMargin: "0px 0px 0px 0px",
+        threshold: 0.5,
+      }),
+      []
+    );
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        console.log("out");
+        // setIsIntersecting(true);
+        // setAbsoluteIntersecting(false);
+        dispatch(setIsIntersection(false));
+      } else {
+        console.log("in");
+
+        dispatch(setIsIntersection(true));
+
+        // setIsIntersecting(false);
+        // setAbsoluteIntersecting(false);
+      }
+    }, options);
+
+    const target = targetRef.current;
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) {
+        observer.unobserve(target);
+      }
+    };
+  }, [targetRef, options]);
+
   // 스크롤 이벤트를 추가합니다.
   return (
-    <div className="z-100 h-[161px]   min-w-[1280px] top-0 left-0 right-0 relative w-[100%]">
+    <header
+      ref={targetRef}
+      className={`
+      ${
+        isIntersection
+          ? ""
+          : `z - 100 h-[161px]min - w - [1280px] top - 0 left - 0 right - 0 relative w - [100 %]`
+      } `}
+    >
       <div className="h-[5px]" ref={endOfPageRef}></div>
+
       <div className="relative pr-[20px] w-[100%] max-w-[1920px] h-[98px] my-0 mx-auto">
         <div className="absolute top-[32px] left-[20px]">
           <Link href="/">
@@ -184,20 +249,25 @@ export default function Header() {
           </li>
         </ul>
       </div>
-      <div className="relative block w-[100%] top-0 left-0 right-0 z-[10] min-w-[1280px] border-b-[1px] border-[#e9e9e9]">
-        <div className="max-w-[1920px] h-[57px] my-[0] mx-auto px-[20px] py-0 flex flex-start justify-center">
-          <div className="flex justify-center"></div>
-          <ul className=" m-0 p-0 flex flex-row  items-center justify-center">
-            <li className="px-10 font-bold text-[14px]">NEW</li>
-            <li className="px-10 font-bold text-[14px]">WOMEN</li>
-            <li className="px-10 font-bold text-[14px]">BEAUTY</li>
-            <li className="px-10 font-bold text-[14px]">LIFE</li>
-            <li className="px-10 font-bold text-[14px]">SALE</li>
-            <li className="px-10 font-bold text-[14px]">DESIGNER</li>
-          </ul>
-        </div>
-        <Category></Category>
-      </div>
-    </div>
+
+      {isIntersection ? (
+        <ResponsiveHeader count={count}></ResponsiveHeader>
+      ) : (
+        <nav className="relative block w-[100%] top-0 left-0 right-0 z-[10] min-w-[1280px] border-b-[1px] border-[#e9e9e9]">
+          <div className="max-w-[1920px] h-[57px] my-[0] mx-auto px-[20px] py-0 flex flex-start justify-center">
+            <div className="flex justify-center"></div>
+            <ul className=" m-0 p-0 flex flex-row  items-center justify-center">
+              <li className="px-10 font-bold text-[14px]">NEW</li>
+              <li className="px-10 font-bold text-[14px]">WOMEN</li>
+              <li className="px-10 font-bold text-[14px]">BEAUTY</li>
+              <li className="px-10 font-bold text-[14px]">LIFE</li>
+              <li className="px-10 font-bold text-[14px]">SALE</li>
+              <li className="px-10 font-bold text-[14px]">DESIGNER</li>
+            </ul>
+          </div>
+          <Category></Category>
+        </nav>
+      )}
+    </header>
   );
 }
