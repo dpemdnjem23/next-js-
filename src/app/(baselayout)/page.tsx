@@ -39,7 +39,7 @@ const Home = () => {
       console.log(err);
     }
   }, []);
-  console.log(product);
+  console.log(product, "product");
 
   // const closeModal = () => {
   //   dispatch(setIsModal(false));
@@ -48,24 +48,35 @@ const Home = () => {
   return (
     <div className="">
       <Slider>
-        <Image className="block h-[600px]" alt="" src={mainSliderImage}></Image>
         <Image
-          className="block h-[600px]"
+          // width={}
+          className="block h-[600px] relative w-[100%]"
+          objectFit="cover"
+          alt=""
+          src={mainSliderImage}
+          // layout="fill"
+        ></Image>
+        <Image
+          className="block h-[600px] relative w-[100%]"
+          objectFit="cover"
           alt=""
           src={mainSliderImage2}
         ></Image>
         <Image
-          className="block h-[600px]"
+          className="block h-[600px] relative w-[100%]"
+          objectFit="cover"
           alt=""
           src={mainSliderImage3}
         ></Image>
         <Image
-          className="block h-[600px]"
+          className="block h-[600px] relative w-[100%]"
+          objectFit="cover"
           alt=""
           src={mainSliderImage4}
         ></Image>
         <Image
-          className="block h-[600px]"
+          className="block h-[600px] relative w-[100%]"
+          objectFit="cover"
           alt=""
           src={mainSliderImage5}
         ></Image>

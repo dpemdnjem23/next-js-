@@ -31,8 +31,8 @@ export default function CartTable() {
   const dispatch = useDispatch();
 
   const quantityById = () => {
-    let arr = [];
-    cartItems?.data?.forEach((item, index: number) => {
+    let arr:any = [];
+    cartItems?.data?.forEach((item) => {
       arr = [...arr, { id: item?.id, quantity: item?.quantity }];
     });
     setControlQuantity(arr);
@@ -106,6 +106,7 @@ export default function CartTable() {
         ...curr?.options.map((option: string, index: number) => ({
           id: curr?.id,
           option,
+          product_code: curr?.product_id?.product_code,
           brand: curr?.product_id?.brand,
           front_multiline: curr?.product_id?.front_multiline,
           thumbnail: curr?.product_id?.thumbnail,
@@ -124,6 +125,7 @@ export default function CartTable() {
         ...curr?.options.map((option: string, index: number) => ({
           id: curr?.id,
           option,
+          product_code: curr?.product_id?.product_code,
           brand: curr?.product_id?.brand,
           front_multiline: curr?.product_id?.front_multiline,
           thumbnail: curr?.product_id?.thumbnail,
@@ -225,7 +227,7 @@ export default function CartTable() {
         <col className="w-[30px]"></col>
       </colgroup>
       <thead>
-        <tr>
+        <tr>value
           {/* 체크박스 */}
 
           <th

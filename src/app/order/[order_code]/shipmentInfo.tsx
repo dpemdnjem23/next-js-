@@ -125,7 +125,7 @@ export default function ShipmentInfo() {
             >
               <input
                 onChange={(e) => handleNameChange(e)}
-                value={name}
+                value={name||''}
                 type="text"
                 maxLength={15}
                 className="
@@ -148,7 +148,7 @@ export default function ShipmentInfo() {
 
                 <input
                   onChange={(e) => handlePhoneChange(e)}
-                  value={phoneNumber.part2}
+                  value={phoneNumber.part2||''}
                   name="part2"
                   type="text"
                   maxLength={4}
@@ -159,7 +159,7 @@ export default function ShipmentInfo() {
                 ></input>
                 <input
                   onChange={(e) => handlePhoneChange(e)}
-                  value={phoneNumber.part3}
+                  value={phoneNumber.part3||''}
                   name="part3"
                   type="text"
                   maxLength={4}
@@ -181,7 +181,7 @@ export default function ShipmentInfo() {
             </th>
             <td className="border-[#e9e9e9] font-thin py-[14px] px-[19px] text-[#000] text-[14px] border-t-[1px]">
               <input
-                value={address["zip"]}
+                value={address["zip"]||''}
                 disabled={true}
                 className="w-[250px] mr-[7px] text-[#aaa] cursor-default font-normal font-sans pl-[20px]
               h-[40px] leading-[38px] bg-[#f2f2f2] border-[#f2f2f2] border-[1px] text-[14px] outline-none align-middle
@@ -198,7 +198,7 @@ export default function ShipmentInfo() {
               </button>
               <p className=" block mt-[10px] text-[14px] text-[#000] font-normal font-sans ">
                 <input
-                  value={address["road"]}
+                  value={address["road"]||''}
                   type="text"
                   disabled={true}
                   className="w-[400px] pl-[20px]
@@ -210,7 +210,7 @@ export default function ShipmentInfo() {
                 ></input>
 
                 <input
-                  value={address["addressLine"]}
+                  value={address["addressLine"]||''}
                   onChange={(e) => handleAddressChange(e)}
                   type="text"
                   className="

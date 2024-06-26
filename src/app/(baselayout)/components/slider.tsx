@@ -29,10 +29,13 @@ interface CustomArrowProps {
 export default function SlickSlider({ children, width }: any) {
   const sliderRef = useRef<Slick>(null);
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [isHovered, setIsHovered] = useState(false);
+  const [windowWidth, setWindowWidth] = useState<number | string>(
+    window.innerWidth
+  );
+  const [isHovered, setIsHovered] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log("실행");
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };

@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 
 const useIntersectionObserver = (targetRef, options) => {
@@ -19,7 +20,6 @@ const useIntersectionObserver = (targetRef, options) => {
 
     return () => {
       if (target) {
-
         observer.unobserve(target);
       }
     };

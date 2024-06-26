@@ -1,3 +1,4 @@
+"use client";
 export const onClickProduct = (product) => {
   //product중 id, 브랜드, front 사진 만저장
 

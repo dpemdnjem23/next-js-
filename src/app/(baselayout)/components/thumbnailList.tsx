@@ -11,16 +11,15 @@ import ReactModal from "react-modal";
 import { getSession } from "next-auth/react";
 
 import { useEffect, useState } from "react";
-import { Post } from "@/model/Post";
-import { onClickProduct } from "@/lib/historyLocalstorage";
+
+import { onClickProduct } from "@/src/lib/historyLocalstorage";
 
 interface props {
   title: string;
   link: string;
-  child: Post[];
 }
 
-export default function ThumbnailList({ title, child, link }: props) {
+export default function ThumbnailList({ title, link, child }: props) {
   const [clicked, setIsClicked] = useState<boolean>(false);
   const [buttonStates, setButtonStates] = useState<boolean[]>(
     new Array(child.length).fill(false)
@@ -71,7 +70,7 @@ export default function ThumbnailList({ title, child, link }: props) {
         </Link>
       </h3>
       <ul className="float-left mr-[-22px] ">
-        {child.map((el: Post, index: number) => {
+        {child.map((el, index: number) => {
           return (
             <li
               onClick={() => onClickProduct(child)}
@@ -128,7 +127,7 @@ export default function ThumbnailList({ title, child, link }: props) {
 
                   <div className="mt-[10px] mb-[5px] max-h-[45px] overflow-hidden">
                     <p className="block overflow-hidden m-0">
-                      {el.general_info.label.map(
+                      {el?.general_info?.label.map(
                         (el: string[], index: number) => {
                           return (
                             <span

@@ -92,7 +92,6 @@ export default function CartPayment({
       name: "아무개",
       total_cost: totalCost,
       item: cartItems,
-      product_code: params.product_code,
       points: totalCost * 0.1,
     });
 
@@ -115,6 +114,7 @@ export default function CartPayment({
   function generateRandomInteger() {
     const min = Math.pow(10, 13); // 10의 9제곱(10억)
     const max = Math.pow(10, 14) - 1; // 10의 10제곱 - 1 (9999999999)
+
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
@@ -133,11 +133,8 @@ export default function CartPayment({
     dispatch(setPageRouterLoading(true));
 
     try {
-      const addToOrder = mutation.mutateAsync(randomInteger);
+   mutation.mutate(randomInteger);
 
-      if (!addToOrder) {
-        throw Error("추가되지 않았습니다.");
-      }
     } catch (e) {
       console.error(e);
     }
@@ -146,13 +143,6 @@ export default function CartPayment({
   //isIntersecting - 정해져있음
   //absolute true- auto
 
-  console.log(
-    isIntersecting,
-    absoluteIntersecting,
-
-    newLeft,
-    newTop
-  );
   // ,
 
   return (

@@ -101,7 +101,6 @@ export default function CartButton() {
   const alertDelete = async () => {
     // boxObj중에 setChecked true인것만 다시 뺀다.
 
-    console.log(boxObj, "box");
     const mergedData = Object.values(
       boxObj.reduce((acc, item) => {
         if (!acc[item.id]) {
@@ -109,7 +108,6 @@ export default function CartButton() {
         }
 
         // const optionWithEnd = item.option.map((option) => option + "end");
-        console.log(item);
 
         if (item?.isChecked === false) {
           acc[item.id].quantity.push(item?.quantity);
@@ -120,14 +118,12 @@ export default function CartButton() {
       }, {})
     );
 
-    console.log(mergedData, "mergeData");
 
     const selectedIdsToRemove = mergedData?.map((item) => item.id);
 
     const updatedCartItems = cartItems?.data?.map((item, idx) => {
       //mergedData에서 사용할
 
-      console.log(mergedData);
       const selectedOptionsToRemove = mergedData?.find((selectedItem) => {
         console.log(selectedItem, item.id, "selected");
         return selectedItem.id === item.id;

@@ -7,6 +7,7 @@ import axios from "axios";
 import { zip } from "lodash";
 import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { useRouter, useParams } from "next/navigation";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const url = process.env.NEXT_PUBLIC_URL;
@@ -19,7 +20,11 @@ type Response = {
 };
 
 export default function PaymentSystem() {
+  const router = useRouter();
+
   const queryClient = useQueryClient();
+
+  const order = queryClient.getQueryData(["order"]);
 
   const params: Params = useParams();
   const storeId: string | undefined = process.env.NEXT_PUBLIC_ID;
@@ -32,6 +37,7 @@ export default function PaymentSystem() {
   const message = useSelector((state) => state.order.message);
   const address = useSelector((state) => state.order.address);
   const paymentMethod = useSelector((state) => state.order.paymentMethod);
+  const userInfo = JSON.parse(localStorage.getItem("userInfo")).user;
 
   const product = cartItems?.data[0]?.item[0];
   // console.log(JSON.parse(product));
@@ -63,7 +69,6 @@ export default function PaymentSystem() {
         phoneNumber.part3
       )
     ) {
-      console.log(phoneNumber.part1, phoneNumber.part2, phoneNumber.part3);
       alert("핸드폰번호를 잘못 입력했습니다.");
       return;
     } else if (address.zipcode === "" && address.road === "") {
@@ -73,152 +78,164 @@ export default function PaymentSystem() {
       alert("전달할 메세지를 입력해주세요");
       return;
     } else if (!paymentMethod) {
-      console.log(paymentMethod);
       alert("결제수단을 선택해주세요");
       return;
     } else {
-      const response = await PortOne.requestPayment({
-        // Store ID 설정
-        storeId: storeId,
-        // 채널 키 설정
-        channelKey: process.env.NEXT_PUBLIC_CHANNEL,
-        paymentId,
-        orderName: `${JSON.parse(product).front_multiline} 외 ${
-          cartItems?.data[0].item.length > 1
-            ? cartItems?.data[0].item.length - 1
-            : ""
-        }`,
-        totalAmount: Number(cartItems?.data[0]?.total_cost - point),
-        currency: "CURRENCY_KRW",
-        payMethod: "EASY_PAY",
-      });
+      window.IMP.request_pay(
+        {
+          pg: "kakaopay",
+          merchant_uid: `${paymentId}`,
+          name: `${JSON.parse(product).front_multiline}  ${
+            cartItems?.data[0].item.length > 1
+              ? `외 ${cartItems?.data[0].item.length - 1}`
+              : ""
+          }`,
+          amount: Number(cartItems?.data[0]?.total_cost - point),
+          buyer_email: "",
+          buyer_name: name,
+          buyer_tel: `${phoneNumber.part1}-${phoneNumber.part2}-${phoneNumber.part3}`,
+          buyer_addr: `${address.road}`,
+          buyer_postcode: `${address.zip}`,
+        },
+        async (rsp) => {
+          if (!rsp.success) {
+            console.log(rsp);
+            await requestCancel(rsp.imp_uid);
+            throw Error("결제 실패");
+          } // 결제 성공 시 로직
+        
 
-      //코드가 존재하지않으면 에러
+          const notified = await axios.post(
+            `http://localhost:3000/api/payment/complete`,
+            {
+              imp_uid: rsp.imp_uid,
+              merchant_uid: rsp.merchant_uid,
+              params: params.order_code,
+              point: point,
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+              // imp_uid와 merchant_uid, 주문 정보를 서버에 전달합니다
+            }
+            // 주문 정보...
+          );
+          //결제가 잘못됐을시 취소
 
-      if (response?.code) {
-        return alert(response?.message);
-      }
+          if (notified.data.error) {
+            await requestCancel(rsp.imp_uid);
+
+            throw Error("결제 시도중 에러 발생");
+          }
+          //결제완료후 결제정보 저장,
+
+          const { data, error } = await supabase.from("payment").insert({
+            order_id: generateOrderNumber(),
+            address: `${rsp.buyer_addr}`,
+            payment_id: rsp.merchant_uid,
+            name: rsp.name,
+            message,
+            amount: rsp.amount,
+            phone: `${rsp.buyer_tel}`,
+            user_id: userInfo.id,
+            zipcode: `${rsp.buyer_postcode}`,
+            items: order?.data[0]?.item,
+            progress: "결제완료",
+          });
+          console.log(data);
+
+          if (error) {
+            await requestCancel(rsp.imp_uid);
+
+            throw Error("결제생성이 완료되지 않았습니다.");
+          }
+
+          //결제가완료되면 메인으로 이동하고 order를 삭제한다.
+          //item을 담아야된다.
+
+          const { data: dleData, error: delError } = await supabase
+            .from("payment")
+            .delete()
+            .eq("id", params.order_code);
+
+          if (delError) {
+            await requestCancel(rsp.imp_uid);
+            throw Error("생성 에러");
+          }
+
+          router.push("/");
+        }
+      );
 
       //결제에 성공하는경우
-
-      try {
-        const getPaymentData = await axios.get(
-          `https://api.portone.io/payments/${paymentId}`,
-          {
-            headers: {
-              Authorization: `PortOne ${process.env.NEXT_PUBLIC_SECRET}`,
-            },
-          }
-        );
-
-        const paymentData = getPaymentData.data;
-
-        if (!paymentData) {
-          throw new Error("결제정보를 불러오지 못했습니다.");
-        }
-
-        //저장된 데이터와,  클라이언트에서 넘어온 데이터랑 비교한다. 우벼
-
-        //결제검증하기
-
-        // DB에서 결제되어야 하는 금액 조회
-
-        // 2. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
-
-        //client에서 온 amount
-        const { amount, status, customer } = paymentData;
-
-        const { data: orderData, error: orderError } = await supabase
-          .from("order")
-          .select()
-          .eq("id", params.order_code);
-
-        if (orderError) {
-          throw new Error("일치하는 order가 없다.");
-        }
-
-        const total = orderData[0].total_cost - point;
-
-        console.log(orderData, amount);
-        //저장해둔 order db의 가격정보와 일치하는지 확인
-        //가격의 변동 (할인, 포인트 등으로 인한 변화 고려 할인은 일단제외, 포인트변화만 고려)
-        if (total === amount.total) {
-          switch (status) {
-            case "VIRTUAL_ACCOUNT_ISSUED": {
-              // 가상 계좌가 발급된 상태입니다.
-              // 계좌 정보를 이용해 원하는 로직을 구성하세요.
-              break;
-            }
-            case "PAID": {
-              const insertPayment = await supabase.from("payment").insert({
-                paymentId: customer.id,
-                amount: amount.total,
-                name: name,
-                orderId:params.order_code,
-                message: message,
-                phone: `${phoneNumber.part1}-${phoneNumber.part2}-${phoneNumber.part3}`,
-                zipcode: address.zip,
-                address: `${address.road}, ${address.addressLine}`,
-              });
-
-              if (!insertPayment) {
-                throw new Error("결제정보가 생성되지 않았습니다.");
-              }
-              console.log(insertPayment);
-
-              alert("결제가 완료되었습니다.");
-
-              // 모든 금액을 지불했습니다! 완료 시 원하는 로직을 구성하세요.
-              //결제 정보를 db에 저장한다.
-              break;
-            }
-          }
-        } else {
-          const cancel = await axios.post(
-            `https://api.portone.io/payments/${paymentId}/cancel`,
-            {
-              storeId,
-              amount: Number(cartItems?.data[0]?.total_cost - point),
-              reason: "결제금액 불일치",
-            },
-            {
-              headers: {
-                Authorization: `PortOne ${process.env.NEXT_PUBLIC_SECRET}`,
-              },
-            }
-          );
-
-          console.log(cancel);
-
-          throw new Error("결제금액 불일치 정상적이지 않은 결제시도");
-
-          // 결제 금액이 불일치하여 위/변조 시도가 의심됩니다.
-        }
-      } catch (e: any) {
-        // 결제 검증에 실패했습니다.
-
-        console.log(paymentId, storeId);
-        const cancel = await axios.post(
-          `https://api.portone.io/payments/${paymentId}/cancel`,
-          {
-            storeId,
-            amount: Number(cartItems?.data[0]?.total_cost - point),
-            reason: "결제시도중에 에러발생",
-          },
-          {
-            headers: {
-              Authorization: `PortOne ${process.env.NEXT_PUBLIC_SECRET}`,
-            },
-          }
-        );
-
-        console.log(cancel);
-
-        throw new Error(e);
-      }
     }
   };
 
+  useEffect(() => {
+    // 외부 스크립트 로드 함수
+    const loadScript = (src, callback) => {
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = src;
+      script.onload = callback;
+      document.head.appendChild(script);
+    };
+
+    // 스크립트 로드 후 실행
+    loadScript("https://code.jquery.com/jquery-1.12.4.min.js", () => {
+      loadScript("https://cdn.iamport.kr/js/iamport.payment-1.2.0.js", () => {
+        const IMP = window.IMP;
+        // 가맹점 식별코드
+        IMP.init(process.env.NEXT_PUBLIC_IMP);
+      });
+    });
+
+    // 컴포넌트가 언마운트될 때 스크립트를 제거하기 위한 정리 함수
+    return () => {
+      const scripts = document.querySelectorAll('script[src^="https://"]');
+      scripts.forEach((script) => script.remove());
+    };
+  }, []);
+
+  const requestCancel = async (imp_uid: string) => {
+    try {
+      const response = await axios.post("http://localhost:3000/api/payment/cancel", {
+        imp_uid: imp_uid,
+      });
+
+      const result = response.data;
+
+      if (result.success) {
+        alert("Payment cancelled successfully");
+      } else {
+        alert("Failed to cancel payment: " + result.message);
+      }
+      window.IMP.close();
+    } catch (error) {
+      window.IMP.close();
+
+      alert("An error occurred while cancelling payment");
+    }
+  };
+
+  const generateOrderNumber = () => {
+    // 영문자 (A-Z, a-z)와 숫자 (0-9)로 구성된 문자열 생성
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    let orderNumber = "";
+
+    // 첫 번째 문자는 영문자로 시작하도록 설정
+    const firstCharIndex = Math.floor(Math.random() * 52); // A-Z (26) + a-z (26) = 52
+    orderNumber += characters.charAt(firstCharIndex);
+
+    // 숫자 7자리 추가
+    for (let i = 0; i < 7; i++) {
+      const numIndex = Math.floor(Math.random() * 10); // 0-9
+      orderNumber += characters.charAt(26 + 26 + numIndex); // 숫자는 characters 배열의 52번째 이후부터 시작
+    }
+
+    return orderNumber;
+  };
   return (
     <button
       onClick={requestPayment}

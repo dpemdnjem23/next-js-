@@ -1,5 +1,5 @@
 import Mypage from "../mypage";
-import Cancel from "./cancel";
+import List from "./list";
 
 export default function Page() {
   return (
@@ -9,8 +9,8 @@ export default function Page() {
           MY PAGE
         </h2>
       </div>
-          <Mypage></Mypage>
-          <Cancel></Cancel>
-      </section>
+      <Mypage></Mypage>
+      <List></List>
+    </section>
   );
 }

@@ -24,6 +24,7 @@ import CartPayment from "./cartpaymet";
 import useIntersectionObserver from "@/lib/useIntersectionObserver";
 import { root } from "postcss";
 import CartTable from "./component/cartTable";
+import { cookieGet } from "@/utils/cookieUtils";
 
 export default function CartItem() {
   const [work, setWork] = useState<boolean>(false);
@@ -49,7 +50,7 @@ export default function CartItem() {
       const response = await supabase
         .from("cart")
         .select(
-          `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
+          `id,options,cart_id,quantity,user_id,product(id,product_code,price,thumbnail,product_code,brand,front_multiline,discount)`
         )
         .eq("cart_id", cookie)
 
@@ -61,7 +62,7 @@ export default function CartItem() {
       const response = await supabase
         .from("cart")
         .select(
-          `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
+          `id,options,cart_id,quantity,user_id,product(id,price,,product_code,thumbnail,product_code,brand,front_multiline,discount)`
         )
         .order("id", { ascending: true })
         .eq("user_id", user?.user?.id);
@@ -94,6 +95,7 @@ export default function CartItem() {
   if (isError) {
     throw error;
   }
+  console.log(cartItems);
 
   useEffect(() => {
     const checkAll = () => {
@@ -107,6 +109,7 @@ export default function CartItem() {
           ...curr?.options.map((option: string, index: number) => ({
             id: curr?.id,
             option,
+            product_code: curr?.product_id?.product_code,
             brand: curr?.product_id?.brand,
             front_multiline: curr?.product_id?.front_multiline,
             thumbnail: curr?.product_id?.thumbnail,
@@ -222,7 +225,6 @@ export default function CartItem() {
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        console.log("여기가 오른쪽에오는곳");
         setIsIntersecting(true);
 
         setAbsoluteIntersecting(false);

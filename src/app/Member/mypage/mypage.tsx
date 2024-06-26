@@ -107,15 +107,15 @@ export default function Mypage() {
           w-[210px] table-cell relative"
           >
             <li className=" text-center leading-[25px] align-top">
-              <Link className=" text-[12px] text-[#4c4c4c] " href={"#"}>
-                주문/배송조히
+              <Link
+                className=" text-[12px] text-[#4c4c4c] "
+                href={"/Member/mypage/orderList"}
+              >
+                주문/배송조회
               </Link>
             </li>
             <li className=" text-center leading-[25px] align-top">
-              <Link
-                className=" text-[12px] text-[#4c4c4c] "
-                href={"/Member/mypage/orderCancelList"}
-              >
+              <Link className=" text-[12px] text-[#4c4c4c] " href={"#"}>
                 취소/교환/반품 조회
               </Link>
             </li>
