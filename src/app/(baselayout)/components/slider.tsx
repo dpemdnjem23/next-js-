@@ -72,7 +72,10 @@ export default function SlickSlider({ children, width }: any) {
   };
 
   return (
-    <div style={{ width: windowWidth }} className={`mt-[-25px]`}>
+    <div
+      // style={{ width: windowWidth }}
+      className={` top-[-25px] relative overflow-hidden max-w-[1920px] w-[100%] h-[600px] mx-auto`}
+    >
       <Slick ref={sliderRef} {...settings}>
         {children}
       </Slick>

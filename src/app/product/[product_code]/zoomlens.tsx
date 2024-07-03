@@ -15,7 +15,7 @@ function ZoomLens() {
     y: 220,
   });
   const boundary = { xMin: 170, xMax: 350, yMin: 190, yMax: 500 };
-  const cursorRef = useRef();
+  const cursorRef: any = useRef();
   const [showLens, setShowLens] = useState(false);
   const imageRef: any = useRef();
   const lensRef: any = useRef();
@@ -49,7 +49,6 @@ function ZoomLens() {
   const onMouseMove = debounce((e) => {
     //imageframe getbounding해야함 실수 ->e.traget을한것
     const { left, top } = imageRef.current.getBoundingClientRect();
-    const { width, height } = lensRef.current.getBoundingClientRect();
     const x = e.clientX - left;
     const y = e.clientY - top;
     const coord = { x: x - 170, y: y - 190 };
@@ -169,13 +168,10 @@ function ZoomLens() {
         src={zoomImage}
         alt="Original"
       />
-      {/* )} */}
       <div className="zoomWindow w-[630px]">
         <div
           style={{
             background: `url(${selectedImage}) ${bgPosition.x}px ${bgPosition.y}px / 960px 1280px  no-repeat`,
-            // backgroundPosition: `${bgPosition.x}px ${bgPosition.y}px`,
-            // backgroundSize: "960px 1280px",
           }}
           ref={lensRef}
           className={` ${showLens ? "block" : "hidden"}

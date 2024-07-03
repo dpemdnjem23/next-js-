@@ -1,10 +1,10 @@
 .slick-dots {
-  left: 50%;
-  /* bottom: 40px; */
+  /* left: 50%; */
+  /* top: px; */
+  bottom: 60px;
 }
 
 .slick-dots li {
+  /* width: 40px; */
   width: 5px;
 }
-
-

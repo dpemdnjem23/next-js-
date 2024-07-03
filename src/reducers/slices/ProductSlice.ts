@@ -1,7 +1,7 @@
 "use client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface props {
+export type props = {
   id: number | null;
   created_at: TimeRanges | null;
   brand: any;
@@ -12,20 +12,17 @@ interface props {
   option: option | null | [];
   general_info: generals | null;
   category_id: number | null;
-  imageArr: images | null;
+  imageArr: string[] | null;
   product_code: number | null;
   thumbnail: string;
 
   country: string;
   company: string;
-}
+};
 type sizes = {
   size: string[];
 };
 
-type images = {
-  image: string[];
-};
 type generals = {
   label: string[];
 };
@@ -61,7 +58,7 @@ const initialState: Home = {
     option: [],
     general_info: null,
     category_id: null,
-    imageArr: { image: [] },
+    imageArr: [],
     product_code: null,
     thumbnail: "",
     country: "",

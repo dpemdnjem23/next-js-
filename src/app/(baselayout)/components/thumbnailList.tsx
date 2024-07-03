@@ -4,7 +4,6 @@ import Image from "next/image";
 import Slider from "./slider";
 import Link from "next/link";
 import Router from "next/router";
-import { image12 } from "../../../../public/304896935_UP25289.jpg";
 
 import ReactModal from "react-modal";
 
@@ -12,14 +11,9 @@ import { getSession } from "next-auth/react";
 
 import { useEffect, useState } from "react";
 
-import { onClickProduct } from "@/src/lib/historyLocalstorage";
+import { onClickProduct } from "@/lib/historyLocalstorage";
 
-interface props {
-  title: string;
-  link: string;
-}
-
-export default function ThumbnailList({ title, link, child }: props) {
+export default function ThumbnailList({ title, link, child }) {
   const [clicked, setIsClicked] = useState<boolean>(false);
   const [buttonStates, setButtonStates] = useState<boolean[]>(
     new Array(child.length).fill(false)
@@ -52,9 +46,11 @@ export default function ThumbnailList({ title, link, child }: props) {
     checkLoginStatus();
   };
 
+
+  console.log(child, "thum");
   //하트를 클릭할때 로그인되어있지 않으면 alert창
   return (
-    <div className="w-[100%] relative overflow-hidden">
+    <div className="w-[100%] mt-[30px] relative overflow-hidden">
       <h3 className="w-[150px]  mr-[30px] text-right float-left leading-[50px]">
         <Link className="h-[430px] block" href={link}>
           <strong className="text-[40px] mt-[-4px]">{title}</strong>
@@ -71,9 +67,11 @@ export default function ThumbnailList({ title, link, child }: props) {
       </h3>
       <ul className="float-left mr-[-22px] ">
         {child.map((el, index: number) => {
+          console.log(el.id);
+
           return (
             <li
-              onClick={() => onClickProduct(child)}
+              onClick={() => onClickProduct(child, el.id,index)}
               className="
               list
               w-[216px] float-left mb-[50px] mr-[22px] relative"
@@ -91,7 +89,7 @@ export default function ThumbnailList({ title, link, child }: props) {
               
               `}
               ></button>
-              <Link href={`/product/${el.product_code}`}>
+              <Link href={`/product/${el?.product_code}`}>
                 <div className="relative mb-[16px] h-[260px] overflow-hidden">
                   <Image
                     width={200}
@@ -104,24 +102,24 @@ export default function ThumbnailList({ title, link, child }: props) {
                 <div className="h-[190px] pl-[4px] pr-[6px] ">
                   <div className="h-[100px]">
                     <div className="text-[14px] leading-[16px] mb-[7px] font-semibold w-[auto] min-h-auto max-h-initial whitespace-nowrap text-ellipsis overflow-hidden">
-                      {el.brand}
+                      {el?.brand}
                     </div>
                     <div className="text-[#777] overflow-hidden whitespace-nowrap over text-ellipsis mb-[8px]">
-                      {el.front}
+                      {el?.front}
                     </div>
                     <div className="h-[32px] break-all  text-[12px] leading-[16px] mb-[16px] overflow-hidden text-[#777]">
-                      {el.front_multiline}
+                      {el?.front_multiline}
                     </div>
                   </div>
                   <div className="relative leading-normal flex justify-start items-baseline">
                     <span className="text-[16px] font-bold mr-[6px]">
-                      {((1 - el.discount / 100) * el.price).toLocaleString()}
+                      {((1 - el?.discount / 100) * el.price).toLocaleString()}
                     </span>
                     <span className="text-[12px] line-through text-[#aaa] ">
-                      {el.price.toLocaleString()}
+                      {el?.price.toLocaleString()}
                     </span>
                     <span className="block absolute font-[600] top-0 right-0 text-[16px] text-[#ff4000]">
-                      {el.discount}%
+                      {el?.discount}%
                     </span>
                   </div>
 

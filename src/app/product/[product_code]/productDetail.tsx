@@ -89,7 +89,7 @@ export default function ProductDetail() {
 
         if (!ignore) {
           dispatch(setProduct(data));
-          dispatch(setIsImage(data.imageArr.image[key]));
+          dispatch(setIsImage(data.imageArr[key]));
         }
       };
       result();
@@ -126,7 +126,7 @@ export default function ProductDetail() {
       return updatedState;
     });
 
-    dispatch(setIsImage(product?.imageArr.image[findTrueKeys2()]));
+    dispatch(setIsImage(product?.imageArr[findTrueKeys2()]));
   };
 
   const findTrueKeys2 = () => {
@@ -261,12 +261,12 @@ export default function ProductDetail() {
                   height={700}
                   width={525}
                   alt=""
-                  src={product?.imageArr?.image[findTrueKeys()]}
+                  src={product?.imageArr[findTrueKeys()]}
                 ></Image>
               </div>
               <div className="mt-[20px] h-[80px] overflow-hidden">
                 <ul className="max-w-[520px]">
-                  {product?.imageArr?.image.map((el: string, index: number) => {
+                  {product?.imageArr?.map((el: string, index: number) => {
                     return (
                       <li
                         onClick={() => handleImageClick(index)}
@@ -410,13 +410,15 @@ export default function ProductDetail() {
                     type="button"
                     onClick={handleCardModalOn}
                     className="
-                     inline-block pr-[29px] pl-[6px] align-middle ml-[5px]
+                     
+                    inline-flex justify-between items-center
+                    pr-[29px] pl-[6px] align-middle ml-[5px]
                   h-[21px] leading-[19px] border-[#959595] border-[1px] text-[#323232] text-[12px]"
                   >
                     카드안내
                     <Image
                       typeof="button"
-                      className="absolute top-[402px] right-[285px]"
+                      className="absolute right-[291px]"
                       width={19}
                       height={19}
                       alt=""
@@ -437,13 +439,14 @@ export default function ProductDetail() {
                   <button
                     type="button"
                     onClick={handlePointsModalOn}
-                    className="
-                     inline-block pr-[29px] pl-[6px] align-middle ml-[5px]
+                    className="max-w-[150px]
+                    pr-[29px] pl-[6px] align-middle ml-[5px]
+                     inline-flex justify-between items-center
                   h-[21px] leading-[19px] border-[#959595] border-[1px] text-[#323232] text-[12px]"
                   >
                     포인트 안내
                     <Image
-                      className="absolute top-[436px] right-[370px]"
+                      className="absolute right-[380px]"
                       width={19}
                       height={19}
                       alt=""
@@ -600,15 +603,6 @@ export default function ProductDetail() {
                   })}
                 </ul>
                 {/* 스크롤 x,y 조정하기 */}
-                {/* <div>
-                  <div></div>
-                </div>
-                <div
-                  style={{ transition: "all 0s linear" }}
-                  className="top-0 right-0 h-[278px] bg-[] absolute opacity-[1] w-[5px] "
-                >
-                  <div className=" rounded-[3px] top-0 h-[232px] w-[3px] bg-[rgba(0,0,0,.2)]"></div>
-                </div> */}
               </div>
 
               {/* 구매 쇼핑백담기등의 버튼 */}

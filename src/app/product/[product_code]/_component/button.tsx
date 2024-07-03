@@ -32,7 +32,6 @@ export default function ButtonBox() {
   const product = useSelector((state) => state?.product.product);
   const isHeart = useSelector((state) => state?.user.isHeart);
   const selectOption = useSelector((state) => state?.product.selectOption);
-  console.log(selectOption);
   //만약 personalHeart에 변화가 생겼다면
 
   const personalHeart = useSelector((state) => state?.user.personalHeart);
@@ -44,7 +43,6 @@ export default function ButtonBox() {
 
   //
 
-  console.log(userInfo.user.id);
   const fetchData = async () => {
     let cartId = await cookieGet("cartId");
 

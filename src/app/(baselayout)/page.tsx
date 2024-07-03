@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import Slider from "./components/slider";
-import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import mainSliderImage from "../../../public/pc04_1920x600_pre_20240104180145.jpg";
 import mainSliderImage2 from "../../../public/pc07_1920x600_pre_20240104180315.jpg";
@@ -15,7 +14,6 @@ import ScrollButton from "@/app/(baselayout)/components/ScrollButton";
 import Header from "../_component/header";
 import { setIsHeader, setIsModal } from "@/reducers/slices/HomeSlice";
 import { result } from "lodash";
-import { Post } from "@/model/Post";
 import ShoppingHistoryModal from "../@ modal/shoppingHistory/page";
 import { supabase } from "@/lib";
 const Home = () => {
@@ -31,6 +29,10 @@ const Home = () => {
       
         `);
 
+        if (error) {
+          throw Error(" 메인 페이지 product 생성 에러");
+        }
+
         console.log(product);
         setProduct(product);
       };
@@ -39,44 +41,51 @@ const Home = () => {
       console.log(err);
     }
   }, []);
-  console.log(product, "product");
+  // console.log(product, "product");
 
   // const closeModal = () => {
   //   dispatch(setIsModal(false));
   // };
 
   return (
-    <div className="">
+    <section className="">
       <Slider>
         <Image
+          width={1920}
+          height={600}
           // width={}
-          className="block h-[600px] relative w-[100%]"
-          objectFit="cover"
+          className="block relative w-100% h-[600px] "
+          // objectFit="cover"
           alt=""
           src={mainSliderImage}
           // layout="fill"
         ></Image>
+
         <Image
           className="block h-[600px] relative w-[100%]"
-          objectFit="cover"
+          width={1920}
+          height={600}
           alt=""
           src={mainSliderImage2}
         ></Image>
         <Image
           className="block h-[600px] relative w-[100%]"
-          objectFit="cover"
+          width={1920}
+          height={600}
           alt=""
           src={mainSliderImage3}
         ></Image>
         <Image
           className="block h-[600px] relative w-[100%]"
-          objectFit="cover"
+          width={1920}
+          height={600}
           alt=""
           src={mainSliderImage4}
         ></Image>
         <Image
           className="block h-[600px] relative w-[100%]"
-          objectFit="cover"
+          width={1920}
+          height={600}
           alt=""
           src={mainSliderImage5}
         ></Image>
@@ -102,13 +111,8 @@ const Home = () => {
           child={product.filter((el) => el.category.category_name === "beauty")}
           link={"/beauty"}
         ></ThumbnailList>
-        <ThumbnailList
-          title={"NEW"}
-          child={product.filter((el) => el.category.category_name === "women")}
-          link={"/new"}
-        ></ThumbnailList>
       </div>
-    </div>
+    </section>
   );
 };
 export default Home;

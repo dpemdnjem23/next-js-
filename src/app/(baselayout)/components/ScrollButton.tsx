@@ -20,7 +20,6 @@ const ScrollButton = () => {
   const dispatch = useDispatch();
   const isHeader = useSelector((state) => state?.home.isHeader);
 
-  console.log(isHeader, isFooter);
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -31,6 +30,8 @@ const ScrollButton = () => {
 
   const openModal = () => {
     dispatch(setIsModal(true));
+    document.body.style.overflow = 'hidden';
+
   };
 
   return (
