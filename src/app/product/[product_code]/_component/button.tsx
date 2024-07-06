@@ -54,13 +54,24 @@ export default function ButtonBox() {
     });
     //해당하는 cart_id를 찾아서 넣기
 
-    const select = {
+    // const select = {
+    //   user_id: userInfo?.user?.id || null,
+     
+    // };
+
+    //option이 여러개
+    // const response = await supabase.from("cart").update(select);
+
+     const select = {
       user_id: userInfo?.user?.id || null,
+      options: optionsArr,
+      quantity: quantityArr,
+      cart_id:cartId
      
     };
 
-    //option이 여러개
-    const response = await supabase.from("cart").update(select);
+    // //option이 여러개
+    const response = await supabase.from("cart").insert(select)
 
     return response;
   };

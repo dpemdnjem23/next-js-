@@ -31,7 +31,7 @@ export default function CartTable() {
   const dispatch = useDispatch();
 
   const quantityById = () => {
-    let arr:any = [];
+    let arr: any = [];
     cartItems?.data?.forEach((item) => {
       arr = [...arr, { id: item?.id, quantity: item?.quantity }];
     });
@@ -179,7 +179,6 @@ export default function CartTable() {
   const handleQuantityUp = (index2: number, itemId: number) => {
     //controlQunatity를 불러온다.
     //quantity에서 변할부분만 변화
-    console.log("수량업");
 
     //올리든 내리든 변화가 일어날경우  빨강색으로
 
@@ -195,7 +194,6 @@ export default function CartTable() {
         });
       }
     );
-    console.log(controlQuantity);
   };
   const handleQuantityDown = (index2: number, itemId: number) => {
     setControlQuantity(
@@ -227,7 +225,7 @@ export default function CartTable() {
         <col className="w-[30px]"></col>
       </colgroup>
       <thead>
-        <tr>value
+        <tr>
           {/* 체크박스 */}
 
           <th

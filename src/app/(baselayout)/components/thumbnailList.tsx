@@ -47,7 +47,6 @@ export default function ThumbnailList({ title, link, child }) {
   };
 
 
-  console.log(child, "thum");
   //하트를 클릭할때 로그인되어있지 않으면 alert창
   return (
     <div className="w-[100%] mt-[30px] relative overflow-hidden">

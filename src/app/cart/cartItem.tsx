@@ -32,19 +32,19 @@ export default function CartItem() {
   const user = JSON.parse(localStorage.getItem("userInfo"));
   const userLogin = JSON.parse(localStorage.getItem("userLogin"));
 
-  console.log(user, userLogin.login);
   const targetRef = useRef();
   const targetRef2 = useRef();
   //버튼 활성화 밑 색깔 바꾸기
   const [count, setCount] = useState<number>(0);
 
+  console.log(userLogin?.login);
   const [isIntersecting, setIsIntersecting] = useState<boolean>(false);
   const [absoluteIntersecting, setAbsoluteIntersecting] =
     useState<boolean>(false);
   const controlQuantity = useSelector((state) => state.cart?.controlQuantity);
 
   const getItem = async () => {
-    if (!userLogin.login) {
+    if (userLogin?.login === undefined) {
       const cookie = await cookieGet("cartId");
 
       const response = await supabase
@@ -58,7 +58,7 @@ export default function CartItem() {
       setWork(!work);
 
       return response;
-    } else if (userLogin.login) {
+    } else if (userLogin?.login) {
       const response = await supabase
         .from("cart")
         .select(
@@ -95,7 +95,6 @@ export default function CartItem() {
   if (isError) {
     throw error;
   }
-  console.log(cartItems);
 
   useEffect(() => {
     const checkAll = () => {
@@ -148,8 +147,6 @@ export default function CartItem() {
   useEffect(() => {
     countCart();
   }, [cartItems, work]);
-
-  const queryClient = useQueryClient();
 
   const [rootMargin, setRootMargin] = useState("0px");
 

@@ -33,7 +33,6 @@ const Home = () => {
           throw Error(" 메인 페이지 product 생성 에러");
         }
 
-        console.log(product);
         setProduct(product);
       };
       result();
