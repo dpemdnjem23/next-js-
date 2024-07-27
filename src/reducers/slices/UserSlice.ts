@@ -5,14 +5,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type Home = {
   isLogin: boolean;
   isHeart: [];
-  personalHeart: [] | null;
+  favorites: [];
   isLoading: boolean;
 
   // isHeart: [{user_id:string, product_id:number,id:number}]
 };
 const initialState: Home = {
   isLogin: false,
-  personalHeart: [],
+  favorites: [],
   isLoading: false,
 
   isHeart: [],
@@ -39,8 +39,8 @@ const UserSlice = createSlice({
       state.isHeart = action.payload;
     },
 
-    setPersonalHeart(state, action: PayloadAction<[]>) {
-      state.personalHeart = action.payload;
+    setFavorites(state, action: PayloadAction<[]>) {
+      state.favorites = action.payload;
     },
     setIsLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
@@ -53,7 +53,7 @@ export const {
   setIsLogout,
   setIsHeart,
   setIsLoading,
-  setPersonalHeart,
+  setFavorites,
 } = UserSlice.actions;
 // export const selectCount = (state) => state.counter.value;
 export default UserSlice.reducer;

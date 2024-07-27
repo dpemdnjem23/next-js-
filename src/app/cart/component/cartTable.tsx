@@ -22,9 +22,8 @@ export default function CartTable() {
   const queryClient = useQueryClient();
 
   const [controlQuantity, setControlQuantity] = useState<[]>([]);
-  // const cartItems = [];
   const cartItems: any = queryClient.getQueryData(["carts"]);
-  const boxObj = useSelector((state) => state.cart?.boxObj);
+  const boxObj = useSelector((state) => state?.cart?.boxObj);
   // const boxObj = [];
 
   // const controlQuantity = useSelector((state) => state?.cart?.controlQuantity);
@@ -310,7 +309,6 @@ export default function CartTable() {
           const product_id = [item.product_id];
 
           let number = 0;
-
           return item?.options.map((item2, index2: number) => {
             number++;
 
@@ -544,6 +542,7 @@ export default function CartTable() {
               );
             }
             if (number >= item.options.length) {
+              // console.log("칸나누기");
               let totalCost: number = 0;
               let shipCost: number = 0;
               item?.quantity.forEach((el) => {

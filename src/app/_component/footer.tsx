@@ -51,7 +51,7 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="pt-[90px] block">
+    <footer className="mt-[200px] block">
       <div>
         <nav className="relative w-full  mt-[70px]">
           <ul className=" w-[1280px] bg-[rgb(132,132,132)] px-[28px] relative mx-auto overflow-hidden">

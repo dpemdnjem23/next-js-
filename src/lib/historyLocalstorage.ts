@@ -20,7 +20,7 @@ export const onClickProduct = (product, id: number, index: number) => {
     today: formattedDate,
     id: product[index].id,
     front: product[index].front,
-    front_multiline:product[index].front_multiline,
+    front_multiline: product[index].front_multiline,
 
     brand: product[index].brand,
     thumbnail: product[index].thumbnail,
@@ -29,11 +29,9 @@ export const onClickProduct = (product, id: number, index: number) => {
   let isExist = false;
   //중복확인 절차.
 
-
   //쭉나열해놓으면 그걸로 그룹핑을해서 하면되겟다.
   // product 는 [{},{}] ...
   items?.forEach((item) => {
-    console.log(item.id === history.id, item.id, product.id);
     if (item.id === history.id) {
       isExist = true;
     }

@@ -5,7 +5,7 @@ import ProductDetail from "./productDetail";
 import CardInfoModal from "./_component/cardInfoModal";
 import { useDispatch, useSelector } from "react-redux";
 import PointsInfoModal from "./_component/pointsInfoModal";
-import { setIsHeart, setPersonalHeart } from "@/reducers/slices/UserSlice";
+import { setFavorites, setIsHeart } from "@/reducers/slices/UserSlice";
 import { useEffect } from "react";
 import { supabase } from "@/lib";
 import { setIsImage, setProduct } from "@/reducers/slices/ProductSlice";
@@ -16,6 +16,7 @@ export default function ProductBuyingPage() {
   const cardModal = useSelector((state) => state?.product?.cardInfoModal);
   const personalHeart = useSelector((state) => state?.user?.personalHeart);
   const cartCheckModal = useSelector((state) => state?.product?.cartCheckModal);
+  const favorites = useSelector((state) => state?.user.favorites);
 
   const product = useSelector((state) => state?.product.product);
 
@@ -23,8 +24,8 @@ export default function ProductBuyingPage() {
   const dispatch = useDispatch();
 
   const isHeart = useSelector((state) => state?.user.isHeart);
-  const userLogin = JSON.parse(localStorage.getItem("userLogin")) || [];
-  const userInfo = JSON.parse(localStorage.getItem("userInfo")) || [];
+  const userLogin = JSON.parse(localStorage.getItem("userLogin")||'{}');
+  const userInfo = JSON.parse(localStorage.getItem("userInfo")||'{}');
   const { product_code } = useParams();
 
   //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기
@@ -36,7 +37,6 @@ export default function ProductBuyingPage() {
         if (!product.id) {
           return; // product.id가 없으면 요청을 보내지 않고 함수를 종료
         }
-
         const { data, error }: any = await supabase
           .from("favorite")
           .select()
@@ -48,7 +48,8 @@ export default function ProductBuyingPage() {
         // }
 
         if (!ignore) {
-          dispatch(setPersonalHeart(data));
+
+          dispatch(setFavorites(data));
         }
       } catch (err) {
         throw err;
@@ -93,7 +94,7 @@ export default function ProductBuyingPage() {
     } catch (err) {
       throw err;
     }
-  }, [personalHeart, product?.id]);
+  }, [favorites, product?.id]);
   return (
     <section className=" block">
       {cardModal ? <CardInfoModal></CardInfoModal> : null}

@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import zoomImage from "../../../../public/zoom.png";
 import { useDispatch, useSelector } from "react-redux";
-import { debounce } from "lodash";
+import { debounce, throttle } from "lodash";
 
 function ZoomLens() {
   const [lensPosition, setLensPosition] = useState<{ x: number; y: number }>({
@@ -46,97 +46,106 @@ function ZoomLens() {
     setShowLens(false);
   };
 
-  const onMouseMove = debounce((e) => {
-    //imageframe getbounding해야함 실수 ->e.traget을한것
-    const { left, top } = imageRef.current.getBoundingClientRect();
-    const x = e.clientX - left;
-    const y = e.clientY - top;
-    const coord = { x: x - 170, y: y - 190 };
+  const onMouseMove = throttle(
+    (e) => {
+      console.log("디바운싱");
 
-    let cx = lensRef?.current.offsetWidth / cursorRef?.current.offsetWidth;
-    let cy = lensRef?.current.offsetHeight / cursorRef?.current.offsetHeight;
+      //imageframe getbounding해야함 실수 ->e.traget을한것
+      const { left, top } = imageRef.current.getBoundingClientRect();
+      const x = e.clientX - left;
+      const y = e.clientY - top;
+      const coord = { x: x - 170, y: y - 190 };
 
-    switch (true) {
-      case x <= boundary.xMin && y <= boundary.yMin:
-        setLensPosition({ x: 0, y: 0 });
-        setbgPosition({
-          x: 0,
-          y: 0,
-        });
+      let cx = lensRef?.current.offsetWidth / cursorRef?.current.offsetWidth;
+      let cy = lensRef?.current.offsetHeight / cursorRef?.current.offsetHeight;
 
-        break;
+      switch (true) {
+        case x <= boundary.xMin && y <= boundary.yMin:
+          setLensPosition({ x: 0, y: 0 });
+          setbgPosition({
+            x: 0,
+            y: 0,
+          });
 
-      case x > boundary.xMin && x < boundary.xMax && y <= boundary.yMin:
-        setLensPosition({ x: coord.x, y: 0 });
+          break;
 
-        setbgPosition({
-          x: -(x - cursorRef?.current.offsetWidth / 2) * cx,
-          y: 0,
-        });
+        case x > boundary.xMin && x < boundary.xMax && y <= boundary.yMin:
+          setLensPosition({ x: coord.x, y: 0 });
 
-        break;
+          setbgPosition({
+            x: -(x - cursorRef?.current.offsetWidth / 2) * cx,
+            y: 0,
+          });
 
-      case x >= boundary.xMax && y <= boundary.yMin:
-        setLensPosition({ x: 180, y: 0 });
-        setbgPosition({
-          x: -332,
-          y: 0,
-        });
+          break;
 
-        break;
+        case x >= boundary.xMax && y <= boundary.yMin:
+          setLensPosition({ x: 180, y: 0 });
+          setbgPosition({
+            x: -332,
+            y: 0,
+          });
 
-      case x <= boundary.xMin && y > boundary.yMin && y < boundary.yMax:
-        setLensPosition({ x: 0, y: coord.y });
-        setbgPosition({
-          x: 0,
-          y: -(y - cursorRef?.current.offsetHeight / 2) * cy,
-        });
+          break;
 
-        break;
+        case x <= boundary.xMin && y > boundary.yMin && y < boundary.yMax:
+          setLensPosition({ x: 0, y: coord.y });
+          setbgPosition({
+            x: 0,
+            y: -(y - cursorRef?.current.offsetHeight / 2) * cy,
+          });
 
-      case x <= boundary.xMin && y >= boundary.yMax:
-        setLensPosition({ x: 0, y: 315 });
+          break;
 
-        break;
+        case x <= boundary.xMin && y >= boundary.yMax:
+          setLensPosition({ x: 0, y: 315 });
 
-      case x > boundary.xMin && x < boundary.xMax && y >= boundary.yMax:
-        setLensPosition({ x: coord.x, y: 315 });
+          break;
 
-        setbgPosition({
-          x: -(x - cursorRef?.current.offsetWidth / 2) * cx,
-          y: -565,
-        });
+        case x > boundary.xMin && x < boundary.xMax && y >= boundary.yMax:
+          setLensPosition({ x: coord.x, y: 315 });
 
-        break;
+          setbgPosition({
+            x: -(x - cursorRef?.current.offsetWidth / 2) * cx,
+            y: -565,
+          });
 
-      case x >= boundary.xMax && y >= boundary.yMax:
-        setLensPosition({ x: 180, y: 315 });
-        setbgPosition({
-          x: -332,
-          y: -565,
-        });
+          break;
 
-        break;
+        case x >= boundary.xMax && y >= boundary.yMax:
+          setLensPosition({ x: 180, y: 315 });
+          setbgPosition({
+            x: -332,
+            y: -565,
+          });
 
-      case x >= boundary.xMax && y > boundary.yMin && y < boundary.yMax:
-        setLensPosition({ x: 180, y: coord.y });
-        setbgPosition({
-          x: -332,
-          y: -(y - cursorRef?.current.offsetHeight / 2) * cy,
-        });
+          break;
 
-        break;
+        case x >= boundary.xMax && y > boundary.yMin && y < boundary.yMax:
+          setLensPosition({ x: 180, y: coord.y });
+          setbgPosition({
+            x: -332,
+            y: -(y - cursorRef?.current.offsetHeight / 2) * cy,
+          });
 
-      default:
-        setLensPosition({ x: coord.x, y: coord.y });
+          break;
 
-        setbgPosition({
-          x: -(x - cursorRef?.current.offsetWidth / 2) * cx,
-          y: -(y - cursorRef?.current.offsetHeight / 2) * cy,
-        });
+        default:
+          setLensPosition({ x: coord.x, y: coord.y });
+
+          setbgPosition({
+            x: -(x - cursorRef?.current.offsetWidth / 2) * cx,
+            y: -(y - cursorRef?.current.offsetHeight / 2) * cy,
+          });
+      }
+      // setLensPosition({ x, y });
+    },
+    1000,
+    {
+      leading: false,
+      trailing: true,
     }
-    // setLensPosition({ x, y });
-  });
+  );
 
   // 마우스를 이용하여 렌즈 위치를 설정하는 함수
 

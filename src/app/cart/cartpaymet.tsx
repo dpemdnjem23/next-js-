@@ -40,8 +40,10 @@ export default function CartPayment({
   });
 
   const cartItems = boxObj?.filter((item) => {
-    return item.isChecked === true;
+    return item.option !== "end" && item.isChecked === true;
   });
+
+  console.log(cartItems);
 
   // const targetRef2 = useRef();
 
@@ -90,9 +92,9 @@ export default function CartPayment({
     const response = await supabase.from("order").insert({
       id: random,
       name: "아무개",
-      total_cost: totalCost,
+      total_cost: Math.round(totalCost),
       item: cartItems,
-      points: totalCost * 0.1,
+      points: Math.round(totalCost * 0.1),
     });
 
     return response;
@@ -129,15 +131,10 @@ export default function CartPayment({
     //   query: { boxObj: JSON.stringify(boxObj) },
     // });
 
+    mutation.mutate(randomInteger);
+
     Router.push(`/order/${randomInteger}`);
     dispatch(setPageRouterLoading(true));
-
-    try {
-   mutation.mutate(randomInteger);
-
-    } catch (e) {
-      console.error(e);
-    }
   };
 
   //isIntersecting - 정해져있음

@@ -11,15 +11,16 @@ import Image from "next/image";
 import Slide from "./_component/slide";
 import ReactImageMagnify from "react-image-magnify";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   setCardInfoModal,
   setIsImage,
-  setIsShowLens,
-  setLensPosition,
   setPointsInfoModal,
   setProduct,
   setSelectOption,
 } from "@/reducers/slices/ProductSlice";
+
+
 import ButtonBox from "./_component/button";
 import Description from "./_component/description";
 
@@ -90,6 +91,7 @@ export default function ProductDetail() {
         if (!ignore) {
           dispatch(setProduct(data));
           dispatch(setIsImage(data.imageArr[key]));
+          dispatch(setSelectOption([]));
         }
       };
       result();
@@ -256,8 +258,9 @@ export default function ProductDetail() {
         <div className="relative">
           <div className="left float-left w-[520px] relative">
             <div className="relative mb-[30px]">
-              <div className="w-[525px] h-[700px]  relative">
+              <div className="w-[100%] h-[700px]  relative">
                 <Image
+                  className="w-100% h-100%"
                   height={700}
                   width={525}
                   alt=""

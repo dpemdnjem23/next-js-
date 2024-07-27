@@ -29,7 +29,7 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ["/Member/mypage"],
+  matcher: ["/Member/mypage", "/order/:order_code*"],
 };
 
 // /, "/Order/:order_code*"

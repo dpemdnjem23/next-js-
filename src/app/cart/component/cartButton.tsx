@@ -15,16 +15,12 @@ export default function CartButton() {
 
   const boxObj = useSelector((state) => state?.cart?.boxObj);
 
-  const getItem = async () => {
-    const response = await supabase.from("cart").select();
-
-    return response;
-  };
+  const cartItems = queryClient.getQueryData(["carts"]);
 
   const updatedData = async (el) => {
     const { data, error } = await supabase
       .from("cart")
-      .update({ options: el.options })
+      .update({ options: el.options, quantity: el.quantity })
       .eq("id", el.id)
 
       .select();
@@ -38,12 +34,16 @@ export default function CartButton() {
       .delete()
       .eq("id", el.id)
       .select();
+
+    console.log(data);
+
+    return data;
   };
 
   const mutation2 = useMutation({
     mutationFn: deleteData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cartsWith"] });
+      queryClient.invalidateQueries({ queryKey: ["carts"] });
     },
     onError: (err) => {
       console.error(err);
@@ -53,30 +53,12 @@ export default function CartButton() {
   const mutation = useMutation({
     mutationFn: updatedData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cartsWith"] });
+      queryClient.invalidateQueries({ queryKey: ["carts"] });
     },
     onError: (err) => {
       console.error(err);
     },
   });
-
-  const {
-    data: cartItems,
-    isLoading,
-    error,
-    isSuccess,
-    refetch,
-    isRefetching,
-    isError,
-  } = useQuery({
-    queryKey: ["carts"],
-    queryFn: getItem,
-  });
-  if (isError) {
-    throw error;
-  }
-
-  //캐싱 쿼리를 사용하는경우 querykey를
 
   //선택 삭제하기가 아니라 quantity, options update하기
   // 배열에 end만 남아있으면 삭제
@@ -94,9 +76,10 @@ export default function CartButton() {
     if (result) {
       alertDelete();
 
-      router.refresh();
+      // router.refresh();
     }
   };
+  //end를 남겨 놓아야한다.
 
   const alertDelete = async () => {
     // boxObj중에 setChecked true인것만 다시 뺀다.
@@ -118,36 +101,64 @@ export default function CartButton() {
       }, {})
     );
 
-
+    console.log(mergedData, "mer");
     const selectedIdsToRemove = mergedData?.map((item) => item.id);
 
     const updatedCartItems = cartItems?.data?.map((item, idx) => {
       //mergedData에서 사용할
 
       const selectedOptionsToRemove = mergedData?.find((selectedItem) => {
-        console.log(selectedItem, item.id, "selected");
+        console.log("selected", selectedItem);
         return selectedItem.id === item.id;
       });
 
-      console.log(selectedOptionsToRemove, item, "selectedOption");
+      //end를 넣어야되고 qunatity도 줄여야한다.
+      console.log(selectedOptionsToRemove, "selectedOption");
       return {
         ...item,
         options: item.options.filter((option, index) => {
-          console.log(selectedOptionsToRemove);
+          console.log(
+            selectedOptionsToRemove,
+            "remove",
+            selectedIdsToRemove.includes(item.id)
+          );
           if (selectedIdsToRemove.includes(item.id)) {
             console.log(
               option,
-              selectedOptionsToRemove.option,
-              selectedOptionsToRemove.option.includes(option)
+              // selectedOptionsToRemove?.option,
+              selectedOptionsToRemove?.option.includes(option),
+              "item.id가 포함된경우"
             );
-            return selectedOptionsToRemove.option.includes(option);
+            return (
+              option === "end" ||
+              selectedOptionsToRemove?.option.includes(option)
+            );
           }
+          return true;
+        }),
+        quantity: item.quantity.filter((quant, index) => {
+          if (selectedIdsToRemove.includes(item.id)) {
+            console.log(
+              quant,
+              selectedOptionsToRemove,
+              selectedOptionsToRemove?.quantity,
+              selectedOptionsToRemove?.quantity === quant,
+              "quant"
+            );
+            return (
+              // quant !== undefined &&
+              selectedOptionsToRemove?.quantity[index] === quant
+            );
+          }
+          return true;
         }),
       };
 
       // return el
     });
 
+    // updatedCartItems.option.push("end");
+    // return;
     //체크된 cart를 합쳐놨다.
     //cartItems와 비교해서 같은것 제외. 만약 option에
     //아무것도 존재하지않으면 [] delete 존재하면 upsert 한다.
@@ -158,22 +169,18 @@ export default function CartButton() {
     //updateCartItems id가 여러개일텐데,
     //
     //2개이상인경우 upsert로 그대로 넣어준다.
-    console.log(updatedCartItems, "updatedCart");
 
-    try {
-      updatedCartItems?.forEach(async (el) => {
-        if (el?.options?.length > 2) {
-          console.log(el);
-          mutation.mutate(el);
-          // window.location.reload();
-        } else if (el?.options?.length <= 1) {
-          mutation2.mutate(el);
-          window.location.reload();
-        }
-      });
-    } catch (err) {
-      throw err;
-    }
+    updatedCartItems?.forEach(async (el) => {
+      //op
+      
+      if (el?.options?.length >= 2) {
+        mutation.mutate(el);
+        // window.location.reload();
+      } else if (el?.options?.length <= 1) {
+        mutation2.mutate(el);
+        // window.location.reload();
+      }
+    });
 
     // console.log(data, "sdfsdfas");
 

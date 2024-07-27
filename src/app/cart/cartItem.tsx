@@ -37,7 +37,6 @@ export default function CartItem() {
   //버튼 활성화 밑 색깔 바꾸기
   const [count, setCount] = useState<number>(0);
 
-  console.log(userLogin?.login);
   const [isIntersecting, setIsIntersecting] = useState<boolean>(false);
   const [absoluteIntersecting, setAbsoluteIntersecting] =
     useState<boolean>(false);
@@ -98,6 +97,7 @@ export default function CartItem() {
 
   useEffect(() => {
     const checkAll = () => {
+      console.log(cartItems);
       const check = cartItems?.data?.reduce(
         (
           acc: unknown,
@@ -138,7 +138,7 @@ export default function CartItem() {
     let count = 0;
 
     cartItems?.data?.map((el) => {
-      count = count + el.options.length - 1;
+      count = count + el?.options.length - 1;
     });
 
     setCount(count);

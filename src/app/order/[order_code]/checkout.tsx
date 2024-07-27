@@ -1,21 +1,54 @@
+"use state";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import PaymentSystem from "./component/paymentSystem";
+import { setPageRouterLoading } from "@/reducers/slices/CartSlice";
 
 export default function Checkout() {
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const point = useSelector((state) => state.order.point);
 
   const isIntersecting = useSelector((state) => state?.home.isIntersection);
   const cartItems = queryClient.getQueryData(["order"]);
 
+  const [newLeft, setNewLeft] = useState<string>("980px");
+  const [newTop, setNewTop] = useState<string>("151px");
+
+  useEffect(() => {
+    const adjustElementPosition = () => {
+      // console.log(targetRef.current.innerWidth);
+      const pageWidth = window.innerWidth;
+      const fixedPosition = 980;
+
+      if (pageWidth > 1255) {
+        const newLeft = fixedPosition + (pageWidth - 1255) * 0.5;
+        setNewLeft(`${newLeft}px`);
+        setNewTop("192px");
+      } else {
+        setNewLeft(`9800px`);
+        setNewTop("192px");
+      }
+      //만약 페이지가 더작은경우 left를 고정
+    };
+
+    adjustElementPosition();
+
+    window.addEventListener("resize", adjustElementPosition);
+    dispatch(setPageRouterLoading(false));
+
+    return () => {
+      window.removeEventListener("resize", adjustElementPosition);
+    };
+  }, []);
+
   return (
     <div
+      style={{ left: `${newLeft}`, top: `${newTop}` }}
       className={` w-[260px] float-right
     
       ${isIntersecting ? "fixed" : ""}
-    left-[990px] top-[151px]
      bg-[#fff]`}
     >
       <div className="p-[19px] border-[1px] border-[#e9e9e9]">
