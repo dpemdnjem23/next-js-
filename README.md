@@ -31,9 +31,11 @@ _다양한 상품을 구매하실 분들에게 어울립니다.
 
 ## proto-type
 
-사진
+![Group 1](https://github.com/user-attachments/assets/8b038a65-78bc-46a5-84eb-4ff02d573ae2)
+![Group 2](https://github.com/user-attachments/assets/312fa7aa-9f4d-4d1b-847f-93ea609fde7e)
+![Group 3](https://github.com/user-attachments/assets/c40f31ea-e38c-4600-8181-f19f98dda7b2)
+![Group 4 (1)](https://github.com/user-attachments/assets/1db7ba94-4b03-49da-a9f7-171e0e842ec4)
+![Group 5](https://github.com/user-attachments/assets/a6eed1fa-62db-4171-961d-9cbb2da11bd7)
 
-## db-scheme
 
-supabase 사진
 
