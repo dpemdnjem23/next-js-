@@ -1,3 +1,4 @@
+"use client";
 import cartArrow from "../../../../public/ico_cart_arrow_opt.svg";
 import btnDel from "../../../../public/ico_basket_delete_20.svg";
 import checkBoxS from "../../../../public/ico_checkbox_square_20.svg";

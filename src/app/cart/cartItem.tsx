@@ -15,7 +15,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import CartButton from "./component/cartButton";
+import CartButton from "./_component/cartButton";
 
 import { useDispatch, useSelector } from "react-redux";
 import { Cart, setBoxObj } from "@/reducers/slices/CartSlice";
@@ -23,7 +23,7 @@ import { update } from "lodash";
 import CartPayment from "./cartpaymet";
 import useIntersectionObserver from "@/lib/useIntersectionObserver";
 import { root } from "postcss";
-import CartTable from "./component/cartTable";
+import CartTable from "./_component/cartTable";
 import { cookieGet } from "@/utils/cookieUtils";
 
 export default function CartItem() {
