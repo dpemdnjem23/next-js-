@@ -1,11 +1,10 @@
 "use client";
-import FullScreenLoading from "@/app/_component/fullScreenLoading";
 import ShipmentInfo from "./shipmentInfo";
 import { useDispatch, useSelector } from "react-redux";
 import { setPostModal, setSelectState } from "@/reducers/slices/OrderSlice";
-import PostModal from "./component/postModal";
+import PostModal from "./_component/postModal";
 import DaumPostcode from "react-daum-postcode";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import OrderProduct from "./orderProduct";
 import Checkout from "./checkout";
 import PaymentProduct from "./paymentProduct";
@@ -13,34 +12,23 @@ import CouponInfo from "./couponInfo";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib";
 import { useParams } from "next/navigation";
-import PaymentSystem from "./component/paymentSystem";
+import PaymentSystem from "./_component/paymentSystem";
+import Loading from "@/app/_lib/loading";
+import { getOrderData } from "./_lib/getOrderData";
 
 export default function Order() {
-  const params = useParams();
+  // const data = await getOrderData(params.order_code);
 
-  const fetchData = async () => {
-    const response = await supabase
-      .from("order")
-      .select()
-      .eq("id", params.order_code);
+  // console.log(data);
 
-    return response;
-  };
+  // const fetchData = async () => {
+  //   const response = await supabase
+  //     .from("order")
+  //     .select()
+  //     .eq("id", params.order_code);
 
-  const {
-    data: cartItems,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["order"],
-    queryFn: fetchData,
-  });
-
-  if (isError) {
-    throw error;
-  }
-
-  const isLoading = useSelector((state) => state.user.isLoading);
+  //   return response;
+  // };
 
   const postModal = useSelector((state) => state.order.postModal);
   //cartItem
@@ -88,17 +76,17 @@ export default function Order() {
       >
         <div className="relative mb-[60px] after:block after:clear-both">
           <div className="w-[960px] float-left">
-            <ShipmentInfo></ShipmentInfo>
-            <OrderProduct></OrderProduct>
-            <CouponInfo></CouponInfo>
-            <PaymentProduct></PaymentProduct>
+            <Suspense fallback={<Loading></Loading>}>
+              <ShipmentInfo></ShipmentInfo>
+              <OrderProduct></OrderProduct>
+              <CouponInfo></CouponInfo>
+              <PaymentProduct></PaymentProduct>
+            </Suspense>
           </div>
 
           <Checkout></Checkout>
         </div>
       </div>
-
-      {isLoading ? <FullScreenLoading></FullScreenLoading> : ""}
 
       {postModal ? <PostModal></PostModal> : ""}
     </section>

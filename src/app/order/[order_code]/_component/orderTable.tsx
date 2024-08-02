@@ -22,11 +22,13 @@ import { supabase } from "@/lib";
 import { useParams, useRouter } from "next/navigation";
 
 import CartItem from "@/app/cart/cartItem";
+import { getOrderData } from "../_lib/getOrderData";
+import Loading from "@/app/_lib/loading";
 
 export default function OrderTable() {
   const queryClient = useQueryClient();
-  let totalCost: number = 0;
-  const Router = useRouter();
+  // let totalCost: number = 0;
+  const params = useParams();
 
   const [controlQuantity, setControlQuantity] = useState<[]>([]);
   // const cartItems = [];
@@ -34,7 +36,37 @@ export default function OrderTable() {
   // const controlQuantity = useSelector((state) => state?.cart?.controlQuantity);
   const dispatch = useDispatch();
 
-  const cartItems = queryClient.getQueryData(["order"]);
+  // const orderData = async () => {
+  //   const response = await getOrderData(params);
+
+  //   console.log(response, "response");
+
+  //   // return JSON.stringify(response);
+  //   return response;
+  // };
+
+  // orderData();
+
+  // console.log(orderData()); ''
+  // console.log(getOrderData(params));
+
+  const {
+    data: cartItems,
+    error,
+    isError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["orders", params.order_code],
+    queryFn: () => getOrderData(params),
+    staleTime: 1000 * 60 * 30, //30분간만 캐시를 유지하고 삭제
+    gcTime: 1000 * 60 * 30,
+  });
+
+  if (isError) {
+    throw Error(error);
+  }
+
+  // const cartItems = queryClient.getQueryData(["order"]);
   // cartItems?.forEach((item) => {
   //   if (item.option !== "end" && item.isChecked) {
   //     // 이 부분에서 상품의 가격을 추가로 가져와서 총 비용을 계산할 수 있습니다.
@@ -98,15 +130,15 @@ export default function OrderTable() {
         </tr>
       </thead>
       <tbody>
-        {cartItems?.data[0]?.item?.map((items, index: number) => {
+        {cartItems?.[0]?.item?.map((items, index: number) => {
           //checke된 가격만 포함시킨다
 
           const item = JSON.parse(items);
 
-          console.log(item.id, "itemsdfadf");
+          console.log(item);
 
           return (
-            <tr key={index}>
+            <tr key={item.id}>
               <td
                 className="py-[20px] font-sans h-auto 
                    text-[14px] text-[#000]
@@ -158,10 +190,9 @@ export default function OrderTable() {
                     </p>
                   </Link>
                 </div>
-                {/* <div className="w-[calc(100% - 96px)]"></div> */}
+                <div className="w-[calc(100% - 96px)]"></div>
               </td>
               <td className="py-[14px] text-center h-auto border-[#f9f9f9] align-middle font-sans  text-[14px] text-[#000]">
-
                 {item?.quantity}
               </td>
               <td className="py-[14px] text-center h-auto  border-[#f9f9f9] ]">

@@ -2,7 +2,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import PaymentSystem from "./component/paymentSystem";
+import PaymentSystem from "./_component/paymentSystem";
 import { setPageRouterLoading } from "@/reducers/slices/CartSlice";
 
 export default function Checkout() {

@@ -1,6 +1,6 @@
 "use client";
 
-import OrderTable from "./component/orderTable";
+import OrderTable from "./_component/orderTable";
 
 export default function OrderProduct() {
   return (

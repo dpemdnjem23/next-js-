@@ -1,5 +1,5 @@
 "use state";
-import PaymentSystem from "./component/paymentSystem";
+import PaymentSystem from "./_component/paymentSystem";
 import checkBox from "../../../../public/ico_checkbox_square_20.svg";
 import checkBoxY from "../../../../public/ico_checkbox_square_s_20.svg";
 import radioY from "../../../../public/ico_radio_c_20.svg";

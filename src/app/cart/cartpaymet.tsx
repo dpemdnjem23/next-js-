@@ -109,7 +109,7 @@ export default function CartPayment({
       throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["order"] });
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 
