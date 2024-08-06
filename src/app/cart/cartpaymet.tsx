@@ -9,6 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 import { setPageRouterLoading } from "@/reducers/slices/CartSlice";
 import { supabase } from "@/lib";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Loading from "../_lib/loading";
 // import { useRouter } from "next/router";
 
 export default function CartPayment({
@@ -134,7 +135,13 @@ export default function CartPayment({
     mutation.mutate(randomInteger);
 
     Router.push(`/order/${randomInteger}`);
-    dispatch(setPageRouterLoading(true));
+    if (Router.isFallback) {
+      return <Loading></Loading>;
+
+    }
+    // return <Loading></Loading>;
+
+    // dispatch(setPageRouterLoading(true));
   };
 
   //isIntersecting - 정해져있음

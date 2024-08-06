@@ -132,8 +132,10 @@ export default function ShoppingHistoryModal() {
                         >
                           <div className="h-[78px] relative w-[58px]">
                             <Image
-                              layout="fill"
-                              objectFit="cover"
+                              width={58}
+                              height={78}
+                              // layout="fill"
+                              // objectFit="cover"
                               className="w-[100%] h-[100%] object-cover absolute top-0 left-0"
                               src={el.thumbnail}
                               alt=""

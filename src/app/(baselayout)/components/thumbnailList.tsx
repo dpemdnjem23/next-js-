@@ -66,7 +66,6 @@ export default function ThumbnailList({ title, link, child }) {
             .eq("user_id", userInfo?.user?.id)
             .eq("product_id", child[index]?.id);
 
-
           if (error) {
             throw error;
           }
@@ -88,8 +87,8 @@ export default function ThumbnailList({ title, link, child }) {
           const response: any = await supabase
             .from("favorite")
             .select()
-            .eq("user_id", userInfo.user.id)
-            // .eq("product_id", child[index]?.id);
+            .eq("user_id", userInfo.user.id);
+          // .eq("product_id", child[index]?.id);
 
           if (response.error) {
             throw response.error;
@@ -204,8 +203,9 @@ export default function ThumbnailList({ title, link, child }) {
                   <Image
                     width={200}
                     height={50}
-                    className="block w-[100%] h-[100%] object-cover"
-                    alt="벽"
+                    style={{ width: "100%", height: "100%" }}
+                    // className="relative"
+                    alt=""
                     src={el?.thumbnail}
                   ></Image>
                 </div>

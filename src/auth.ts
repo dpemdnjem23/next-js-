@@ -1,9 +1,14 @@
-"use client";
+// "use client";
 import { supabase } from "./lib";
 
 //
-export const token = async () => {
-  const user = await supabase.auth.getUser();
+export const auth = async () => {
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
 
-  console.log(user);
+  console.log(session, "getSession");
+
+  return session?.data;
 };

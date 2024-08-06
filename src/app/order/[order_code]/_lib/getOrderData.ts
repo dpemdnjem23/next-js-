@@ -18,6 +18,7 @@ export async function getOrderData(params) {
       cache: "no-store",
 
       headers: {
+        
         "Content-Type": "application/json",
 
         apikey: supabaseKey,

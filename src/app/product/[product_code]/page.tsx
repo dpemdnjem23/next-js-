@@ -11,6 +11,9 @@ import { supabase } from "@/lib";
 import { setIsImage, setProduct } from "@/reducers/slices/ProductSlice";
 import { useParams } from "next/navigation";
 import CartCheckModal from "./_component/cartCheckModal";
+import RootLayout from "@/app/layout";
+import LoadingComponent from "@/app/cart/_component/rootLayout";
+import Loading from "@/app/_lib/loading";
 
 export default function ProductBuyingPage() {
   const cardModal = useSelector((state) => state?.product?.cardInfoModal);
@@ -24,8 +27,8 @@ export default function ProductBuyingPage() {
   const dispatch = useDispatch();
 
   const isHeart = useSelector((state) => state?.user.isHeart);
-  const userLogin = JSON.parse(localStorage.getItem("userLogin")||'{}');
-  const userInfo = JSON.parse(localStorage.getItem("userInfo")||'{}');
+  const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
   const { product_code } = useParams();
 
   //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기
@@ -48,7 +51,6 @@ export default function ProductBuyingPage() {
         // }
 
         if (!ignore) {
-
           dispatch(setFavorites(data));
         }
       } catch (err) {
@@ -103,6 +105,10 @@ export default function ProductBuyingPage() {
       <ProductDetail></ProductDetail>
       {/* <Checkout></Checkout> */}
       <ZoomLens></ZoomLens>
+  
+
+      <Loading></Loading>
+      {/* <LoadingComponent></LoadingComponent> */}
     </section>
   );
 }

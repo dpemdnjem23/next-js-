@@ -49,45 +49,52 @@ const Home = () => {
   return (
     <section className="">
       <Slider>
-        <Image
-          width={1920}
-          height={600}
-          // width={}
-          className="block relative w-100% h-[600px] "
-          // objectFit="cover"
-          alt=""
-          src={mainSliderImage}
-          // layout="fill"
-        ></Image>
+        <span className=" relative block w-100% h-100%">
+          <Image
+            style={{ width: "auto" }}
+            // fill
+            height={600}
+            priority
+            alt=""
+            src={mainSliderImage}
+          ></Image>
+        </span>
 
-        <Image
-          className="block h-[600px] relative w-[100%]"
-          width={1920}
-          height={600}
-          alt=""
-          src={mainSliderImage2}
-        ></Image>
-        <Image
-          className="block h-[600px] relative w-[100%]"
-          width={1920}
-          height={600}
-          alt=""
-          src={mainSliderImage3}
-        ></Image>
-        <Image
-          className="block h-[600px] relative w-[100%]"
-          width={1920}
-          height={600}
-          alt=""
-          src={mainSliderImage4}
-        ></Image>
-        <Image
-          className="block h-[600px] relative w-[100%]"
-          width={1920}
-          height={600}
-          alt=""
-          src={mainSliderImage5}
-        ></Image>
+        <span className=" relative block w-100% h-100%">
+          <Image
+            style={{ width: "auto" }}
+            height={600}
+
+            alt=""
+            src={mainSliderImage2}
+          ></Image>
+        </span>
+        <span className=" relative block w-100% h-100%">
+          <Image
+            style={{ width: "auto" }}
+            height={600}
+
+            alt=""
+            src={mainSliderImage3}
+          ></Image>
+        </span>
+
+        <span className=" relative block w-100% h-100%">
+          <Image
+            style={{  width: "auto" }}
+            alt=""
+            src={mainSliderImage4}
+          ></Image>
+        </span>
+
+        <span className=" relative block w-100% h-100%">
+          <Image
+            style={{ width: "auto" }}
+            alt=""
+            height={600}
+            src={mainSliderImage5}
+          ></Image>
+        </span>
       </Slider>
       <div className=" w-[1350px]">
         <ThumbnailList

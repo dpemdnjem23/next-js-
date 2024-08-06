@@ -25,12 +25,13 @@ import useIntersectionObserver from "@/lib/useIntersectionObserver";
 import { root } from "postcss";
 import CartTable from "./_component/cartTable";
 import { cookieGet } from "@/utils/cookieUtils";
+import { getCartItems } from "./_lib/getCartItmes";
 
 export default function CartItem() {
   const [work, setWork] = useState<boolean>(false);
 
-  const user = JSON.parse(localStorage.getItem("userInfo"));
-  const userLogin = JSON.parse(localStorage.getItem("userLogin"));
+  const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
 
   const targetRef = useRef();
   const targetRef2 = useRef();
@@ -42,35 +43,6 @@ export default function CartItem() {
     useState<boolean>(false);
   const controlQuantity = useSelector((state) => state.cart?.controlQuantity);
 
-  const getItem = async () => {
-    if (userLogin?.login === undefined) {
-      const cookie = await cookieGet("cartId");
-
-      const response = await supabase
-        .from("cart")
-        .select(
-          `id,options,cart_id,quantity,user_id,product(id,product_code,price,thumbnail,product_code,brand,front_multiline,discount)`
-        )
-        .eq("cart_id", cookie)
-
-        .order("id", { ascending: true });
-      setWork(!work);
-
-      return response;
-    } else if (userLogin?.login) {
-      const response = await supabase
-        .from("cart")
-        .select(
-          `id,options,cart_id,quantity,user_id,product(id,price,,product_code,thumbnail,product_code,brand,front_multiline,discount)`
-        )
-        .order("id", { ascending: true })
-        .eq("user_id", user?.user?.id);
-      setWork(!work);
-
-      return response;
-    }
-  };
-
   //캐싱 쿼리를 사용하는경우 querykey를
 
   // if (isRefetching) {
@@ -78,6 +50,8 @@ export default function CartItem() {
   // }
   //수량
   const dispatch = useDispatch();
+
+  const queryClient = new QueryClient();
 
   const {
     data: cartItems,
@@ -89,11 +63,8 @@ export default function CartItem() {
     isError,
   } = useQuery({
     queryKey: ["carts"],
-    queryFn: getItem,
+    queryFn: () => getCartItems(userLogin, user),
   });
-  if (isError) {
-    throw error;
-  }
 
   useEffect(() => {
     const checkAll = () => {
@@ -132,7 +103,9 @@ export default function CartItem() {
     };
 
     checkAll();
-  }, [isSuccess]);
+  }, []);
+
+  //isSuccess
 
   const countCart = () => {
     let count = 0;
