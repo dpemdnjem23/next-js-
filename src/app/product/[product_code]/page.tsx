@@ -1,4 +1,3 @@
-"use client";
 import Checkout from "./_component/button";
 import ZoomLens from "./zoomlens";
 import ProductDetail from "./productDetail";
@@ -12,15 +11,15 @@ import { setIsImage, setProduct } from "@/reducers/slices/ProductSlice";
 import { useParams } from "next/navigation";
 import CartCheckModal from "./_component/cartCheckModal";
 import RootLayout from "@/app/layout";
-import LoadingComponent from "@/app/cart/_component/rootLayout";
 import Loading from "@/app/_lib/loading";
+import Modals from "./_component/modals";
 
 export default function ProductBuyingPage() {
-  const cardModal = useSelector((state) => state?.product?.cardInfoModal);
   const personalHeart = useSelector((state) => state?.user?.personalHeart);
   const cartCheckModal = useSelector((state) => state?.product?.cartCheckModal);
   const favorites = useSelector((state) => state?.user.favorites);
 
+  const cardInfoModal = useSelector((state)=> state?.product.cardInfoModal)
   const product = useSelector((state) => state?.product.product);
 
   const pointsModal = useSelector((state) => state?.product.pointsInfoModal);
@@ -33,81 +32,15 @@ export default function ProductBuyingPage() {
 
   //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기
   //heart는 product번호랑 매칭시켜야한다.
-  useEffect(() => {
-    let ignore = false;
-    const result = async () => {
-      try {
-        if (!product.id) {
-          return; // product.id가 없으면 요청을 보내지 않고 함수를 종료
-        }
-        const { data, error }: any = await supabase
-          .from("favorite")
-          .select()
-          .eq("user_id", userInfo?.user?.id)
-          .eq("product_id", product?.id);
 
-        // if (response.error) {
-        //   throw response.error;
-        // }
-
-        if (!ignore) {
-          dispatch(setFavorites(data));
-        }
-      } catch (err) {
-        throw err;
-      }
-    };
-
-    result();
-
-    return () => {
-      ignore = true;
-    };
-  }, [product?.id]);
-
-  useEffect(() => {
-    let ignore = false;
-
-    try {
-      if (!product.id) {
-        return; // product.id가 없으면 요청을 보내지 않고 함수를 종료
-      }
-
-      const result = async () => {
-        const { data, error }: any = await supabase
-          .from("favorite")
-          .select()
-          .eq("product_id", product?.id);
-
-        // if (error) {
-        //   throw error;
-        // }
-
-        if (!ignore) {
-          dispatch(setIsHeart(data));
-        }
-      };
-
-      result();
-
-      return () => {
-        ignore = true;
-      };
-    } catch (err) {
-      throw err;
-    }
-  }, [favorites, product?.id]);
   return (
     <section className=" block">
-      {cardModal ? <CardInfoModal></CardInfoModal> : null}
-      {pointsModal ? <PointsInfoModal></PointsInfoModal> : null}
-      {cartCheckModal ? <CartCheckModal></CartCheckModal> : null}
+<Modals></Modals>
       <ProductDetail></ProductDetail>
       {/* <Checkout></Checkout> */}
       <ZoomLens></ZoomLens>
-  
 
-      <Loading></Loading>
+      {/* <Loading></Loading> */}
       {/* <LoadingComponent></LoadingComponent> */}
     </section>
   );

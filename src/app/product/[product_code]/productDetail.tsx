@@ -20,7 +20,6 @@ import {
   setSelectOption,
 } from "@/reducers/slices/ProductSlice";
 
-
 import ButtonBox from "./_component/button";
 import Description from "./_component/description";
 
@@ -244,7 +243,7 @@ export default function ProductDetail() {
     dispatch(setCardInfoModal(true));
   };
 
-  // console.log(product[0].imageArr);
+  console.log(product?.imageArr[findTrueKeys()], "랴ㅜㅇ");
   return (
     <div
       onClick={handleShowOptionFalse}

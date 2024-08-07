@@ -201,10 +201,11 @@ export default function ThumbnailList({ title, link, child }) {
               <Link href={`/product/${el?.product_code}`}>
                 <div className="relative mb-[16px] h-[260px] overflow-hidden">
                   <Image
-                    width={200}
-                    height={50}
-                    style={{ width: "100%", height: "100%" }}
-                    // className="relative"
+                    // width={200}
+                    // height={50}
+                    fill
+                    // style={{ width: "auto", height: "auto" }}
+                    className="object-cover"
                     alt=""
                     src={el?.thumbnail}
                   ></Image>

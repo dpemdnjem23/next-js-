@@ -49,50 +49,51 @@ const Home = () => {
   return (
     <section className="">
       <Slider>
-        <span className=" relative block w-100% h-100%">
+        <span className=" relative block h-[600px] w-100% ">
           <Image
-            style={{ width: "auto" }}
-            // fill
-            height={600}
+            fill
+            className=" object-cover"
+            // className="object-cover h-[600px]"
+
             priority
             alt=""
             src={mainSliderImage}
           ></Image>
         </span>
 
-        <span className=" relative block w-100% h-100%">
+        <span className=" relative block h-[600px] w-100% ">
           <Image
-            style={{ width: "auto" }}
-            height={600}
-
+            fill
+            className=" object-cover"
             alt=""
             src={mainSliderImage2}
           ></Image>
         </span>
-        <span className=" relative block w-100% h-100%">
+        <span className=" relative block h-[600px] w-100% ">
           <Image
-            style={{ width: "auto" }}
-            height={600}
-
+            fill
+            className=" object-cover"
             alt=""
             src={mainSliderImage3}
           ></Image>
         </span>
 
-        <span className=" relative block w-100% h-100%">
+        <span className=" relative block h-[600px] w-100% ">
           <Image
-            style={{  width: "auto" }}
+            fill
+            className=" object-cover"
             alt=""
             src={mainSliderImage4}
           ></Image>
         </span>
 
-        <span className=" relative block w-100% h-100%">
+        <span className=" relative block h-[600px] w-100% ">
           <Image
-            style={{ width: "auto" }}
+            fill
+            className=" object-cover"
             alt=""
-            height={600}
             src={mainSliderImage5}
+            sizes="100vw"
           ></Image>
         </span>
       </Slider>
