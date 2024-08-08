@@ -57,7 +57,7 @@ export default function OrderTable() {
     isLoading,
   } = useQuery({
     queryKey: ["orders", params.order_code],
-    queryFn: () => getOrderData(params),
+    queryFn: getOrderData,
     staleTime: 1000 * 60 * 30, //30분간만 캐시를 유지하고 삭제
     gcTime: 1000 * 60 * 30,
   });

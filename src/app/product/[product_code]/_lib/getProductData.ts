@@ -29,7 +29,7 @@ export async function getProductData({
   );
 
   const jsonData = await response.json();
-  console.log(jsonData);
+  console.log(jsonData, "jsonData");
 
   if (!response.ok) {
     throw new Error("Failed to fetch data");

@@ -1,4 +1,5 @@
 "use client";
+import { supabase } from "@/lib";
 import { setFavorites, setIsHeart } from "@/reducers/slices/UserSlice";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
@@ -50,7 +51,7 @@ export default function useHeartState() {
     return () => {
       ignore = true;
     };
-  }, [product?.id]);
+  }, [dispatch, product.id, userInfo?.user?.id]);
 
   useEffect(() => {
     let ignore = false;

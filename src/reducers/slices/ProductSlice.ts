@@ -15,7 +15,7 @@ export type props = {
   imageArr: string[] | null;
   product_code: number | null;
   thumbnail: string;
-
+showOption:boolean
   country: string;
   company: string;
 };
@@ -44,6 +44,7 @@ const initialState: Home = {
   image: "",
   selectOption: [],
   cartCheckModal: false,
+  showOption:false,
 
   cardInfoModal: false,
   pointsInfoModal: false,
@@ -73,6 +74,10 @@ const ProductSlice = createSlice({
     setIsImage(state, action: PayloadAction<string>) {
       state.image = action.payload;
     },
+
+    setShowOption(state, action: PayloadAction<boolean>) {
+      state.showOption = action.payload;
+    },
     setCardInfoModal(state, action: PayloadAction<boolean>) {
       state.cardInfoModal = action.payload;
     },
@@ -98,6 +103,7 @@ export const {
   setProduct,
   setSelectOption,
   setCartCheckModal,
+  setShowOption,
 } = ProductSlice.actions;
 // export const selectCount = (state) => state.counter.value;
 export default ProductSlice.reducer;

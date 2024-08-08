@@ -1,20 +1,16 @@
 import Checkout from "./_component/button";
 import ZoomLens from "./zoomlens";
 import ProductDetail from "./productDetail";
-import CardInfoModal from "./_component/cardInfoModal";
-import { useDispatch, useSelector } from "react-redux";
-import PointsInfoModal from "./_component/pointsInfoModal";
-import { setFavorites, setIsHeart } from "@/reducers/slices/UserSlice";
-import { useEffect } from "react";
-import { supabase } from "@/lib";
-import { setIsImage, setProduct } from "@/reducers/slices/ProductSlice";
-import CartCheckModal from "./_component/cartCheckModal";
-import RootLayout from "@/app/layout";
-import Loading from "@/app/_lib/loading";
-import Modals from "./_component/modals";
-import { QueryClient } from "@tanstack/react-query";
+
+import Modals from "./modals";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { getProductData } from "./_lib/getProductData";
-import { useRouter } from "next/navigation";
+
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export default async function Page({
   params,
@@ -28,17 +24,21 @@ export default async function Page({
 
   const { product_code } = params;
 
-   await queryClient.prefetchQuery({
+  await queryClient.prefetchQuery({
     queryKey: ["product", product_code],
     queryFn: getProductData,
   });
 
+  const dehydratedState = dehydrate(queryClient);
+
   return (
     <section className=" block">
-      <Modals></Modals>
-      <ProductDetail></ProductDetail>
-      {/* <Checkout></Checkout> */}
-      <ZoomLens></ZoomLens>
+      <HydrationBoundary state={dehydratedState}>
+        <Modals></Modals>
+        <ProductDetail></ProductDetail>
+        {/* <Checkout></Checkout> */}
+        <ZoomLens></ZoomLens>
+      </HydrationBoundary>
 
       {/* <Loading></Loading> */}
       {/* <LoadingComponent></LoadingComponent> */}

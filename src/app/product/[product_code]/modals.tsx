@@ -1,8 +1,8 @@
 "use client";
 import { useSelector } from "react-redux";
-import CardInfoModal from "./cardInfoModal";
-import PointsInfoModal from "./pointsInfoModal";
-import CartCheckModal from "./cartCheckModal";
+import CardInfoModal from "./_component/cardInfoModal";
+import PointsInfoModal from "./_component/pointsInfoModal";
+import CartCheckModal from "./_component/cartCheckModal";
 
 export default function Modals() {
   const cartCheckModal = useSelector((state) => state?.product?.cartCheckModal);
