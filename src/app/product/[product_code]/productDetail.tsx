@@ -22,6 +22,8 @@ import {
 
 import ButtonBox from "./_component/button";
 import Description from "./_component/description";
+import { useQuery } from "@tanstack/react-query";
+import { getProductData } from "./_lib/getProductData";
 
 type props = {
   id: number;
@@ -58,7 +60,6 @@ export default function ProductDetail() {
   const product = useSelector((state) => state?.product.product);
   const { product_code } = useParams();
 
-  const [key, setKey] = useState<number>(0);
   //option창을 여는것
   const [showOption, setShowOption] = useState<boolean>(false);
 
@@ -72,36 +73,12 @@ export default function ProductDetail() {
   // )
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    let ignore = false;
 
-    try {
-      const result = async () => {
-        const { data, error }: any = await supabase
-          .from("product")
-          .select()
-          .eq("product_code", product_code)
-          .single();
+  const { data:prodcut} = useQuery({
 
-        if (error) {
-          throw error;
-        }
+    queryKey:['product',product_code],queryFn:getProductData
+  })
 
-        if (!ignore) {
-          dispatch(setProduct(data));
-          dispatch(setIsImage(data.imageArr[key]));
-          dispatch(setSelectOption([]));
-        }
-      };
-      result();
-
-      return () => {
-        ignore = true;
-      };
-    } catch (err) {
-      throw err;
-    }
-  }, [product?.id]);
 
   //클릭하면 active 변화를주어 css변화를 준다.
   //active 된 이미지를 메인화면에 띄워준다.

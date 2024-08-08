@@ -1,3 +1,4 @@
+"use client";
 import { useSelector } from "react-redux";
 import CardInfoModal from "./cardInfoModal";
 import PointsInfoModal from "./pointsInfoModal";
