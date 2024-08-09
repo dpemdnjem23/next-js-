@@ -13,7 +13,7 @@ export async function getProductData({
   const [_, product_code] = queryKey;
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/product?product_code=eq.${product_code}`,
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/product?product_code=eq.${product_code}&select=*&limit=1`,
     {
       next: { tags: ["product", product_code] },
       credentials: "include",
@@ -53,5 +53,7 @@ export async function getProductData({
   // };
   // result();
 
-  return jsonData;
+  if (Array.isArray(jsonData) && jsonData.length === 1) {
+    return jsonData[0]; // Return the single product object
+  }
 }

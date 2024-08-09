@@ -1,4 +1,3 @@
-"use client";
 import Image from "next/image";
 import Slider from "./components/slider";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,30 +15,53 @@ import { setIsHeader, setIsModal } from "@/reducers/slices/HomeSlice";
 import { result } from "lodash";
 import ShoppingHistoryModal from "../@ modal/shoppingHistory/page";
 import { supabase } from "@/lib";
-const Home = () => {
-  const dispatch = useDispatch();
-  const [product, setProduct] = useState<any>([]);
-  useEffect(() => {
-    try {
-      const result = async () => {
-        const { data: product, error } = await supabase.from("product").select(`
-        id,brand,front,front_multiline,price,discount,imageArr,general_info,thumbnail,option,product_code,
-        category(id, category_name
-        )
-      
-        `);
+import { Metadata } from "next";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { getProductsData } from "./_lib/getProductsData";
 
-        if (error) {
-          throw Error(" 메인 페이지 product 생성 에러");
-        }
+export const metadata: Metadata = {
+  title: "홈 / W",
+  description: "홈",
+};
 
-        setProduct(product);
-      };
-      result();
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+const Home = async () => {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["products"],
+    queryFn: getProductsData,
+  });
+
+  const dehydratedState = dehydrate(queryClient);
+
+  // const [product, setProduct] = useState<any>([]);
+  // useEffect(() => {
+  //   try {
+  //     const result = async () => {
+  //       const { data: product, error } = await supabase.from("product").select(`
+  //       id,brand,front,front_multiline,price,discount,imageArr,general_info,thumbnail,option,product_code,
+  //       category(id, category_name
+  //       )
+
+  //       `);
+
+  //       if (error) {
+  //         throw Error(" 메인 페이지 product 생성 에러");
+  //       }
+
+  //       setProduct(product);
+  //     };
+  //     result();
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }, []);
   // console.log(product, "product");
 
   // const closeModal = () => {
@@ -98,26 +120,28 @@ const Home = () => {
         </span>
       </Slider>
       <div className=" w-[1350px]">
-        <ThumbnailList
-          title={"MEN"}
-          child={product.filter((el) => el.category.category_name === "men")}
-          link={"/men"}
-        ></ThumbnailList>
-        <ThumbnailList
-          title={"WOMEN"}
-          child={product.filter((el) => el.category.category_name === "women")}
-          link={"/women"}
-        ></ThumbnailList>
-        <ThumbnailList
-          title={"LIFE"}
-          child={product.filter((el) => el.category.category_name === "life")}
-          link={"/life"}
-        ></ThumbnailList>
-        <ThumbnailList
-          title={"BEAUTY"}
-          child={product.filter((el) => el.category.category_name === "beauty")}
-          link={"/beauty"}
-        ></ThumbnailList>
+        <HydrationBoundary state={dehydratedState}>
+          <ThumbnailList
+            title={"MEN"}
+            categoryName={"men"}
+            link={"/men"}
+          ></ThumbnailList>
+          <ThumbnailList
+            title={"WOMEN"}
+            categoryName={"women"}
+            link={"/women"}
+          ></ThumbnailList>
+          <ThumbnailList
+            title={"LIFE"}
+            categoryName={"life"}
+            link={"/life"}
+          ></ThumbnailList>
+          <ThumbnailList
+            title={"BEAUTY"}
+            categoryName={"beauty"}
+            link={"/beauty"}
+          ></ThumbnailList>
+        </HydrationBoundary>
       </div>
     </section>
   );

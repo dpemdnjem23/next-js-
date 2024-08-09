@@ -18,6 +18,7 @@ import {
   setPointsInfoModal,
   setProduct,
   setSelectOption,
+  setShowOption,
 } from "@/reducers/slices/ProductSlice";
 
 import ButtonBox from "./_component/button";
@@ -25,6 +26,7 @@ import Description from "./_component/description";
 import { useQuery } from "@tanstack/react-query";
 import { getProductData } from "./_lib/getProductData";
 import SelectOptions from "./_component/selectOptions";
+import Loading from "@/app/_lib/loading";
 
 type props = {
   id: number;
@@ -63,10 +65,6 @@ export default function ProductDetail() {
 
   const { product_code }: any = params;
 
-
-
-  const [showOption, setShowOption] = useState<boolean>(false);
-
   //option창을 여는것
 
   // const product = useSelector((state) => state?.product.product);
@@ -79,17 +77,18 @@ export default function ProductDetail() {
   //   (state: { product: string }) => state?.product.image
   // )
   const dispatch = useDispatch();
+  const selectOption = useSelector((state) => state?.product?.selectOption);
 
-  const { data: product } = useQuery({
+  const { data: product, isLoading } = useQuery({
     queryKey: ["product", product_code],
     queryFn: getProductData,
-    staleTime: 1000 * 60 * 30,
-    gcTime: 1000 * 60 * 30,
+    // staleTime: 1000 * 60 * 30,
+    // gcTime: 1000 * 60 * 30,
   });
 
-  console.log(product);
-
-  const selectOption = useSelector((state) => state?.product?.selectOption);
+  if (isLoading) {
+    return <Loading></Loading>;
+  }
 
   //클릭하면 active 변화를주어 css변화를 준다.
   //active 된 이미지를 메인화면에 띄워준다.
@@ -198,11 +197,8 @@ export default function ProductDetail() {
   };
 
   const handleShowOptionFalse = () => {
-    setShowOption(false);
+    dispatch(setShowOption(false));
   };
-
-
-  console.log(product?.imageArr[findTrueKeys()], "랴ㅜㅇ");
   return (
     <div
       onClick={handleShowOptionFalse}
@@ -222,7 +218,7 @@ export default function ProductDetail() {
                   height={700}
                   width={525}
                   alt=""
-                  src={product?.imageArr[findTrueKeys()]}
+                  src={product?.imageArr?.[findTrueKeys()]}
                 ></Image>
               </div>
               <div className="mt-[20px] h-[80px] overflow-hidden">
@@ -434,7 +430,7 @@ export default function ProductDetail() {
                   색상/사이즈
                 </dt>
                 <dd className="py-[5px] float-left m-0 w-[535px] relative px-0">
-                  <SelectOptions></SelectOptions>
+                  <SelectOptions product={product}></SelectOptions>
                 </dd>
               </dl>
               <div className="clear-both block"></div>

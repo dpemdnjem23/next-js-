@@ -1,20 +1,18 @@
+"use client";
 import { setSelectOption, setShowOption } from "@/reducers/slices/ProductSlice";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { getProductData } from "../_lib/getProductData";
 
-export default function SelectOptions() {
+export default function SelectOptions({ product }) {
   const params = useParams();
   const dispatch = useDispatch();
   const selectOption = useSelector((state) => state?.product?.selectOption);
 
   const showOption = useSelector((state) => state?.product?.showOption);
-  const { product_code } = params;
 
-  const queryClient = new QueryClient();
-
-  const product = queryClient.getQueryData(["product", product_code]);
 
   const handleSelectOption = (el: string, index: number) => {
     //option을 추가한다. 기존에 옵션이 있다면 추가하지 않는다.
@@ -39,15 +37,16 @@ export default function SelectOptions() {
 
     dispatch(setShowOption(false));
   };
-  setShowOption;
 
   const handleShowOption = () => {
     if (showOption) {
       dispatch(setShowOption(false));
     } else {
-      dispatch(setShowOption(false));
+      dispatch(setShowOption(true));
     }
   };
+
+  // console.log(product);
 
   return (
     <Fragment>
@@ -88,7 +87,7 @@ export default function SelectOptions() {
                 선택해 주세요.
               </button>
             </li>
-            {product?.option.size.map((el, index: number) => {
+            {product?.option?.size.map((el, index: number) => {
               return (
                 <li
                   onClick={() => handleSelectOption(el, index)}

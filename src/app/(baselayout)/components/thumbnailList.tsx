@@ -14,9 +14,18 @@ import { useEffect, useState } from "react";
 import { onClickProduct } from "@/lib/historyLocalstorage";
 import { supabase } from "@/lib";
 import { useDispatch, useSelector } from "react-redux";
-import { setFavorites } from "@/reducers/slices/UserSlice";
 
-export default function ThumbnailList({ title, link, child }) {
+import { setFavorites } from "@/reducers/slices/UserSlice";
+import { useQuery } from "@tanstack/react-query";
+import { getProductsData } from "../_lib/getProductsData";
+
+export default function ThumbnailList({ title, link, categoryName }) {
+  const { data: products } = useQuery({ queryKey: ["products"] });
+
+  const product = products?.filter(
+    (product) => product.category.category_name === categoryName
+  );
+
   const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || `{}`);
 
@@ -44,12 +53,11 @@ export default function ThumbnailList({ title, link, child }) {
       if (userLogin.login) {
         //db에 추가하려면, 없어야한다. 있는경우 삭제한다.
 
-        console.log(child[index]?.id);
         const { data, error } = await supabase
           .from("favorite")
           .select()
           .eq("user_id", userInfo?.user?.id)
-          .eq("product_id", child[index]?.id);
+          .eq("product_id", product[index]?.id);
 
         if (error) {
           throw error;
@@ -64,7 +72,7 @@ export default function ThumbnailList({ title, link, child }) {
             .from("favorite")
             .delete()
             .eq("user_id", userInfo?.user?.id)
-            .eq("product_id", child[index]?.id);
+            .eq("product_id", product[index]?.id);
 
           if (error) {
             throw error;
@@ -165,7 +173,7 @@ export default function ThumbnailList({ title, link, child }) {
         </Link>
       </h3>
       <ul className="float-left mr-[-22px] ">
-        {child.map((el, index: number) => {
+        {product?.map((el, index: number) => {
           // const s = favorites.some((fav) => {
           //   console.log(fav.product_id, el.id);
 
