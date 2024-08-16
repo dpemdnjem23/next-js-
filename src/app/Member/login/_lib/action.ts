@@ -1,5 +1,5 @@
 "use server";
-import { createSupabaseClient, createSupabaseServer } from "@/lib";
+import { createSupabaseServer } from "@/lib";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -15,7 +15,7 @@ export async function login({ id, password }) {
     }
     const { auth } = await createSupabaseServer();
 
-    const { error } = await auth.signInWithPassword(data);
+    const { data: signData, error } = await auth.signInWithPassword(data);
 
     // if (error) {
     //   throw error;
@@ -24,7 +24,7 @@ export async function login({ id, password }) {
       throw error;
     }
 
-    return { errorMessage: null };
+    return { errorMessage: null, data: signData };
 
     return signData;
   } catch (error) {

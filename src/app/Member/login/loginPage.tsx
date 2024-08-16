@@ -39,16 +39,15 @@ export default function LoginPage() {
       //아이디를 찾는경우 비밀번호 검증으로
 
       if (id && password) {
-        const data = await login({ id, password });
+        const { errorMessage, data } = await login({ id, password });
 
         // const { data, error } = await supabase.auth.signInWithPassword({
         //   email: id,
         //   password: password,
         // });
+        console.log(errorMessage, data);
 
-        console.log(data);
-
-        if (!data) {
+        if (errorMessage) {
           setMessage(
             "아이디 또는 비밀번호가 일치하지 않습니다. 다시 입력해주세요"
           );
@@ -62,12 +61,12 @@ export default function LoginPage() {
 
         // console.log(user, "user", error);
 
-        localStorage.setItem("userInfo", JSON.stringify(data));
+        localStorage.setItem("userInfo", JSON.stringify(data?.user));
         //data 중에서 id를 가져온다.
         setMessage("");
         dispatch(setIsLogin(true));
-
-        // window.location.assign("/");
+c
+        window.location.assign("/");
         let cartId = await cookieGet("cartId");
         //id를 가져와서 업데이트 동일한 cart_id인경우
         const select = {
