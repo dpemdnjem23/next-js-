@@ -26,8 +26,6 @@ export default function ClaimButton() {
           .from("payment")
           .update({ progress: "환불완료" })
           .eq("order_id", order_code);
-        
-        
 
         router.push("/Member/mypage/orderList");
       } catch (err: any) {

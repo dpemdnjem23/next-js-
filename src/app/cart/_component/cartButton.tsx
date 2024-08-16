@@ -172,7 +172,7 @@ export default function CartButton() {
 
     updatedCartItems?.forEach(async (el) => {
       //op
-      
+
       if (el?.options?.length >= 2) {
         mutation.mutate(el);
         // window.location.reload();

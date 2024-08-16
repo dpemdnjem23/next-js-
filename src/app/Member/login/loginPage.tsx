@@ -16,6 +16,7 @@ import { refresh } from "../../../utils/jwtUitls";
 import { useDispatch } from "react-redux";
 import { cookieCreate, cookieGet } from "@/utils/cookieUtils";
 import { setIsLogin } from "@/reducers/slices/UserSlice";
+import { cart, login } from "./_lib/action";
 
 export default function LoginPage() {
   const [id, setId] = useState<string>("");
@@ -38,39 +39,50 @@ export default function LoginPage() {
       //아이디를 찾는경우 비밀번호 검증으로
 
       if (id && password) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: id,
-          password: password,
-        });
+        const data = await login({ id, password });
 
-        if (error) {
+        // const { data, error } = await supabase.auth.signInWithPassword({
+        //   email: id,
+        //   password: password,
+        // });
+
+        console.log(data);
+
+        if (!data) {
           setMessage(
             "아이디 또는 비밀번호가 일치하지 않습니다. 다시 입력해주세요"
           );
-          throw error;
+          return;
         }
 
-        const user = await supabase.auth.getUser();
+        // const {
+        //   data: { user },
+        //   error,
+        // } = await supabase.auth.getUser();
 
-        localStorage.setItem("userInfo", JSON.stringify(user.data));
+        // console.log(user, "user", error);
+
+        localStorage.setItem("userInfo", JSON.stringify(data));
         //data 중에서 id를 가져온다.
         setMessage("");
         dispatch(setIsLogin(true));
 
-        window.location.assign("/");
+        // window.location.assign("/");
         let cartId = await cookieGet("cartId");
         //id를 가져와서 업데이트 동일한 cart_id인경우
         const select = {
-          user_id: user?.data?.user?.id || null,
+          user_id: data?.user?.id || null,
         };
 
         //option이 여러개
+
+        //cart mutate 해야됨
         const response = await supabase
           .from("cart")
           .update(select)
           .eq("cart_id", cartId)
           .select();
-        console.log(response, "update");
+
         //비밀번호가 일치하지 않는경우
       } else if (!id && !password) {
         setMessage("아이디를 입력해주세요");
@@ -94,7 +106,7 @@ export default function LoginPage() {
   };
 
   return (
-    <>
+    <form>
       <div className="pt-[55px] pb-[36px] relative min-w-[1200px]">
         <h3 className=" text-[40px] text-center uppercase">Login</h3>
       </div>
@@ -192,6 +204,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </>
+    </form>
   );
 }

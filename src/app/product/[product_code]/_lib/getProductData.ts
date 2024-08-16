@@ -1,9 +1,6 @@
 "use server";
-import { supabase } from "@/lib";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY as string;
+import { supabaseKey, supabaseUrl } from "@/lib";
 
 export async function getProductData({
   queryKey,

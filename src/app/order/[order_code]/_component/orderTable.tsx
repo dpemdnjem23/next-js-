@@ -76,8 +76,6 @@ export default function OrderTable() {
   //   }
   // });
 
-
-  
   return (
     <table
       className="w-[100%]
@@ -135,7 +133,6 @@ export default function OrderTable() {
         {cartItems?.[0]?.item?.map((items, index: number) => {
           //checke된 가격만 포함시킨다
 
-          
           const item = JSON.parse(items);
 
           console.log(item);

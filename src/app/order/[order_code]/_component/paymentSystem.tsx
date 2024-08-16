@@ -103,7 +103,6 @@ export default function PaymentSystem() {
             await requestCancel(rsp.imp_uid);
             throw Error("결제 실패");
           } // 결제 성공 시 로직
-        
 
           const notified = await axios.post(
             `http://localhost:3000/api/payment/complete`,
@@ -198,9 +197,12 @@ export default function PaymentSystem() {
 
   const requestCancel = async (imp_uid: string) => {
     try {
-      const response = await axios.post("http://localhost:3000/api/payment/cancel", {
-        imp_uid: imp_uid,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/payment/cancel",
+        {
+          imp_uid: imp_uid,
+        }
+      );
 
       const result = response.data;
 

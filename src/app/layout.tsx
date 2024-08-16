@@ -4,14 +4,14 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 
-import ScrollButton from "@/app/(baselayout)/components/ScrollButton";
+import ScrollButton from "@/app/(baselayout)/_components/ScrollButton";
 import loginImage from "../../public/ico_login.svg";
 import cartImage from "../../public/ico_bag.svg";
 import joinImage from "../../public/ico_join.svg";
 import logoImage from "../../public/ico_gnb_logo_176.svg";
 import Image from "next/image";
 // import { useState } from "react";
-import Category from "./(baselayout)/components/category";
+import Category from "./(baselayout)/_components/category";
 import Header from "@/app/_component/header";
 import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
@@ -42,7 +42,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <ReduxProvider>
           <ReactQueryProviders>
-            
             <Header></Header>
             <ScrollButton></ScrollButton>
             <ShoppingHistoryModal></ShoppingHistoryModal>

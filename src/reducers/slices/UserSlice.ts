@@ -33,6 +33,7 @@ const UserSlice = createSlice({
       const data2 = JSON.stringify(data);
       localStorage.setItem("userLogin", data2);
       localStorage.removeItem("userLogin");
+      localStorage.removeItem("userInfo");
     },
 
     setIsHeart(state, action: PayloadAction<[]>) {

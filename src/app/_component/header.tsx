@@ -8,9 +8,9 @@ import cartImage from "../../../public/ico_bag.svg";
 import joinImage from "../../../public/ico_join.svg";
 import logoImage from "../../../public/ico_gnb_logo_176.svg";
 import Image from "next/image";
-import Category from "../(baselayout)/components/category";
+import Category from "../(baselayout)/_components/category";
 import ReduxProvider from "@/reducers";
-import LogoutButton from "@/app/(baselayout)/components/signout";
+import LogoutButton from "@/app/_component/signoutButton";
 import { useInView } from "react-intersection-observer";
 import { setIsHeader, setIsIntersection } from "@/reducers/slices/HomeSlice";
 import {
@@ -20,9 +20,10 @@ import {
   useQueryClient,
   QueryClient,
 } from "@tanstack/react-query";
-import { supabase } from "@/lib";
+
 import ResponsiveHeader from "./responsiveHeader";
 import { cookieGet } from "@/utils/cookieUtils";
+import { supabase } from "@/lib";
 
 export default function Header() {
   const targetRef = useRef<HTMLDivElement | null>(null);
@@ -34,8 +35,10 @@ export default function Header() {
   const [observer, setObserver] = useState(null);
 
   const queryClient = useQueryClient();
-  const userLogin = JSON.parse(localStorage.getItem("userLogin"))?.login;
-  const user = JSON.parse(localStorage.getItem("userInfo"))?.user;
+  const userLogin = JSON.parse(
+    localStorage.getItem("userLogin") || "{}"
+  )?.login;
+  const user = JSON.parse(localStorage.getItem("userInfo") || "{}")?.user;
 
   // const cartItems = queryClient.getQueryData(['cart'])
   const getItem = async () => {

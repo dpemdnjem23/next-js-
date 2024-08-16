@@ -5,19 +5,19 @@ import Slider from "./slider";
 import Link from "next/link";
 import Router from "next/router";
 
-import ReactModal from "react-modal";
-
-import { getSession } from "next-auth/react";
-
 import { useEffect, useState } from "react";
 
 import { onClickProduct } from "@/lib/historyLocalstorage";
-import { supabase } from "@/lib";
+
 import { useDispatch, useSelector } from "react-redux";
 
 import { setFavorites } from "@/reducers/slices/UserSlice";
+
 import { useQuery } from "@tanstack/react-query";
+
 import { getProductsData } from "../_lib/getProductsData";
+import { supabase } from "@/lib";
+// import { supabase, supabaseKey } from "@/lib";
 
 export default function ThumbnailList({ title, link, categoryName }) {
   const { data: products } = useQuery({ queryKey: ["products"] });
@@ -41,13 +41,14 @@ export default function ThumbnailList({ title, link, categoryName }) {
 
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const closeModal = () => {
-    setModalOpen(false);
-  };
-
   const handleClickHeart = async (index: number, productId: number) => {
     //로그인 되어있는 경우
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
+    console.log(user, "user", error);
     try {
       //db에 추가 db에 추가된경우 db에서 삭제
       if (userLogin.login) {
@@ -65,7 +66,6 @@ export default function ThumbnailList({ title, link, categoryName }) {
 
         // dispatch(setFavorites(response.data));
 
-        console.log(data, !data[0], child[index], userInfo);
         //data가 존재한다. 확인이 된경우 삭제한다.
         if (data.length >= 1) {
           const del = await supabase
@@ -85,7 +85,7 @@ export default function ThumbnailList({ title, link, categoryName }) {
           const add = await supabase
             .from("favorite")
             .insert([
-              { user_id: userInfo?.user.id, product_id: child[index]?.id },
+              { user_id: userInfo?.user.id, product_id: product[index]?.id },
             ]);
 
           if (add.error) {
@@ -135,7 +135,7 @@ export default function ThumbnailList({ title, link, categoryName }) {
     const response: any = await supabase
       .from("favorite")
       .select()
-      .eq("user_id", userInfo.user.id);
+      .eq("user_id", userInfo?.user?.id);
 
     if (response.error) {
       throw response.error;

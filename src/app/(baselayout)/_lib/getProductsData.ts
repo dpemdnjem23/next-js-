@@ -1,11 +1,7 @@
-import { supabase } from "@/lib";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY as string;
+import { supabase, supabaseKey, supabaseUrl } from "@/lib";
 
 export async function getProductsData() {
-  const url: string = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/product?select=id,brand,front,front_multiline,price,discount,imageArr,general_info,thumbnail,option,product_code,category(id,category_name)`;
+  const url: string = `${supabaseUrl}/rest/v1/product?select=id,brand,front,front_multiline,price,discount,imageArr,general_info,thumbnail,option,product_code,category(id,category_name)`;
 
   const response = await fetch(url, {
     next: { tags: ["products"] },
@@ -21,11 +17,9 @@ export async function getProductsData() {
   });
   const jsonData = await response.json();
 
-
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
-
 
   return jsonData;
 }

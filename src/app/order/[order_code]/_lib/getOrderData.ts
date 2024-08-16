@@ -2,9 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 // import { useParams } from "next/navigation";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY as string;
 
 export async function getOrderData(params) {
   const { order_code } = params;

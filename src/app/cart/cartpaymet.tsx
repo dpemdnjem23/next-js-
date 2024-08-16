@@ -137,7 +137,6 @@ export default function CartPayment({
     Router.push(`/order/${randomInteger}`);
     if (Router.isFallback) {
       return <Loading></Loading>;
-
     }
     // return <Loading></Loading>;
 

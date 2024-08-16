@@ -9,7 +9,7 @@ export default function useHeartState() {
   const personalHeart = useSelector((state) => state?.user?.personalHeart);
   const cartCheckModal = useSelector((state) => state?.product?.cartCheckModal);
   const favorites = useSelector((state) => state?.user.favorites);
-  const cardInfoModal = useSelector((state)=> state?.product.cardInfoModal)
+  const cardInfoModal = useSelector((state) => state?.product.cardInfoModal);
 
   const product = useSelector((state) => state?.product.product);
 
