@@ -12,24 +12,24 @@ import PendingLoading from "./_component/pendingLoading";
 import { QueryClient } from "@tanstack/react-query";
 import { getCartItems } from "./_lib/getCartItmes";
 import { supabase } from "@/lib";
-import { auth } from "@/auth";
+// import { auth } from "@/auth";
 export default async function Cart() {
   //cartItem
 
   // const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
   // const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
 
-  console.log(await auth(), "sdfasdf");
-  if (await auth()) {
-    return null;
-  }
-  const queryClient = new QueryClient();
+  // console.log(await auth(), "sdfasdf");
+  // if (await auth()) {
+  //   return null;
+  // }
+  // const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["carts"],
+  // await queryClient.prefetchQuery({
+  //   queryKey: ["carts"],
 
-    queryFn: getCartItems,
-  });
+  //   queryFn: getCartItems,
+  // });
 
   return (
     // <div className="relative mb-[60px]">

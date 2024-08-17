@@ -34,6 +34,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { SupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { getCartData } from "../_lib/getCartData";
 
 const Home = async (req: NextRequest) => {
   const res = NextResponse.next();
@@ -48,8 +49,8 @@ const Home = async (req: NextRequest) => {
   // const res = NextResponse.next();
 
   await queryClient.prefetchQuery({
-    queryKey: ["products"],
-    queryFn: getProductsData,
+    queryKey: ["cart",],
+    queryFn: getCartData,
   });
 
   // await queryClient.prefetchQuery({

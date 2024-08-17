@@ -40,39 +40,15 @@ export default function Header() {
   )?.login;
   const user = JSON.parse(localStorage.getItem("userInfo") || "{}")?.user;
 
-  // const cartItems = queryClient.getQueryData(['cart'])
-  const getItem = async () => {
-    if (userLogin) {
-      const response = await supabase
-        .from("cart")
-        .select(
-          `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
-        )
-        .eq("user_id", user?.id);
-      setWork(!work);
-
-      return response;
-    } else if (!userLogin) {
-      const cookie = await cookieGet("cartId");
-
-      const response = await supabase
-        .from("cart")
-        .select(
-          `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
-        )
-        .eq("cart_id", cookie);
-      setWork(!work);
-
-      return response;
-    }
-  };
   const {
     data: cartItems,
     isLoading,
     error,
     isSuccess,
     refetch,
-  } = useQuery({ queryKey: ["carts"], queryFn: getItem });
+  } = useQuery({ queryKey: ["cart"] });
+
+  console.log(cartItems, "cart");
 
   // if (isSuccess) {
   //   setWork(!work);
@@ -115,19 +91,19 @@ export default function Header() {
     };
   }, []);
 
-  const countCart = () => {
-    let count = 0;
-
-    cartItems?.data?.map((el) => {
-      count = count + el.options.length - 1;
-    });
-
-    setCount(count);
-  };
-
   useEffect(() => {
+    const countCart = () => {
+      let count = 0;
+
+      cartItems?.map((el) => {
+        count = count + el.options.length - 1;
+      });
+
+      setCount(count);
+    };
+
     countCart();
-  }, [cartItems, work]);
+  }, [cartItems]);
 
   const options: { root: null; rootMargin: string; threshold: number[] } =
     useMemo(
@@ -141,12 +117,10 @@ export default function Header() {
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        console.log("out");
         // setIsIntersecting(true);
         // setAbsoluteIntersecting(false);
         dispatch(setIsIntersection(false));
       } else {
-        console.log("in");
 
         dispatch(setIsIntersection(true));
 

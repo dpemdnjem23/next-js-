@@ -65,7 +65,7 @@ export default function LoginPage() {
         //data 중에서 id를 가져온다.
         setMessage("");
         dispatch(setIsLogin(true));
-c
+
         window.location.assign("/");
         let cartId = await cookieGet("cartId");
         //id를 가져와서 업데이트 동일한 cart_id인경우
