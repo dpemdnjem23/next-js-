@@ -73,27 +73,5 @@ export async function getCartData(queyr) {
     //2. 로그인하지 않은 사용자인경우
   } catch (err) {
     return { errMessage: err };
-
-    // const response = await supabase
-    // .from("cart")
-    // .select(
-    //   `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
-    // )
-    // .eq("user_id", user?.id);
-    // setWork(!work);
-
-    // return response;
-    // } else if (!userLogin) {
-    // const cookie = await cookieGet("cartId");
-
-    // const response = await supabase
-    // .from("cart")
-    // .select(
-    //   `id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`
-    // )
-    // .eq("cart_id", cookie);
-    // setWork(!work);
-
-    // return response;
   }
 }
