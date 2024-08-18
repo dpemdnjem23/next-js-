@@ -9,11 +9,15 @@ import { useSearchParams } from "next/navigation";
 import { getUser, supabase } from "./lib";
 
 export async function middleware(req: NextRequest) {
-  console.log("middleware", req.nextUrl.pathname);
+  const url = req.nextUrl.clone();
   const session = await getUser();
   if (!session) {
-    return NextResponse.redirect("httpL//localhost:3000/Member/login");
+    return NextResponse.redirect(new URL("/Member/login", req.url));
   }
+
+  console.log(session);
+
+  return session;
 }
 
 export const config = {

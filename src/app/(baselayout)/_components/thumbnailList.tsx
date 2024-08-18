@@ -42,13 +42,6 @@ export default function ThumbnailList({ title, link, categoryName }) {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleClickHeart = async (index: number, productId: number) => {
-    //로그인 되어있는 경우
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    console.log(user, "user", error);
     try {
       //db에 추가 db에 추가된경우 db에서 삭제
       if (userLogin.login) {

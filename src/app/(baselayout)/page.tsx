@@ -23,7 +23,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { getProductsData } from "./_lib/getProductsData";
-import { cr, createServer, getUser, supabase } from "@/lib";
+import { getUser, supabase } from "@/lib";
 
 export const metadata: Metadata = {
   title: "홈 / W",
@@ -34,59 +34,29 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { SupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { getCartData } from "../_lib/getCartData";
+import { getHeartData } from "./_lib/getHeartData";
 
 const Home = async (req: NextRequest) => {
+  console.log(req, "req");
   const res = NextResponse.next();
 
   const queryClient = new QueryClient();
   // // console.log(request, "request");
-  // const {
-  //   data: { user },
-  //   error,
-  // } = await get.auth.getUser();
-
+  const user = await getUser();
   // const res = NextResponse.next();
 
   await queryClient.prefetchQuery({
-    queryKey: ["cart",],
-    queryFn: getCartData,
+    queryKey: ["products"],
+    queryFn: getProductsData,
   });
-
-  // await queryClient.prefetchQuery({
-  //   queryKey:['favorites',]
-  // })
+  if (user) {
+    await queryClient.prefetchQuery({
+      queryKey: ["favorites", user?.email],
+      queryFn: getHeartData,
+    });
+  }
 
   const dehydratedState = dehydrate(queryClient);
-
-  // const [product, setProduct] = useState<any>([]);
-  // useEffect(() => {
-  //   try {
-  //     const result = async () => {
-  //       const { data: product, error } = await supabase.from("product").select(`
-  //       id,brand,front,front_multiline,price,discount,imageArr,general_info,thumbnail,option,product_code,
-  //       category(id, category_name
-  //       )
-
-  //       `);
-
-  //       if (error) {
-  //         throw Error(" 메인 페이지 product 생성 에러");
-  //       }
-
-  //       setProduct(product);
-  //     };
-  //     result();
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }, []);
-  // console.log(product, "product");
-
-  // const closeModal = () => {
-  //   dispatch(setIsModal(false));
-  // };
-
   return (
     <section className="">
       <Slider>

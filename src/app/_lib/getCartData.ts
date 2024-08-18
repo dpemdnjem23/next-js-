@@ -30,7 +30,6 @@ export async function getCartData(queyr) {
         },
       });
 
-      console.log(user, response, "getCartData");
       if (!response.ok) {
         throw error("cart를 불러오는데 실패");
       }
@@ -40,11 +39,17 @@ export async function getCartData(queyr) {
       return jsonData;
     } else if (!user) {
       const cookie = await cookieGet("cartId");
+      //쿠키가 존재하지안흥면 안만들면되잖아?
 
-      const url: string = `${supabaseUrl}/rest/v1/cart?select=id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`;
+      //
+      const url: string = `${supabaseUrl}/rest/v1/cart?cart_id=eq.${cookie}&select=id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`;
+
+      if (!cookie) {
+        throw error("cart를 불러오는데 실패");
+      }
 
       const response = await fetch(url, {
-        next: { tags: ["cart"] },
+        next: { tags: ["cart", cookie] },
         credentials: "include",
         cache: "no-store",
 
@@ -55,8 +60,6 @@ export async function getCartData(queyr) {
           Authorization: `Bearer ${supabaseKey}`,
         },
       });
-
-      console.log(user, response, "getCartData");
 
       if (!response.ok) {
         throw error("cart를 불러오는데 실패");

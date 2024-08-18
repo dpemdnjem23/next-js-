@@ -1,32 +1,41 @@
+import { supabaseKey, supabaseUrl } from "@/lib";
+import { useQuery, QueryFunctionContext } from "react-query";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+type props = {
+  useQuery: [string, string];
+};
 
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_KEY as string;
+export async function getHeartData({
+  useQuery,
+}: QueryFunctionContext<[string, undefined|string]>) {
+  const [_, user_id] = useQuery;
 
-export async function getHeartsData({ useQuery }) {
-
-    const [_,user_id] = useQuery
-  const url: string = `${supabaseUrl}/rest/v1/favorite?user_id=eq.${user_id}`
-
-  const response = await fetch(url, {
-    next: { tags: ["favorites",user_id] },
-    cache: "no-store",
-
-    headers: {
-      "Content-Type": "application/json",
-
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-    },
-  });
-  const jsonData = await response.json();
-
-  
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch data");
+  if (!user_id) {
+    throw Error("로그인 하지 않은상태");
   }
+  const url: string = `${supabaseUrl}/rest/v1/favorite?user_id=eq.${user_id}`;
 
+  //userid가 존재하지않는경우
+  try {
+    const response = await fetch(url, {
+      next: { tags: ["favorites", user_id] },
+      cache: "no-store",
 
-  return jsonData;
+      headers: {
+        "Content-Type": "application/json",
+
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+    });
+    const jsonData = await response.json();
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    return jsonData;
+  } catch (err: any) {
+    throw Error(err);
+  }
 }

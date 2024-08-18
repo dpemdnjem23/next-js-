@@ -18,8 +18,15 @@ import { useSelector } from "react-redux";
 import ShoppingHistoryModal from "./@ modal/shoppingHistory/page";
 import ReactQueryProviders from "@/lib/hooks/useReactQuery";
 import Footer from "./_component/footer";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { getCartData } from "./_lib/getCartData";
+import { getUser } from "@/lib";
+import { cookieGet } from "@/utils/cookieUtils";
+import { error } from "console";
 
 const ReduxProvider = dynamic(() => import("@/reducers"), {
   ssr: false,
@@ -40,14 +47,20 @@ export default async function RootLayout({
   // const isModal = useSelector((state) => state?.home.isModal);
   const user = await getUser();
 
-
   const queryClient = new QueryClient();
+  if (user) {
+    await queryClient.prefetchQuery({
+      queryKey: ["cart", user?.email],
+      queryFn: getCartData,
+    });
+  } else if (!user) {
+    const cookie = await cookieGet("cartId");
 
-  await queryClient.prefetchQuery({
-    queryKey: ["cart",],
-    queryFn: getCartData,
-    
-  });
+    await queryClient.prefetchQuery({
+      queryKey: ["cart", cookie],
+      queryFn: getCartData,
+    });
+  }
 
   const dehydratedState = dehydrate(queryClient);
 
@@ -56,17 +69,15 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ReduxProvider>
           <ReactQueryProviders>
-          <HydrationBoundary state={dehydratedState}>
-
-            <Header></Header>
-            <ScrollButton></ScrollButton>
-            <ShoppingHistoryModal></ShoppingHistoryModal>
+            <HydrationBoundary state={dehydratedState}>
+              <Header></Header>
+              <ScrollButton></ScrollButton>
+              <ShoppingHistoryModal></ShoppingHistoryModal>
 
               {children}
 
               <Footer></Footer>
-              </HydrationBoundary>
-
+            </HydrationBoundary>
           </ReactQueryProviders>
         </ReduxProvider>
       </body>
