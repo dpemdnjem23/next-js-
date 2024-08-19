@@ -51,7 +51,7 @@ const Home = async (req: NextRequest) => {
   });
   if (user) {
     await queryClient.prefetchQuery({
-      queryKey: ["favorites", user?.email],
+      queryKey: ["favorites", user?.id],
       queryFn: getHeartData,
     });
   }

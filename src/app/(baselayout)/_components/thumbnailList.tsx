@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setFavorites } from "@/reducers/slices/UserSlice";
 
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useQuery, useMutation } from "@tanstack/react-query";
 
 import { getProductsData } from "../_lib/getProductsData";
 import { supabase } from "@/lib";
@@ -28,12 +28,15 @@ export default function ThumbnailList({ title, link, categoryName }) {
 
   const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || `{}`);
-
+  const { data: heart } = useQuery({
+    queryKey: ["favorites", userInfo?.id],
+  });
+  const queryClient = new QueryClient();
   const isHeart = useSelector((state) => state?.user.isHeart);
   const favorites = useSelector((state) => state?.user.favorites);
 
-  const selectOption = useSelector((state) => state?.product.selectOption);
-  const personalHeart = useSelector((state) => state?.user.personalHeart);
+  // const selectOption = useSelector((state) => state?.product.selectOption);
+  // const personalHeart = useSelector((state) => state?.user.personalHeart);
 
   const [clicked, setIsClicked] = useState<boolean>(false);
 
@@ -41,7 +44,55 @@ export default function ThumbnailList({ title, link, categoryName }) {
 
   const [isModalOpen, setModalOpen] = useState(false);
 
+  const fetch = async (index: number) => {
+    const response = await supabase
+      .from("favorite")
+      .insert([{ user_id: userInfo?.user.id, product_id: product[index]?.id }]);
+
+    return response;
+  };
+
+  const heartOn = useMutation({
+    mutationFn: fetch,
+    onMutate(index: number) {
+      //즉시 하트를 추가한다.
+
+      const value: [] | undefined = queryClient.getQueryData([
+        "favorites",
+        userInfo?.id,
+      ]);
+
+      if (value) {
+        console.log(shallow);
+        const shallow = [...value];
+
+        shallow.push({
+          user_id: userInfo?.user.id,
+          product_id: product[index]?.id,
+        });
+        console.log(shallow);
+        queryClient.setQueryData(["favorites", userInfo?.email], shallow);
+      } else if (value === undefined) {
+        const shallow = {
+          user_id: userInfo?.user.id,
+          product_id: product[index]?.id,
+        };
+
+        console.log(shallow, "shallow");
+        queryClient.setQueryData(["favorites", userInfo?.email], shallow);
+      }
+
+      //만약 데이터가 존재하면
+    },
+    onError(error) {
+      throw Error(error);
+    },
+  });
+
+  const heartOff = useMutation({});
+
   const handleClickHeart = async (index: number, productId: number) => {
+    console.log("click");
     try {
       //db에 추가 db에 추가된경우 db에서 삭제
       if (userLogin.login) {
@@ -50,7 +101,7 @@ export default function ThumbnailList({ title, link, categoryName }) {
         const { data, error } = await supabase
           .from("favorite")
           .select()
-          .eq("user_id", userInfo?.user?.id)
+          .eq("user_id", userInfo?.id)
           .eq("product_id", product[index]?.id);
 
         if (error) {
@@ -64,7 +115,7 @@ export default function ThumbnailList({ title, link, categoryName }) {
           const del = await supabase
             .from("favorite")
             .delete()
-            .eq("user_id", userInfo?.user?.id)
+            .eq("user_id", userInfo?.id)
             .eq("product_id", product[index]?.id);
 
           if (error) {
@@ -75,21 +126,13 @@ export default function ThumbnailList({ title, link, categoryName }) {
         } else if (!data[0]) {
           //data가 없는경우
 
-          const add = await supabase
-            .from("favorite")
-            .insert([
-              { user_id: userInfo?.user.id, product_id: product[index]?.id },
-            ]);
-
-          if (add.error) {
-            throw add.error;
-          }
+          heartOn.mutate(index);
 
           const response: any = await supabase
             .from("favorite")
             .select()
-            .eq("user_id", userInfo.user.id);
-          // .eq("product_id", child[index]?.id);
+            .eq("user_id", userInfo?.id)
+            .eq("product_id", product[index]?.id);
 
           if (response.error) {
             throw response.error;
@@ -177,7 +220,6 @@ export default function ThumbnailList({ title, link, categoryName }) {
 
           return (
             <li
-              onClick={() => onClickProduct(child, el.id, index)}
               className="
               list
               w-[216px] float-left mb-[50px] mr-[22px] relative"
@@ -199,7 +241,10 @@ export default function ThumbnailList({ title, link, categoryName }) {
               
               `}
               ></button>
-              <Link href={`/product/${el?.product_code}`}>
+              <Link
+                onClick={() => onClickProduct(product, el.id, index)}
+                href={`/product/${el?.product_code}`}
+              >
                 <div className="relative mb-[16px] h-[260px] overflow-hidden">
                   <Image
                     // width={200}

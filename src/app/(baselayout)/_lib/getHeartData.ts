@@ -2,14 +2,15 @@ import { supabaseKey, supabaseUrl } from "@/lib";
 import { useQuery, QueryFunctionContext } from "react-query";
 
 type props = {
-  useQuery: [string, string];
+  queryKey: [string, string];
 };
 
 export async function getHeartData({
-  useQuery,
-}: QueryFunctionContext<[string, undefined|string]>) {
-  const [_, user_id] = useQuery;
+  queryKey,
+}: QueryFunctionContext<[string, undefined | string]>) {
+  const [_, user_id] = queryKey;
 
+  console.log(user_id);
   if (!user_id) {
     throw Error("로그인 하지 않은상태");
   }
