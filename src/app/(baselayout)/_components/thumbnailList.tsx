@@ -70,12 +70,12 @@ export default function ThumbnailList({ title, link, categoryName }) {
     return response;
   };
 
-  const del = async (index: number) => {
+  const del = async (productId: number) => {
     const response = await supabase
       .from("favorite")
       .delete()
       .eq("user_id", userInfo?.id)
-      .eq("product_id", product[index]?.id);
+      .eq("product_id", productId);
 
     return response;
   };
@@ -116,44 +116,34 @@ export default function ThumbnailList({ title, link, categoryName }) {
 
   const heartOff = useMutation({
     mutationFn: del,
-    onMutate(index: number) {
-      //즉시 하트를 추가한다.
-
+    onMutate(productId: number) {
+      //삭제하면 즉시 배열에있는 data 삭제
       const value: [] | undefined = queryClient.getQueryData([
         "favorites",
         userInfo?.id,
       ]);
 
-      if (value) {
-        const shallow = [...value];
+      const arr = value?.filter((el: { product_id: number }) => {
+        return el?.product_id !== productId;
+      });
 
-        console.log(shallow);
+      queryClient.setQueryData(["favorites", userInfo?.id], arr);
 
-        console.log(shallow, "shallow");
-        shallow.push({
-          user_id: userInfo?.id,
-          product_id: product[index]?.id,
-        });
-        console.log(shallow);
-        queryClient.setQueryData(["favorites", userInfo?.id], shallow);
-      } else if (!value) {
-        const shallow = {
-          user_id: userInfo?.id,
-          product_id: product[index]?.id,
-        };
-
-        queryClient.setQueryData(["favorites", userInfo?.id], shallow);
-      }
-
+      return { arr };
       //만약 데이터가 존재하면
     },
-    onError(error) {
-      throw Error(error);
+
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["favorites", userInfo?.id] });
+    },
+
+    onError: (error, variables, context) => {
+      queryClient.setQueryData(["favorites", userInfo?.id], context?.arr);
     },
   });
 
   const handleClickHeart = async (index: number, productId: number) => {
-    console.log("click");
+    console.log(productId);
     try {
       //db에 추가 db에 추가된경우 db에서 삭제
       if (userLogin.login) {
@@ -164,13 +154,12 @@ export default function ThumbnailList({ title, link, categoryName }) {
         const check = heart?.find((el) => {
           return el.product_id === productId;
         });
-        console.log(check, "check th");
 
         // dispatch(setFavorites(response.data));
 
         //data가 존재한다. 확인이 된경우 삭제한다.
         if (check) {
-          heartOff.mutate(index);
+          heartOff.mutate(productId);
           // setPrevHeart(!prevHeart);
         } else if (!check) {
           //data가 없는경우
