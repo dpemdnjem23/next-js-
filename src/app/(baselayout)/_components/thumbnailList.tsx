@@ -13,14 +13,23 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setFavorites } from "@/reducers/slices/UserSlice";
 
-import { QueryClient, useQuery, useMutation } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { getProductsData } from "../_lib/getProductsData";
 import { supabase } from "@/lib";
+import { getHeartData } from "../_lib/getHeartData";
+import { query } from "express";
 // import { supabase, supabaseKey } from "@/lib";
 
 export default function ThumbnailList({ title, link, categoryName }) {
   const { data: products } = useQuery({ queryKey: ["products"] });
+
+  const queryClient = useQueryClient();
 
   const product = products?.filter(
     (product) => product.category.category_name === categoryName
@@ -28,10 +37,19 @@ export default function ThumbnailList({ title, link, categoryName }) {
 
   const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || `{}`);
-  const { data: heart } = useQuery({
+
+  const {
+    data: heart,
+    isError,
+    error,
+    isLoading,
+  } = useQuery({
     queryKey: ["favorites", userInfo?.id],
+    // queryFn: getHeartData,
+    gcTime: 300 * 1000,
+    staleTime: 60 * 1000,
   });
-  const queryClient = new QueryClient();
+
   const isHeart = useSelector((state) => state?.user.isHeart);
   const favorites = useSelector((state) => state?.user.favorites);
 
@@ -47,13 +65,57 @@ export default function ThumbnailList({ title, link, categoryName }) {
   const fetch = async (index: number) => {
     const response = await supabase
       .from("favorite")
-      .insert([{ user_id: userInfo?.user.id, product_id: product[index]?.id }]);
+      .insert([{ user_id: userInfo?.id, product_id: product[index]?.id }]);
 
     return response;
   };
 
+  const del = async (index: number) => {
+    const response = await supabase
+      .from("favorite")
+      .delete()
+      .eq("user_id", userInfo?.id)
+      .eq("product_id", product[index]?.id);
+
+    return response;
+  };
   const heartOn = useMutation({
     mutationFn: fetch,
+    onMutate: (index: number) => {
+      //즉시 하트를 추가한다.
+
+      console.log(userInfo?.id);
+
+      const value: [] | undefined = queryClient.getQueryData([
+        "favorites",
+        userInfo?.id,
+      ]);
+
+      console.log(!value, value, "value");
+      const shallow = [...value];
+      console.log(shallow);
+
+      shallow.push({
+        user_id: userInfo?.id,
+        product_id: product[index]?.id,
+      });
+      queryClient.setQueryData(["favorites", userInfo?.id], shallow);
+
+      return { value };
+      //만약 데이터가 존재하면
+    },
+
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["favorites", userInfo?.id] });
+    },
+
+    onError: (error, variables, context) => {
+      queryClient.setQueryData(["favorites", userInfo?.id], context?.value);
+    },
+  });
+
+  const heartOff = useMutation({
+    mutationFn: del,
     onMutate(index: number) {
       //즉시 하트를 추가한다.
 
@@ -63,23 +125,24 @@ export default function ThumbnailList({ title, link, categoryName }) {
       ]);
 
       if (value) {
-        console.log(shallow);
         const shallow = [...value];
 
+        console.log(shallow);
+
+        console.log(shallow, "shallow");
         shallow.push({
-          user_id: userInfo?.user.id,
+          user_id: userInfo?.id,
           product_id: product[index]?.id,
         });
         console.log(shallow);
-        queryClient.setQueryData(["favorites", userInfo?.email], shallow);
-      } else if (value === undefined) {
+        queryClient.setQueryData(["favorites", userInfo?.id], shallow);
+      } else if (!value) {
         const shallow = {
-          user_id: userInfo?.user.id,
+          user_id: userInfo?.id,
           product_id: product[index]?.id,
         };
 
-        console.log(shallow, "shallow");
-        queryClient.setQueryData(["favorites", userInfo?.email], shallow);
+        queryClient.setQueryData(["favorites", userInfo?.id], shallow);
       }
 
       //만약 데이터가 존재하면
@@ -89,61 +152,30 @@ export default function ThumbnailList({ title, link, categoryName }) {
     },
   });
 
-  const heartOff = useMutation({});
-
   const handleClickHeart = async (index: number, productId: number) => {
     console.log("click");
     try {
       //db에 추가 db에 추가된경우 db에서 삭제
       if (userLogin.login) {
-        //db에 추가하려면, 없어야한다. 있는경우 삭제한다.
+        //로그인한경우 db에 존재하는지 확인.
+        //heart데이터가 존재하는중인지 확인해야한다.
+        //heart 데이터중 product 랑 일치하는지확인
 
-        const { data, error } = await supabase
-          .from("favorite")
-          .select()
-          .eq("user_id", userInfo?.id)
-          .eq("product_id", product[index]?.id);
-
-        if (error) {
-          throw error;
-        }
+        const check = heart?.find((el) => {
+          return el.product_id === productId;
+        });
+        console.log(check, "check th");
 
         // dispatch(setFavorites(response.data));
 
         //data가 존재한다. 확인이 된경우 삭제한다.
-        if (data.length >= 1) {
-          const del = await supabase
-            .from("favorite")
-            .delete()
-            .eq("user_id", userInfo?.id)
-            .eq("product_id", product[index]?.id);
-
-          if (error) {
-            throw error;
-          }
-
+        if (check) {
+          heartOff.mutate(index);
           // setPrevHeart(!prevHeart);
-        } else if (!data[0]) {
+        } else if (!check) {
           //data가 없는경우
 
           heartOn.mutate(index);
-
-          const response: any = await supabase
-            .from("favorite")
-            .select()
-            .eq("user_id", userInfo?.id)
-            .eq("product_id", product[index]?.id);
-
-          if (response.error) {
-            throw response.error;
-          }
-          //추가가되면 personalHeart에도 똑같이 만들어서 넣어줘야된다.
-          //추가가됏다는건 가장 마지막 배열이라는것
-
-          // setPrevHeart(response.data[0]);
-          // setButtonStates();
-
-          dispatch(setFavorites(response.data));
 
           // setPrevHeart(!prevHeart);
         }
@@ -167,31 +199,15 @@ export default function ThumbnailList({ title, link, categoryName }) {
     }
   };
 
-  const data = async () => {
-    const response: any = await supabase
-      .from("favorite")
-      .select()
-      .eq("user_id", userInfo?.user?.id);
+  //추가가되면 personalHeart에도 똑같이 만들어서 넣어줘야된다.
+  //추가가됏다는건 가장 마지막 배열이라는것
 
-    if (response.error) {
-      throw response.error;
-    }
-
-    dispatch(setFavorites(response.data));
-  };
-
-  useEffect(() => {
-    data();
-    //추가가되면 personalHeart에도 똑같이 만들어서 넣어줘야된다.
-    //추가가됏다는건 가장 마지막 배열이라는것
-
-    // setPrevHeart(response.data[0]);
-    // setButtonStates();
-  }, []);
-
+  // setPrevHeart(response.data[0]);
+  // setButtonStates()
   // console.log(favorites);
 
   //하트를 클릭할때 로그인되어있지 않으면 alert창
+  console.log(heart);
   return (
     <div className="w-[100%] mt-[30px] relative overflow-hidden">
       <h3 className="w-[150px]  mr-[30px] text-right float-left leading-[50px]">
@@ -234,7 +250,7 @@ export default function ThumbnailList({ title, link, categoryName }) {
                 }}
                 className={`w-[18px] top-[10px] right-[10px] z-[2] h-[17px] absolute
                 ${
-                  favorites.some((fav) => fav?.product_id === el.id)
+                  heart?.some((fav) => fav?.product_id === el.id)
                     ? "active"
                     : ""
                 }

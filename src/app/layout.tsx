@@ -50,7 +50,7 @@ export default async function RootLayout({
   const queryClient = new QueryClient();
   if (user) {
     await queryClient.prefetchQuery({
-      queryKey: ["cart", user?.email],
+      queryKey: ["cart", user?.id],
       queryFn: getCartData,
     });
   } else if (!user) {

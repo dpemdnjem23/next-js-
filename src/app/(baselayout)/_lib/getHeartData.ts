@@ -10,11 +10,10 @@ export async function getHeartData({
 }: QueryFunctionContext<[string, undefined | string]>) {
   const [_, user_id] = queryKey;
 
-  console.log(user_id);
   if (!user_id) {
     throw Error("로그인 하지 않은상태");
   }
-  const url: string = `${supabaseUrl}/rest/v1/favorite?user_id=eq.${user_id}`;
+  const url: string = `${supabaseUrl}/rest/v1/favorite?select=*&user_id=eq.${user_id}`;
 
   //userid가 존재하지않는경우
   try {

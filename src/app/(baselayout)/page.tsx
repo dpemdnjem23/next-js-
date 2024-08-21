@@ -37,7 +37,6 @@ import { cookies } from "next/headers";
 import { getHeartData } from "./_lib/getHeartData";
 
 const Home = async (req: NextRequest) => {
-  console.log(req, "req");
   const res = NextResponse.next();
 
   const queryClient = new QueryClient();
