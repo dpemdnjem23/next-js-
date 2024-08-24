@@ -26,6 +26,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { setPageRouterLoading } from "@/reducers/slices/CartSlice";
 import HeartButton from "./HeartButton";
+import CartButton from "./cartButton";
 
 interface props {
   id: number;
@@ -46,92 +47,8 @@ export default function ButtonBox() {
 
   const queryClient = useQueryClient();
 
-  const fetchData = async () => {
-    let cartId = await cookieGet("cartId");
 
-    const optionsArr = selectOption?.map((el) => {
-      return el.name;
-    });
-    const quantityArr = selectOption?.map((el) => {
-      return Number(el.quantity);
-    });
-    //해당하는 cart_id를 찾아서 넣기
-
-    // const select = {
-    //   user_id: userInfo?.user?.id || null,
-
-    // };
-    optionsArr.push("end");
-    //option이 여러개
-    // const response = await supabase.from("cart").update(select);
-
-    const select = {
-      user_id: userInfo?.user?.id || null,
-      options: optionsArr,
-      quantity: quantityArr,
-      cart_id: cartId,
-
-      product_id: product.id,
-    };
-
-    // //option이 여러개
-    const response = await supabase.from("cart").insert(select);
-
-    return response;
-  };
-
-  const mutation = useMutation({
-    mutationFn: fetchData,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
-
-  const addToCart = async () => {
-    //cart에 추가할때 cookie를 추가한다.
-
-    let cartId = await cookieGet("cartId");
-    // let cart;
-
-    //cartId가 없는경우
-    if (!cartId) {
-      await cookieCreate("cartId");
-      // mutation.mutate();
-    }
-
-    mutation.mutate();
-  };
-
-  const dispatch = useDispatch();
-  //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기
-  //heart는 product번호랑 매칭시켜야한다.
-
-  //heart를 클릭할시 하트색깔을 바꾼다.
-  //hear user_id에 값을 넣고 다시클릭하면 줄어들도록
-  //heart클릭시 로그인이 되지 않았다면
-
-  
-  // const query = useQuery({queryKey:['cart']})
-
-  const openCartCheckModal = () => {
-    // console.log("dllddlltlfgod");
-
-    //옵션이 1개 이상일때부터 시작
-    //옵션에 해당하는 product를 넣는다.
-    //
-    if (selectOption.length >= 1) {
-      addToCart();
-
-      dispatch(setCartCheckModal(true));
-    } else if (selectOption.length < 1) {
-      //옵션이 0개인경우
-      alert("옵션을 선택해주세요");
-    }
-  };
-
+  const dispatch = useDispatch()
   const Router = useRouter();
   let totalCost: number = 0;
 
@@ -255,13 +172,8 @@ export default function ButtonBox() {
         </button>
       </li>
       <li className="flex-1 min-w-[250px] ml-[10px] relative ">
-        <button
-          onClick={openCartCheckModal}
-          type="button"
-          className="w-[100%] h-[70px] font-sans font-medium leading-[68px] text-[20px] bg-[#000] text-[#fff] border-[#000]"
-        >
-          쇼핑백 담기
-        </button>
+   
+        <CartButton></CartButton>
       </li>
       <li className=" min-w-[70px] w-[70px] ml-[10px] relative">
         <button
