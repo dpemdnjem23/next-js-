@@ -3,8 +3,7 @@ import Image from "next/image";
 import { v4 as uuidv4 } from "uuid";
 
 import giftImage from "../../../../../public/ico_prod_gift.svg";
-import heartOffImage from "../../../../../public/ico_prod_heart_off.svg";
-import heartOnImage from "../../../../../public/ico_prod_heart_on.svg";
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -26,6 +25,7 @@ import { cookieCreate, cookieGet } from "@/utils/cookieUtils";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { setPageRouterLoading } from "@/reducers/slices/CartSlice";
+import HeartButton from "./HeartButton";
 
 interface props {
   id: number;
@@ -33,7 +33,6 @@ interface props {
   user_id: number;
 }
 export default function ButtonBox() {
-  const name = "cartId";
   //옵션 이 있을때 구매가 가능하도록한다.
   const product = useSelector((state) => state?.product.product);
   const isHeart = useSelector((state) => state?.user.isHeart);
@@ -46,8 +45,6 @@ export default function ButtonBox() {
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
   const queryClient = useQueryClient();
-
-  //
 
   const fetchData = async () => {
     let cartId = await cookieGet("cartId");
@@ -116,80 +113,7 @@ export default function ButtonBox() {
   //hear user_id에 값을 넣고 다시클릭하면 줄어들도록
   //heart클릭시 로그인이 되지 않았다면
 
-  const handleClickHeart = async () => {
-    //로그인 되어있는 경우
-    try {
-      //db에 추가 db에 추가된경우 db에서 삭제
-      if (userLogin.login) {
-        //db에 추가하려면, 없어야한다. 있는경우 삭제한다.
-
-        const { data, error } = await supabase
-          .from("favorite")
-          .select()
-          .eq("user_id", userInfo.user.id)
-          .eq("product_id", product?.id);
-
-        if (error) {
-          throw error;
-        }
-        //data가 존재한다. 확인이 된경우 삭제한다.
-        if (data[0]) {
-          const del = await supabase
-            .from("favorite")
-            .delete()
-            .eq("user_id", userInfo.user.id)
-            .eq("product_id", product?.id);
-
-          if (error) {
-            throw error;
-          }
-
-          // setPrevHeart(!prevHeart);
-        } else if (!data[0]) {
-          //data가 없는경우
-
-          const add = await supabase
-            .from("favorite")
-            .insert([{ user_id: userInfo.user.id, product_id: product?.id }]);
-          if (add.error) {
-            throw add.error;
-          }
-
-          const response: any = await supabase
-            .from("favorite")
-            .select()
-            .eq("user_id", userInfo.user.id)
-            .eq("product_id", product?.id);
-
-          if (response.error) {
-            throw response.error;
-          }
-          //추가가되면 personalHeart에도 똑같이 만들어서 넣어줘야된다.
-          //추가가됏다는건 가장 마지막 배열이라는것
-
-          // setPrevHeart(response.data[0]);
-          dispatch(setFavorites(response.data));
-          // setPrevHeart(!prevHeart);
-        }
-
-        //heart체크가
-
-        //db에 추가되면 4개로 되고 해당되는 user_id가 존재할때
-      }
-
-      //
-      else {
-        const userConfirmed = window.confirm("로그인 후 이용해주세요");
-
-        if (userConfirmed) {
-          window.location.href = "/Member/login"; // 이동하고자 하는 URL로 변경
-          return;
-        }
-      }
-    } catch (err) {
-      throw err;
-    }
-  };
+  
   // const query = useQuery({queryKey:['cart']})
 
   const openCartCheckModal = () => {
@@ -357,20 +281,7 @@ export default function ButtonBox() {
         </button>
       </li>
       <li>
-        <button
-          onClick={handleClickHeart}
-          className=" border-[1px] border-[#ccc] text-center flex-col w-[70px] h-[70px] ml-[2px] flex items-center   justify-center"
-          type="button"
-        >
-          {favorites.length === 1 ? (
-            <Image width={34} height={34} alt="" src={heartOnImage}></Image>
-          ) : (
-            <Image width={34} height={34} alt="" src={heartOffImage}></Image>
-          )}
-          <p className=" font-semibold text-[13px] leading-[20px] pt-[-5px] text-[#7d7d7d]">
-            {isHeart?.length}
-          </p>
-        </button>
+        <HeartButton></HeartButton>
       </li>
     </ul>
   );

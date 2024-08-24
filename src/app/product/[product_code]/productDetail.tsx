@@ -23,7 +23,7 @@ import {
 
 import ButtonBox from "./_component/button";
 import Description from "./_component/description";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProductData } from "./_lib/getProductData";
 import SelectOptions from "./_component/selectOptions";
 import Loading from "@/app/_lib/loading";
@@ -65,6 +65,7 @@ export default function ProductDetail() {
 
   const { product_code }: any = params;
 
+
   //option창을 여는것
 
   // const product = useSelector((state) => state?.product.product);
@@ -78,13 +79,14 @@ export default function ProductDetail() {
   // )
   const dispatch = useDispatch();
   const selectOption = useSelector((state) => state?.product?.selectOption);
-
+  
+  
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", product_code],
-    queryFn: getProductData,
     // staleTime: 1000 * 60 * 30,
     // gcTime: 1000 * 60 * 30,
   });
+  
 
   if (isLoading) {
     return <Loading></Loading>;

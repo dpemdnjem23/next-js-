@@ -1,10 +1,3 @@
-//클릭한 product를 가져온다.
-// product버튼을 누를ㄸ
-
-//product를 클릭하면 그 데이터를 넘겨준다.
-//get dataHeart는 모든 데이터를 가져오기때문에 product에 쓰기 불펴해짐
-
-
 import { supabaseKey, supabaseUrl } from "@/lib";
 import { useQuery, QueryFunctionContext } from "react-query";
 
@@ -12,20 +5,19 @@ type props = {
   queryKey: [string, string];
 };
 
-export async function getClickHeartData({
+export async function getProductHeart({
   queryKey,
-}: QueryFunctionContext<[string, undefined | string]>) {
-  const [_, user_id] = queryKey;
+}: QueryFunctionContext<[string, number]>) {
+  const [_, product_id] = queryKey;
+  console.log(product_id);
+  //2개로 나눌수있다. 몇명이 찜했는지 볼수있도록,
 
-  if (!user_id) {
-    throw Error("로그인 하지 않은상태");
-  }
-  const url: string = `${supabaseUrl}/rest/v1/favorite?select=*&user_id=eq.${user_id}`;
+  const url: string = `${supabaseUrl}/rest/v1/favorite?select=*&product_id=eq.${product_id}`;
 
   //userid가 존재하지않는경우
   try {
     const response = await fetch(url, {
-      next: { tags: ["favorites", user_id] },
+      next: { tags: ["favorites", product_id.toString()] },
       cache: "no-store",
 
       headers: {
@@ -35,13 +27,16 @@ export async function getClickHeartData({
         Authorization: `Bearer ${supabaseKey}`,
       },
     });
+
+    //서버에서 갯수만 추출해서 내보내준다.
+
     const jsonData = await response.json();
 
     if (!response.ok) {
       throw new Error("Failed to fetch data");
     }
 
-    return jsonData;
+    return jsonData.length;
   } catch (err: any) {
     throw Error(err);
   }

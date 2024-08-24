@@ -48,6 +48,7 @@ export default function ThumbnailList({ title, link, categoryName }) {
     // queryFn: getHeartData,
     gcTime: 300 * 1000,
     staleTime: 60 * 1000,
+    
   });
 
   const isHeart = useSelector((state) => state?.user.isHeart);
@@ -61,6 +62,9 @@ export default function ThumbnailList({ title, link, categoryName }) {
   const dispatch = useDispatch();
 
   const [isModalOpen, setModalOpen] = useState(false);
+
+  
+
 
   const fetch = async (index: number) => {
     const response = await supabase

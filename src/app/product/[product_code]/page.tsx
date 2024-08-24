@@ -11,6 +11,7 @@ import {
 import { getProductData } from "./_lib/getProductData";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { getProductHeart } from "./_lib/getProductHearts";
 
 export default async function Page({
   params,
@@ -28,6 +29,14 @@ export default async function Page({
     queryKey: ["product", product_code],
     queryFn: getProductData,
   });
+
+  const product = queryClient.getQueryData(["product", product_code]);
+
+  await queryClient.prefetchQuery({
+    queryKey: ["favorites", product?.id?.toString()],
+    queryFn: getProductHeart,
+  });
+  //link
 
   const dehydratedState = dehydrate(queryClient);
 
