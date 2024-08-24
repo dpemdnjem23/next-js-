@@ -13,25 +13,24 @@ import {
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 export default function CartButton() {
+    const params = useParams();
 
-  const params = useParams();
+    const queryClient = useQueryClient();
+    const { product_code } = params;
+    const product = useQuery({ queryKey: ["product", product_code] });
 
-  const queryClient = useQueryClient();
-  const { product_code } = params;
-  const product = useQuery({ queryKey: ["product", product_code] });
+    //   const product = queryClient.getQueryData([["product", product_code]]);
+    console.log(product, "cartButton");
+    const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
+    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
-  //   const product = queryClient.getQueryData([["product", product_code]]);
-  console.log(product, "cartButton");
-  const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
-  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+    const selectOption = useSelector((state) => state?.product.selectOption);
+    //   let cartId = cookieGet("cartId");
+    //   console.log(cartId, "cartButton");
 
-  const selectOption = useSelector((state) => state?.product.selectOption);
+    const dispatch = useDispatch();
 
-  const dispatch = useDispatch();
-  
-  const fetchData = async () => {
-    let cartId = await cookieGet("cartId");
-
+    const fetchData = async (cartId: string|undefined) => {
     const optionsArr = selectOption?.map((el) => {
       return el.name;
     });
@@ -54,7 +53,7 @@ export default function CartButton() {
       quantity: quantityArr,
       cart_id: cartId,
 
-      product_id: product.id,
+      product_id: product?.data?.id,
     };
 
     // //option이 여러개
@@ -65,8 +64,8 @@ export default function CartButton() {
 
   const mutation = useMutation({
     mutationFn: fetchData,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
+    onSuccess: (cartId) => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (err) => {
       console.error(err);
@@ -85,7 +84,7 @@ export default function CartButton() {
       // mutation.mutate();
     }
 
-    mutation.mutate();
+    mutation.mutate(cartId);
   };
 
   //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기
@@ -95,7 +94,6 @@ export default function CartButton() {
   //hear user_id에 값을 넣고 다시클릭하면 줄어들도록
   //heart클릭시 로그인이 되지 않았다면
 
-  
   // const query = useQuery({queryKey:['cart']})
 
   const openCartCheckModal = () => {

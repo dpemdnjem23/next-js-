@@ -9,7 +9,7 @@ import FullScreenLoading from "../_component/fullScreenLoading";
 import { useSelector } from "react-redux";
 import Loading from "../_lib/loading";
 import PendingLoading from "./_component/pendingLoading";
-import { QueryClient } from "@tanstack/react-query";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { getCartItems } from "./_lib/getCartItmes";
 import { supabase } from "@/lib";
 // import { auth } from "@/auth";
@@ -23,18 +23,23 @@ export default async function Cart() {
   // if (await auth()) {
   //   return null;
   // }
-  // const queryClient = new QueryClient();
+  const queryClient = new QueryClient();
 
-  // await queryClient.prefetchQuery({
-  //   queryKey: ["carts"],
+  await queryClient.prefetchQuery({
+    queryKey: ["cart"],
 
-  //   queryFn: getCartItems,
-  // });
+    queryFn: getCartItems,
+  });
 
+  const dehydratedState = dehydrate(queryClient);
+
+  
   return (
     // <div className="relative mb-[60px]">
     <div>
-      <CartItem></CartItem>
+      <HydrationBoundary state={dehydratedState}>
+        <CartItem></CartItem>
+      </HydrationBoundary>
     </div>
   );
 }
