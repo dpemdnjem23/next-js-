@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import btnClose from "../../../../../public/layer_close_23.png";
 import btnDel from "../../../../../public/btn_del_12.svg";
-import { getHistory } from "@/lib/historyLocalstorage";
+import { getHistory } from "@/lib/useClickProduct";
 import { setCartCheckModal } from "@/reducers/slices/ProductSlice";
 
 import { useRouter } from "next/navigation";

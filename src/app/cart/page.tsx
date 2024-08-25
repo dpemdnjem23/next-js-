@@ -1,4 +1,4 @@
-// "use client";
+"use server";
 import Image from "next/image";
 import CartItem from "./cartItem";
 import { Suspense, useEffect, useState } from "react";
@@ -9,13 +9,21 @@ import FullScreenLoading from "../_component/fullScreenLoading";
 import { useSelector } from "react-redux";
 import Loading from "../_lib/loading";
 import PendingLoading from "./_component/pendingLoading";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { getCartItems } from "./_lib/getCartItmes";
-import { supabase } from "@/lib";
+import { getUser, supabase } from "@/lib";
+import { cookieGet } from "@/utils/cookieUtils";
 // import { auth } from "@/auth";
 export default async function Cart() {
   //cartItem
 
+  const user = await getUser();
+  const cartId = await cookieGet("cartId");
+  console.log(cartId, "cartgetet");
   // const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
   // const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
 
@@ -23,17 +31,29 @@ export default async function Cart() {
   // if (await auth()) {
   //   return null;
   // }
+  //cart는 2가지 케이스다 로그인 vs 비로그인
+
   const queryClient = new QueryClient();
+  if (user?.id) {
+    
+    await queryClient.prefetchQuery({
+      queryKey: ["cart", user?.id],
+  
+      queryFn: getCartItems,
+    });
+  
+  }
+  else if (!user?.id) {
+    await queryClient.prefetchQuery({
+      queryKey: ["cart"],
+  
+      queryFn: getCartItems,
+    });
+  }
 
-  await queryClient.prefetchQuery({
-    queryKey: ["cart"],
-
-    queryFn: getCartItems,
-  });
 
   const dehydratedState = dehydrate(queryClient);
 
-  
   return (
     // <div className="relative mb-[60px]">
     <div>

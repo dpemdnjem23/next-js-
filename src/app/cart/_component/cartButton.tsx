@@ -15,7 +15,7 @@ export default function CartButton() {
 
   const boxObj = useSelector((state) => state?.cart?.boxObj);
 
-  const cartItems = queryClient.getQueryData(["carts"]);
+  const cartItems = queryClient.getQueryData(["cart"]);
 
   const updatedData = async (el) => {
     const { data, error } = await supabase
@@ -43,7 +43,7 @@ export default function CartButton() {
   const mutation2 = useMutation({
     mutationFn: deleteData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (err) => {
       console.error(err);
@@ -53,7 +53,7 @@ export default function CartButton() {
   const mutation = useMutation({
     mutationFn: updatedData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (err) => {
       console.error(err);

@@ -62,14 +62,13 @@ export default function CartItem() {
     isRefetching,
     isError,
   } = useQuery({
-    queryKey: ["carts"],
-    queryFn: () => getCartItems(userLogin, user),
+    queryKey: ["cart", user?.id || ""],
   });
 
   useEffect(() => {
     const checkAll = () => {
       console.log(cartItems);
-      const check = cartItems?.data?.reduce(
+      const check = cartItems?.reduce(
         (
           acc: unknown,
 
@@ -92,6 +91,8 @@ export default function CartItem() {
         []
       );
 
+      console.log(check);
+
       dispatch(setBoxObj(check));
 
       //모두 체크 해제하기 조건 - 모든 체크가 들어와있으면
@@ -110,7 +111,7 @@ export default function CartItem() {
   const countCart = () => {
     let count = 0;
 
-    cartItems?.data?.map((el) => {
+    cartItems?.map((el) => {
       count = count + el?.options.length - 1;
     });
 

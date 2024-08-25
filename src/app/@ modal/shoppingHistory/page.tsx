@@ -7,7 +7,8 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import btnClose from "../../../../public/btn_filter_close_32.svg";
 import btnDel from "../../../../public/ico_del_gray.svg";
-import { getHistory } from "@/lib/historyLocalstorage";
+import { getHistory } from "@/lib";
+
 
 interface Product {
   id: string;

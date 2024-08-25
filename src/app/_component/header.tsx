@@ -24,6 +24,7 @@ import {
 import ResponsiveHeader from "./responsiveHeader";
 import { cookieGet } from "@/utils/cookieUtils";
 import { supabase } from "@/lib";
+import { userInfo } from "os";
 
 export default function Header() {
   const targetRef = useRef<HTMLDivElement | null>(null);
@@ -38,7 +39,7 @@ export default function Header() {
   const userLogin = JSON.parse(
     localStorage.getItem("userLogin") || "{}"
   )?.login;
-  const user = JSON.parse(localStorage.getItem("userInfo") || "{}")?.user;
+  const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
   const {
     data: cartItems,
@@ -46,7 +47,7 @@ export default function Header() {
     error,
     isSuccess,
     refetch,
-  } = useQuery({ queryKey: ["cart"] });
+  } = useQuery({ queryKey: ["cart", user?.id || null] });
 
   console.log(cartItems, "cart");
 
@@ -121,7 +122,6 @@ export default function Header() {
         // setAbsoluteIntersecting(false);
         dispatch(setIsIntersection(false));
       } else {
-
         dispatch(setIsIntersection(true));
 
         // setIsIntersecting(false);

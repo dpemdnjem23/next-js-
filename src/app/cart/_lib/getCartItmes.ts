@@ -1,38 +1,67 @@
-import { supabase } from "@/lib";
+"use server";
+import { supabase, supabaseKey } from "@/lib";
 import { cookieGet } from "@/utils/cookieUtils";
 
 export async function getCartItems({ queryKey }) {
   const [_, id] = queryKey;
-
-  console.log(queryKey, id, _, "querykey");
-
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
-
   const cookie = await cookieGet("cartId");
 
-  if (!session) {
-    const response = await supabase
-      .from("cart")
-      .select(
-        `id,options,cart_id,quantity,user_id,product(id,product_code,price,thumbnail,product_code,brand,front_multiline,discount)`
-      )
-      .eq("cart_id", cookie)
+  const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/ress/v1/cart?cart_id=eq.${cookie}&select=id,options,cart_id,quantity,user_id,product(id,product_code,price,thumbnail,product_code,brand,front_multiline,discount)
+  &order.id=asc
+  `;
+  const url2 = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/cart?user_id=eq.${id}&select=id,options,cart_id,quantity,user_id,product(id,product_code,price,thumbnail,product_code,brand,front_multiline,discount)
+  &order.id=asc
+  `;
 
-      .order("id", { ascending: true });
+  try {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
 
-    return response;
-  } else if (session) {
-    const response = await supabase
-      .from("cart")
-      .select(
-        `id,options,cart_id,quantity,user_id,product(id,price,,product_code,thumbnail,product_code,brand,front_multiline,discount)`
-      )
-      .order("id", { ascending: true })
-      .eq("user_id", user?.user?.id);
+    if (!session) {
+      const response = await fetch(url, {
+        next: { tags: ["cart"] },
+        credentials: "include",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
 
-    return response;
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      });
+
+      const jsonData = await response.json();
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      return jsonData;
+    } else if (session) {
+      const response = await fetch(url2, {
+        next: { tags: ["cart", id] },
+        credentials: "include",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      });
+      const jsonData = await response.json();
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      console.log(jsonData);
+
+      return jsonData;
+    }
+  } catch (err) {
+    throw Error(err);
   }
 }

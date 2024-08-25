@@ -21,9 +21,11 @@ import { supabase } from "@/lib";
 
 export default function CartTable() {
   const queryClient = useQueryClient();
+  const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
   const [controlQuantity, setControlQuantity] = useState<[]>([]);
-  const cartItems: any = queryClient.getQueryData(["carts"]);
+  //cart items는 2가지가있다. 로그인된경우 되지 않은경우
+  const cartItems: any = queryClient.getQueryData(["cart", user?.id || ""]);
   const boxObj = useSelector((state) => state?.cart?.boxObj);
   // const boxObj = [];
 
@@ -32,7 +34,7 @@ export default function CartTable() {
 
   const quantityById = () => {
     let arr: any = [];
-    cartItems?.data?.forEach((item) => {
+    cartItems?.forEach((item) => {
       arr = [...arr, { id: item?.id, quantity: item?.quantity }];
     });
     setControlQuantity(arr);
@@ -40,6 +42,7 @@ export default function CartTable() {
   useEffect(() => {
     quantityById();
   }, [cartItems]);
+  console.log(controlQuantity, ";");
 
   // console.log(boxObj);
 
@@ -86,7 +89,7 @@ export default function CartTable() {
   const mutationUpdate = useMutation({
     mutationFn: updateData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       window.location.reload();
     },
     onError: (err) => {
@@ -304,7 +307,7 @@ export default function CartTable() {
         </tr>
       </thead>
       <tbody>
-        {cartItems?.data?.map((item, index: number) => {
+        {cartItems?.map((item, index: number) => {
           //checke된 가격만 포함시킨다
 
           const product_id = [item.product_id];

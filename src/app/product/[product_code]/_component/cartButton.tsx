@@ -13,24 +13,24 @@ import {
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 export default function CartButton() {
-    const params = useParams();
+  const params = useParams();
 
-    const queryClient = useQueryClient();
-    const { product_code } = params;
-    const product = useQuery({ queryKey: ["product", product_code] });
+  const queryClient = useQueryClient();
+  const { product_code } = params;
+  const product = useQuery({ queryKey: ["product", product_code] });
 
-    //   const product = queryClient.getQueryData([["product", product_code]]);
-    console.log(product, "cartButton");
-    const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  //   const product = queryClient.getQueryData([["product", product_code]]);
+  console.log(product, "cartButton");
+  const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
-    const selectOption = useSelector((state) => state?.product.selectOption);
-    //   let cartId = cookieGet("cartId");
-    //   console.log(cartId, "cartButton");
+  const selectOption = useSelector((state) => state?.product.selectOption);
+  //   let cartId = cookieGet("cartId");
+  //   console.log(cartId, "cartButton");
 
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const fetchData = async (cartId: string|undefined) => {
+  const fetchData = async (cartId: string | undefined) => {
     const optionsArr = selectOption?.map((el) => {
       return el.name;
     });
@@ -48,7 +48,7 @@ export default function CartButton() {
     // const response = await supabase.from("cart").update(select);
 
     const select = {
-      user_id: userInfo?.user?.id || null,
+      user_id: userInfo?.id || null,
       options: optionsArr,
       quantity: quantityArr,
       cart_id: cartId,
