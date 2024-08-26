@@ -64,7 +64,7 @@ export default function CartButton() {
 
   const mutation = useMutation({
     mutationFn: fetchData,
-    onSuccess: (cartId) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (err) => {
@@ -81,10 +81,11 @@ export default function CartButton() {
     //cartId가 없는경우
     if (!cartId) {
       await cookieCreate("cartId");
-      // mutation.mutate();
+      cartId = await cookieGet("cartId");
+      mutation.mutate(cartId);
+    } else if (cartId) {
+      mutation.mutate(cartId);
     }
-
-    mutation.mutate(cartId);
   };
 
   //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기

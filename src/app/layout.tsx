@@ -48,19 +48,11 @@ export default async function RootLayout({
   const user = await getUser();
 
   const queryClient = new QueryClient();
-  if (user) {
-    await queryClient.prefetchQuery({
-      queryKey: ["cart", user?.id],
-      queryFn: getCartData,
-    });
-  } else if (!user) {
-    const cookie = await cookieGet("cartId");
-
-    await queryClient.prefetchQuery({
-      queryKey: ["cart", cookie || null],
-      queryFn: getCartData,
-    });
-  }
+  await queryClient.prefetchQuery({
+    queryKey: ["cart", user?.id || "guest"],
+    queryFn: getCartData,
+  });
+  const cookie = await cookieGet("cartId");
 
   const dehydratedState = dehydrate(queryClient);
 
