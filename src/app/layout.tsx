@@ -57,7 +57,7 @@ export default async function RootLayout({
     const cookie = await cookieGet("cartId");
 
     await queryClient.prefetchQuery({
-      queryKey: ["cart", cookie],
+      queryKey: ["cart", cookie || null],
       queryFn: getCartData,
     });
   }

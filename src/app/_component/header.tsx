@@ -25,6 +25,8 @@ import ResponsiveHeader from "./responsiveHeader";
 import { cookieGet } from "@/utils/cookieUtils";
 import { supabase } from "@/lib";
 import { userInfo } from "os";
+import { query } from "express";
+import { useCartData } from "@/lib/hooks/useCartData";
 
 export default function Header() {
   const targetRef = useRef<HTMLDivElement | null>(null);
@@ -41,15 +43,9 @@ export default function Header() {
   )?.login;
   const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
-  const {
-    data: cartItems,
-    isLoading,
-    error,
-    isSuccess,
-    refetch,
-  } = useQuery({ queryKey: ["cart", user?.id || null] });
+  const cartItems = queryClient.getQueryData(["cart", user?.id || "guest"]);
 
-  console.log(cartItems, "cart");
+  console.log(cartItems);
 
   // if (isSuccess) {
   //   setWork(!work);
