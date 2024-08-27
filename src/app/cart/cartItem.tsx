@@ -62,7 +62,7 @@ export default function CartItem() {
     isRefetching,
     isError,
   } = useQuery({
-    queryKey: ["cart", user?.id || ""],
+    queryKey: ["cart", user?.id || "guest"],
   });
 
   useEffect(() => {

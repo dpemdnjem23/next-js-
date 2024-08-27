@@ -25,7 +25,10 @@ export default function CartTable() {
 
   const [controlQuantity, setControlQuantity] = useState<[]>([]);
   //cart items는 2가지가있다. 로그인된경우 되지 않은경우
-  const cartItems: any = queryClient.getQueryData(["cart", user?.id || ""]);
+  const cartItems: any = queryClient.getQueryData([
+    "cart",
+    user?.id || "guest",
+  ]);
   const boxObj = useSelector((state) => state?.cart?.boxObj);
   // const boxObj = [];
 
@@ -89,7 +92,9 @@ export default function CartTable() {
   const mutationUpdate = useMutation({
     mutationFn: updateData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({
+        queryKey: ["cart", userInfo?.id || "guest"],
+      });
       window.location.reload();
     },
     onError: (err) => {

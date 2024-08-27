@@ -65,7 +65,9 @@ export default function CartButton() {
   const mutation = useMutation({
     mutationFn: fetchData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({
+        queryKey: ["cart", userInfo?.id || "guest"],
+      });
     },
     onError: (err) => {
       console.error(err);

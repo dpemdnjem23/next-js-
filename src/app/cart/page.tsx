@@ -23,7 +23,6 @@ export default async function Cart() {
 
   const user = await getUser();
   const cartId = await cookieGet("cartId");
-  console.log(cartId, "cartgetet");
   // const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
   // const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
 
@@ -34,23 +33,12 @@ export default async function Cart() {
   //cart는 2가지 케이스다 로그인 vs 비로그인
 
   const queryClient = new QueryClient();
-  if (user?.id) {
-    
-    await queryClient.prefetchQuery({
-      queryKey: ["cart", user?.id],
-  
-      queryFn: getCartItems,
-    });
-  
-  }
-  else if (!user?.id) {
-    await queryClient.prefetchQuery({
-      queryKey: ["cart"],
-  
-      queryFn: getCartItems,
-    });
-  }
 
+  await queryClient.prefetchQuery({
+    queryKey: ["cart", user?.id || "guest"],
+
+    queryFn: getCartItems,
+  });
 
   const dehydratedState = dehydrate(queryClient);
 

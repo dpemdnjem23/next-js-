@@ -43,7 +43,7 @@ export default function Header() {
   )?.login;
   const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
-  // const cartItems = queryClient.getQueryData(["cart", user?.id || "guest"]);
+  const cartItems = queryClient.getQueryData(["cart", user?.id || "guest"]);
 
   console.log(cartItems);
 
