@@ -9,7 +9,7 @@ export async function getProductHeart({
   queryKey,
 }: QueryFunctionContext<[string, number]>) {
   const [_, product_id] = queryKey;
-  console.log(product_id);
+
   //2개로 나눌수있다. 몇명이 찜했는지 볼수있도록,
 
   const url: string = `${supabaseUrl}/rest/v1/favorite?select=*&product_id=eq.${product_id}`;

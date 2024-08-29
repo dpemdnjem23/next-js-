@@ -18,17 +18,25 @@ const cookieCreate = async (name: string) => {
     value: generateCartId(),
     httpOnly: true,
     sameSite: "lax",
-    maxAge:60*360,
+    maxAge: 60 * 360,
     secure: true,
     path: "/",
   });
 };
 const cookieGet = async (name: string) => {
-  return cookies().get(name)?.value;
+  try {
+    return cookies().get(name)?.value;
+  } catch (error) {
+    console.error("쿠키 불러오는 중 오류 발생:", error);
+  }
 };
 
-const cookieDel = async (data) => {
-  cookies().set("refresh", "", { maxAge: 0 });
+const cookieDel = async (name: string) => {
+  try {
+    cookies().set(name, "", { maxAge: 0 });
+  } catch (error) {
+    console.error("쿠키 삭제 중 오류 발생:", error);
+  }
 };
 
 export { cookieCreate, cookieDel, cookieGet };

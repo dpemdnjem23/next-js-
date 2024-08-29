@@ -20,15 +20,19 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib";
 
 export default function CartTable() {
+  
   const queryClient = useQueryClient();
   const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
   const [controlQuantity, setControlQuantity] = useState<[]>([]);
+  
   //cart items는 2가지가있다. 로그인된경우 되지 않은경우
+  
   const cartItems: any = queryClient.getQueryData([
     "cart",
     user?.id || "guest",
   ]);
+
   const boxObj = useSelector((state) => state?.cart?.boxObj);
   // const boxObj = [];
 

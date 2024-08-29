@@ -11,6 +11,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 export default function CartButton() {
   const params = useParams();
@@ -20,7 +21,6 @@ export default function CartButton() {
   const product = useQuery({ queryKey: ["product", product_code] });
 
   //   const product = queryClient.getQueryData([["product", product_code]]);
-  console.log(product, "cartButton");
   const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
@@ -65,8 +65,9 @@ export default function CartButton() {
   const mutation = useMutation({
     mutationFn: fetchData,
     onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["cart"] });
       queryClient.invalidateQueries({
-        queryKey: ["cart", userInfo?.id || "guest"],
+        queryKey: ["cart"],
       });
     },
     onError: (err) => {

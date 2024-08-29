@@ -1,4 +1,3 @@
-"use server";
 
 import { createSupabaseServer } from "@/lib";
 

@@ -25,8 +25,9 @@ export default function CartCheckModal() {
 
   //쇼핑백확인
   const cartRouter = () => {
-    route.push("/cart");
     dispatch(setCartCheckModal(false));
+
+    route.push("/cart");
   };
 
   return (

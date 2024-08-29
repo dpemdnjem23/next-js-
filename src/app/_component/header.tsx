@@ -26,7 +26,7 @@ import { cookieGet } from "@/utils/cookieUtils";
 import { supabase } from "@/lib";
 import { userInfo } from "os";
 import { query } from "express";
-import { useCartData } from "@/lib/hooks/useCartData";
+import { getCartData } from "../_lib/getCartData";
 
 export default function Header() {
   const targetRef = useRef<HTMLDivElement | null>(null);
@@ -43,7 +43,17 @@ export default function Header() {
   )?.login;
   const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
-  const cartItems = queryClient.getQueryData(["cart", user?.id || "guest"]);
+  // const cartItems = queryClient.getQueryData(["cart", user?.id || "guest"]);
+
+  const {
+    data: cartItems,
+    isError,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["cart", user?.id || "guest"],
+    queryFn: getCartData,
+  });
 
   console.log(cartItems);
 

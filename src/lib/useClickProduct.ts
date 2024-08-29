@@ -46,7 +46,6 @@ export const useClickProduct = () => {
     if (isExist) {
       return;
     }
-    dispatch(clearOption()); // 옵션 초기화
 
     localStorage.setItem("history", JSON.stringify([...items, history]));
   };

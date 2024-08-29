@@ -13,6 +13,7 @@ import ReactImageMagnify from "react-image-magnify";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
+  clearOption,
   setCardInfoModal,
   setIsImage,
   setPointsInfoModal,
@@ -65,7 +66,6 @@ export default function ProductDetail() {
 
   const { product_code }: any = params;
 
-
   //option창을 여는것
 
   // const product = useSelector((state) => state?.product.product);
@@ -80,6 +80,12 @@ export default function ProductDetail() {
   const dispatch = useDispatch();
   const selectOption = useSelector((state) => state?.product?.selectOption);
   
+  useEffect(() => {
+    
+dispatch(clearOption())
+    
+  },[])
+
   
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", product_code],

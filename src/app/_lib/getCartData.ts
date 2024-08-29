@@ -1,14 +1,12 @@
-"use server";
-
 import { getUser, supabaseKey, supabaseUrl } from "@/lib";
 import { cookieGet } from "@/utils/cookieUtils";
 export async function getCartData({ queryKey }) {
   const [_, user_id] = queryKey;
 
-  console.log(user_id);
   // 두가지 경우가 존재
 
   //1. 로그인한 사용자인경우(getData로 )
+  console.log(user_id, "user_id");
 
   try {
     //
@@ -45,11 +43,9 @@ export async function getCartData({ queryKey }) {
       const cookie = await cookieGet("cartId");
       if (!cookie) {
         return [];
-        throw Error("cartId가 없음");
       }
 
       const url: string = `${supabaseUrl}/rest/v1/cart?cart_id=eq.${cookie}&select=id,options,cart_id,quantity,user_id,product_id(id,price,thumbnail,product_code,brand,front_multiline,discount)`;
-      console.log(cookie);
 
       const response = await fetch(url, {
         next: { tags: ["cart", "guest"] },
@@ -69,7 +65,6 @@ export async function getCartData({ queryKey }) {
       }
 
       const jsonData = await response.json();
-      console.log(jsonData);
 
       return jsonData;
     }

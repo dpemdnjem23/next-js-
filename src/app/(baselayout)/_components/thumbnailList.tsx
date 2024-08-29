@@ -3,11 +3,10 @@
 import Image from "next/image";
 import Slider from "./slider";
 import Link from "next/link";
-import Router from "next/router";
 
 import { useEffect, useState } from "react";
 
-import { onClickProduct, useClickProduct } from "@/lib/useClickProduct";
+import {useClickProduct } from "@/lib/useClickProduct";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -20,10 +19,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-import { getProductsData } from "../_lib/getProductsData";
-import { supabase } from "@/lib";
-import { getHeartData } from "../_lib/getHeartData";
-import { query } from "express";
 import HeartButton from "./heartButton";
 // import { supabase, supabaseKey } from "@/lib";
 

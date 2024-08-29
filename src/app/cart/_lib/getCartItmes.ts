@@ -59,7 +59,7 @@ export async function getCartItems({ queryKey }) {
 
       console.log(jsonData);
 
-      return jsonData;
+      return jsonData
     }
   } catch (err) {
     throw Error(err);

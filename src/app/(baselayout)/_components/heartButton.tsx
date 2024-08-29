@@ -2,8 +2,9 @@
 
 import { supabase } from "@/lib";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getHeartData } from "../_lib/getHeartData";
 
-export default function HeartButton({ id }:{id:number}) {
+export default function HeartButton({ id }: { id: number }) {
   const queryClient = useQueryClient();
 
   const userLogin = JSON.parse(localStorage.getItem("userLogin") || "{}");
@@ -16,15 +17,15 @@ export default function HeartButton({ id }:{id:number}) {
     isLoading,
   } = useQuery({
     queryKey: ["favorites", userInfo?.id],
-    // queryFn: getHeartData,
+    queryFn: getHeartData,
     gcTime: 300 * 1000,
     staleTime: 60 * 1000,
   });
 
-  const fetch = async (index: number) => {
+  const fetch = async (productId: number) => {
     const response = await supabase
       .from("favorite")
-      .insert([{ user_id: userInfo?.id, product_id: product[index]?.id }]);
+      .insert([{ user_id: userInfo?.id, product_id: productId }]);
 
     return response;
   };
@@ -40,23 +41,20 @@ export default function HeartButton({ id }:{id:number}) {
   };
   const heartOn = useMutation({
     mutationFn: fetch,
-    onMutate: (index: number) => {
+    onMutate: (productId: number) => {
       //즉시 하트를 추가한다.
-
-      console.log(userInfo?.id);
 
       const value: [] | undefined = queryClient.getQueryData([
         "favorites",
         userInfo?.id,
       ]);
 
-      console.log(!value, value, "value");
       const shallow = [...value];
       console.log(shallow);
 
       shallow.push({
         user_id: userInfo?.id,
-        product_id: product[index]?.id,
+        product_id: productId,
       });
       queryClient.setQueryData(["favorites", userInfo?.id], shallow);
 
@@ -101,7 +99,7 @@ export default function HeartButton({ id }:{id:number}) {
     },
   });
 
-  const handleClickHeart = async (index: number, productId: number) => {
+  const handleClickHeart = async (productId: number) => {
     console.log(productId);
     try {
       //db에 추가 db에 추가된경우 db에서 삭제
@@ -114,6 +112,8 @@ export default function HeartButton({ id }:{id:number}) {
           return el.product_id === productId;
         });
 
+        console.log(check);
+
         // dispatch(setFavorites(response.data));
 
         //data가 존재한다. 확인이 된경우 삭제한다.
@@ -123,7 +123,7 @@ export default function HeartButton({ id }:{id:number}) {
         } else if (!check) {
           //data가 없는경우
 
-          heartOn.mutate(index);
+          heartOn.mutate(productId);
 
           // setPrevHeart(!prevHeart);
         }
@@ -150,7 +150,7 @@ export default function HeartButton({ id }:{id:number}) {
   return (
     <>
       <button
-        onClick={() => handleClickHeart(index, id)}
+        onClick={() => handleClickHeart(id)}
         id="heart"
         value={id}
         style={{

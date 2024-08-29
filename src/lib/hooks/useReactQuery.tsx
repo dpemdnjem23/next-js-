@@ -21,6 +21,7 @@ export default function ReactQueryProviders({
             // above 0 to avoid refetching immediately on the client
             // 캐시를 지속하는 시간 설정 (1시간)
             staleTime: Infinity,
+          
           },
         },
       })
