@@ -1,5 +1,3 @@
-"use server";
-
 import { supabaseKey, supabaseUrl } from "@/lib";
 
 export async function getProductData({

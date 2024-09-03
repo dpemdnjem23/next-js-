@@ -8,6 +8,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+
 import { getProductData } from "./_lib/getProductData";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -20,7 +21,6 @@ export default async function Page({
 }) {
   //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기
   //heart는 product번호랑 매칭시켜야한다.
-
   const queryClient = new QueryClient();
 
   const { product_code } = params;

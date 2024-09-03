@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { useEffect, useState } from "react";
 
-import {useClickProduct } from "@/lib/useClickProduct";
+import { useClickProduct } from "@/lib/useClickProduct";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -20,10 +20,14 @@ import {
 } from "@tanstack/react-query";
 
 import HeartButton from "./heartButton";
+import { getProductsData } from "../_lib/getProductsData";
 // import { supabase, supabaseKey } from "@/lib";
 
 export default function ThumbnailList({ title, link, categoryName }) {
-  const { data: products } = useQuery({ queryKey: ["products"] });
+  const { data: products } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProductsData,
+  });
 
   const queryClient = useQueryClient();
 
@@ -31,7 +35,8 @@ export default function ThumbnailList({ title, link, categoryName }) {
     (product) => product.category.category_name === categoryName
   );
 
-  
+  console.log(product);
+
   const { handleProductClick } = useClickProduct();
 
   //추가가되면 personalHeart에도 똑같이 만들어서 넣어줘야된다.

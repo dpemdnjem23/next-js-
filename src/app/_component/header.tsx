@@ -24,10 +24,8 @@ import {
 import ResponsiveHeader from "./responsiveHeader";
 import { cookieGet } from "@/utils/cookieUtils";
 import { supabase } from "@/lib";
-import { userInfo } from "os";
-import { query } from "express";
 import { getCartData } from "../_lib/getCartData";
-
+import { response } from "express";
 export default function Header() {
   const targetRef = useRef<HTMLDivElement | null>(null);
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
@@ -56,8 +54,7 @@ export default function Header() {
   });
 
   console.log(cartItems);
-
-  // if (isSuccess) {
+  // // if (isSuccess) {
   //   setWork(!work);
   //   return;
   // }
@@ -121,17 +118,13 @@ export default function Header() {
       }),
       []
     );
+
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        // setIsIntersecting(true);
-        // setAbsoluteIntersecting(false);
         dispatch(setIsIntersection(false));
       } else {
         dispatch(setIsIntersection(true));
-
-        // setIsIntersecting(false);
-        // setAbsoluteIntersecting(false);
       }
     }, options);
 

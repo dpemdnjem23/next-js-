@@ -1,7 +1,6 @@
 import type { NextRequest, NextFetchEvent } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
-import { verify } from "./utils/jwtUitls";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useSearchParams } from "next/navigation";

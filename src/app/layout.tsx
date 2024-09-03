@@ -23,11 +23,10 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { getCartData } from "./_lib/getCartData";
 import { getUser } from "@/lib";
 import { cookieGet } from "@/utils/cookieUtils";
 import { error } from "console";
-
+import { getCartData } from "./_lib/getCartData";
 const ReduxProvider = dynamic(() => import("@/reducers"), {
   ssr: false,
 });
@@ -49,27 +48,37 @@ export default async function RootLayout({
 
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["cart", user?.id || "guest"],
-    queryFn: getCartData,
-  });
+  // await queryClient.prefetchQuery({
+  //   queryKey: ["cart", user?.id || "guest"],
+  //   queryFn: getCartData,
+  // });
 
-  const dehydratedState = dehydrate(queryClient);
+  // const {
+  //   data: cartItems,
+  //   isError,
+  //   error,
+  //   isLoading,
+  // } = useQuery({
+  //   queryKey: ["cart", user?.id || "guest"],
+  //   queryFn: getCartData,
+  // });
+
+  // const dehydratedState = dehydrate(queryClient);
+  // <HydrationBoundary state={dehydratedState}>
+  //   \            </HydrationBoundary>
 
   return (
     <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
           <ReactQueryProviders>
-            <HydrationBoundary state={dehydratedState}>
-              <Header></Header>
-              <ScrollButton></ScrollButton>
-              <ShoppingHistoryModal></ShoppingHistoryModal>
+            <Header></Header>
+            <ScrollButton></ScrollButton>
+            <ShoppingHistoryModal></ShoppingHistoryModal>
 
-              {children}
+            {children}
 
-              <Footer></Footer>
-            </HydrationBoundary>
+            <Footer></Footer>
           </ReactQueryProviders>
         </ReduxProvider>
       </body>

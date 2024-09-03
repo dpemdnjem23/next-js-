@@ -20,12 +20,13 @@ export default function CartButton() {
   const updatedData = async (el) => {
     const { data, error } = await supabase
       .from("cart")
+      
       .update({ options: el.options, quantity: el.quantity })
+
       .eq("id", el.id)
 
       .select();
 
-    console.log(data, "up");
   };
 
   const deleteData = async (el) => {
@@ -182,7 +183,6 @@ export default function CartButton() {
       }
     });
 
-    // console.log(data, "sdfsdfas");
 
     //option에 end만 남아있는경우 삭제
     //box obj를

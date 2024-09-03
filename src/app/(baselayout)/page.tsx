@@ -25,10 +25,7 @@ import {
 import { getProductsData } from "./_lib/getProductsData";
 import { getUser, supabase } from "@/lib";
 
-export const metadata: Metadata = {
-  title: "홈 / W",
-  description: "홈",
-};
+
 
 import { NextResponse, type NextRequest } from "next/server";
 

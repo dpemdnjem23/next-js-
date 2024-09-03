@@ -1,4 +1,4 @@
-
+"use server";
 import { createSupabaseServer } from "@/lib";
 
 export async function signOut() {
@@ -6,6 +6,7 @@ export async function signOut() {
     const { auth } = await createSupabaseServer();
 
     const { error } = await auth.signOut();
+    console.log(error);
     if (error) {
       throw error;
     }

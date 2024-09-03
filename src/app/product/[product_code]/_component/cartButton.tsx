@@ -43,6 +43,7 @@ export default function CartButton() {
     //   user_id: userInfo?.user?.id || null,
 
     // };
+
     optionsArr.push("end");
     //option이 여러개
     // const response = await supabase.from("cart").update(select);
@@ -58,16 +59,17 @@ export default function CartButton() {
 
     // //option이 여러개
     const response = await supabase.from("cart").insert(select);
+    console.log("성공");
 
     return response;
   };
 
   const mutation = useMutation({
     mutationFn: fetchData,
+
     onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["cart"] });
       queryClient.invalidateQueries({
-        queryKey: ["cart"],
+        queryKey: ["cart", userInfo?.id || "guest"],
       });
     },
     onError: (err) => {
@@ -77,11 +79,10 @@ export default function CartButton() {
 
   const addToCart = async () => {
     //cart에 추가할때 cookie를 추가한다.
-
     let cartId = await cookieGet("cartId");
     // let cart;
-
-    //cartId가 없는경우
+    // mutation.mutate(cartId);
+    // cartId가 없는경우
     if (!cartId) {
       await cookieCreate("cartId");
       cartId = await cookieGet("cartId");
@@ -115,6 +116,7 @@ export default function CartButton() {
       alert("옵션을 선택해주세요");
     }
   };
+
   return (
     <>
       <button

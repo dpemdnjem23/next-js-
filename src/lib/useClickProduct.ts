@@ -31,7 +31,7 @@ export const useClickProduct = () => {
       brand: product[index].brand,
       thumbnail: product[index].thumbnail,
     };
-    const items = JSON.parse(localStorage.getItem("history") || "{}");
+    const items = JSON.parse(localStorage.getItem("history") || "[]");
     let isExist = false;
     //중복확인 절차.
 
@@ -52,4 +52,3 @@ export const useClickProduct = () => {
 
   return { handleProductClick };
 };
-
