@@ -2,13 +2,12 @@
 import { setIsModal } from "@/reducers/slices/HomeSlice";
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { faker } from "@faker-js/faker";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import btnClose from "../../../../public/btn_filter_close_32.svg";
-import btnDel from "../../../../public/ico_del_gray.svg";
+import btnClose from "../../../public/btn_filter_close_32.svg";
+import btnDel from "../../../public/ico_del_gray.svg";
 import { getHistory } from "@/lib";
-
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -29,6 +28,7 @@ export default function ShoppingHistoryModal() {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const [isHovered, setIsHovered] = useState(false);
   const isModal = useSelector((state) => state?.home.isModal);
+  const router = useRouter();
 
   const history = getHistory();
 
@@ -47,8 +47,8 @@ export default function ShoppingHistoryModal() {
 
   const closeModal = () => {
     document.body.style.overflow = "auto";
-
     dispatch(setIsModal(false));
+    router.back();
   };
 
   const groupByDate = (products: Product[]): GroupedProducts => {
@@ -66,7 +66,7 @@ export default function ShoppingHistoryModal() {
 
   return (
     <div
-      onClick={closeModal}
+      // onClick={closeModal}
       //   // ref={ref}
       id="scroll_menu"
       className={`   ${isModal ? "active2" : ""}  

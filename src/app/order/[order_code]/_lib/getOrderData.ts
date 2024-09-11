@@ -1,34 +1,24 @@
-"use server";
-import { useQuery } from "@tanstack/react-query";
 // import { useParams } from "next/navigation";
 
+import { supabase } from "@/lib";
 
-export async function getOrderData(params) {
-  const { order_code } = params;
+export async function getOrderData({ queryKey }: any) {
   // const response = await supabase.from("order").select().eq("id", "46464a");
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/order?id=eq.${order_code}`,
-    {
-      next: { tags: ["orders",order_code] },
-      credentials: "include",
-      cache: "no-store",
+  try {
+    const [_, order_code] = queryKey;
 
-      headers: {
-        
-        "Content-Type": "application/json",
 
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-      },
+    const response = await supabase.from("order").select().eq("id", order_code);
+
+    if (response.error) {
+      throw new Error("Failed to fetch data");
     }
-  );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch data");
+    return response.data
+  } catch (err) {
+    return err;
   }
 
-  const jsonData = await response.json();
-  console.log(jsonData);
-  return jsonData;
+  // return [];
 }

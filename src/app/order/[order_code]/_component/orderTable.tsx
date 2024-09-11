@@ -58,14 +58,10 @@ export default function OrderTable() {
   } = useQuery({
     queryKey: ["orders", params.order_code],
     queryFn: getOrderData,
-    staleTime: 1000 * 60 * 30, //30분간만 캐시를 유지하고 삭제
-    gcTime: 1000 * 60 * 30,
   });
 
-  if (isError) {
-    throw Error(error);
-  }
-
+  console.log(cartItems);
+  // console.log(cartItems);
   // const cartItems = queryClient.getQueryData(["order"]);
   // cartItems?.forEach((item) => {
   //   if (item.option !== "end" && item.isChecked) {

@@ -36,7 +36,6 @@ export async function getCartData({ queryKey }) {
       return []; // 쿠키가 없거나 유저가 guest인 경우 빈 배열 반환
     }
 
-    console.log(response);
 
     // const supabase = await createSupabaseServer();
 

@@ -9,6 +9,7 @@ import "./ScrollButtonStyle.css";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsModal } from "@/reducers/slices/HomeSlice";
+import Link from "next/link";
 
 const ScrollButton = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -30,8 +31,7 @@ const ScrollButton = () => {
 
   const openModal = () => {
     dispatch(setIsModal(true));
-    document.body.style.overflow = 'hidden';
-
+    document.body.style.overflow = "hidden";
   };
 
   return (
@@ -42,12 +42,14 @@ const ScrollButton = () => {
         side_bar
    right-[22px] bottom-[47px]`}
     >
-      <button
+      <Link
         onClick={openModal}
         className="bg-[black] w-[42px] h-[42px] rounded-[50%] flex justify-center items-center"
+        href={"/shoppinghistory"}
       >
         <Image alt="" src={timeImage}></Image>
-      </button>
+      </Link>
+
       <div className="direction flex justify-center flex-col">
         <button
           style={{

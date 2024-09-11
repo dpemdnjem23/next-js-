@@ -26,6 +26,7 @@ import { root } from "postcss";
 import CartTable from "./_component/cartTable";
 import { cookieGet } from "@/utils/cookieUtils";
 import { getCartItems } from "./_lib/getCartItmes";
+import { getCartData } from "../_lib/getCartData";
 
 export default function CartItem() {
   const [work, setWork] = useState<boolean>(false);
@@ -51,8 +52,6 @@ export default function CartItem() {
   //수량
   const dispatch = useDispatch();
 
-  const queryClient = new QueryClient();
-
   const {
     data: cartItems,
     isLoading,
@@ -63,11 +62,12 @@ export default function CartItem() {
     isError,
   } = useQuery({
     queryKey: ["cart", user?.id || "guest"],
+    queryFn: getCartData,
   });
 
   useEffect(() => {
     const checkAll = () => {
-      console.log(cartItems);
+      console.log(cartItems, "useEffect사용");
       const check = cartItems?.reduce(
         (
           acc: unknown,

@@ -1,4 +1,4 @@
-"use state";
+"use client";
 import PaymentSystem from "./_component/paymentSystem";
 import checkBox from "../../../../public/ico_checkbox_square_20.svg";
 import checkBoxY from "../../../../public/ico_checkbox_square_s_20.svg";

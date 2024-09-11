@@ -59,7 +59,6 @@ export default function CartButton() {
 
     // //option이 여러개
     const response = await supabase.from("cart").insert(select);
-    console.log("성공");
 
     return response;
   };
@@ -91,16 +90,6 @@ export default function CartButton() {
       mutation.mutate(cartId);
     }
   };
-
-  //haert를 클릭햇을때 집어넣거나빼고, heart를 불러와서 heart를찍은 사람 수 만큼넣어주기
-  //heart는 product번호랑 매칭시켜야한다.
-
-  //heart를 클릭할시 하트색깔을 바꾼다.
-  //hear user_id에 값을 넣고 다시클릭하면 줄어들도록
-  //heart클릭시 로그인이 되지 않았다면
-
-  // const query = useQuery({queryKey:['cart']})
-
   const openCartCheckModal = () => {
     // console.log("dllddlltlfgod");
 

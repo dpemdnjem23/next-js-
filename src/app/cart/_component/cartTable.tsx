@@ -19,17 +19,19 @@ import {
 } from "@/reducers/slices/CartSlice";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib";
+import { getCartData } from "@/app/_lib/getCartData";
 
 export default function CartTable() {
   const queryClient = useQueryClient();
-  const user = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
   const [controlQuantity, setControlQuantity] = useState<[]>([]);
 
   //cart items는 2가지가있다. 로그인된경우 되지 않은경우
 
   const { data: cartItems }: any = useQuery({
-    queryKey: ["cart", user?.id || "guest"],
+    queryKey: ["cart", userInfo?.id || "guest"],
+    queryFn: getCartData,
   });
 
   console.log(cartItems);
@@ -50,7 +52,6 @@ export default function CartTable() {
   useEffect(() => {
     quantityById();
   }, [cartItems]);
-  console.log(controlQuantity, ";");
 
   // console.log(boxObj);
 

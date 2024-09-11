@@ -13,13 +13,14 @@ import {
   setRoadName,
   setStreetNumber,
 } from "@/reducers/slices/OrderSlice";
-import AddressTable from "./addressTable";
+import AddressTable from "../_component/addressTable";
 import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import FullScreenLoading from "@/app/_component/fullScreenLoading";
 import axios from "axios";
 import { setIsLoading } from "@/reducers/slices/UserSlice";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 const auth = process.env.NEXT_PUBLIC_AUTH_POST;
-
 export default function PostModal() {
   const [isActive, setIsActive] = useState<boolean>(true);
   //시 , 시군구
@@ -29,7 +30,9 @@ export default function PostModal() {
     0: false,
     1: false,
   });
+  const router = useRouter();
 
+  const params = useParams();
   // const isClicked = useSelector((state) => state.order.isClicked);
   const pageNum = useSelector((state) => state?.order?.pageNum);
   //
@@ -239,6 +242,12 @@ export default function PostModal() {
     queryClient.invalidateQueries();
 
     // await refetch();
+  };
+
+  const handleXClick = () => {
+    
+    
+    router.back()
   };
   //검색 버튼을 눌럿을때 주소가 입력되어야한다.
 
@@ -533,10 +542,10 @@ export default function PostModal() {
           </div>
         )}
 
-        <button
-          className=" overflow-hidden absolute top-[25px] right-[25px] w-[53px] h-[53px] p-[15px] leading-[99em] align-top"
-          onClick={() => dispatch(setPostModal(false))}
-        >
+        <button 
+        
+        onClick={handleXClick}
+          className=" overflow-hidden absolute top-[25px] right-[25px] w-[53px] h-[53px] p-[15px] leading-[99em] align-top">
           <Image
             alt=""
             width={23}
@@ -546,10 +555,7 @@ export default function PostModal() {
           ></Image>
         </button>
       </div>
-      <span
-        onClick={() => dispatch(setPostModal(false))}
-        className=" fixed top-0 left-0 right-0 bottom-0 z-50 bg-[#0e0e0e] opacity-40 block"
-      ></span>
+      <span className=" fixed top-0 left-0 right-0 bottom-0 z-50 bg-[#0e0e0e] opacity-40 block"></span>
     </div>
   );
 }

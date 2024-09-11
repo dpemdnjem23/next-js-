@@ -13,7 +13,7 @@ import ScrollButton from "@/app/(baselayout)/_components/ScrollButton";
 import Header from "../_component/header";
 import { setIsHeader, setIsModal } from "@/reducers/slices/HomeSlice";
 import { result } from "lodash";
-import ShoppingHistoryModal from "../@ modal/shoppingHistory/page";
+import ShoppingHistoryModal from "../shoppinghistory/page";
 import { Metadata } from "next";
 import {
   dehydrate,
@@ -24,8 +24,6 @@ import {
 } from "@tanstack/react-query";
 import { getProductsData } from "./_lib/getProductsData";
 import { getUser, supabase } from "@/lib";
-
-
 
 import { NextResponse, type NextRequest } from "next/server";
 

@@ -1,3 +1,4 @@
+"use client";
 import { setIsClicked, setPageNum } from "@/reducers/slices/OrderSlice";
 import { setIsLoading } from "@/reducers/slices/UserSlice";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

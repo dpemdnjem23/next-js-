@@ -1,12 +1,15 @@
 "use client";
 import { useState } from "react";
-import PointModal from "./pointModal";
+import PointModal from "../pointModal";
 import { useDispatch, useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { setPoint } from "@/reducers/slices/OrderSlice";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function CouponTable() {
   const [showModal, setShowModal] = useState(false);
+  const params = useParams()
 
   const [dummy, setDummy] = useState<number>(0);
   const point = useSelector((state) => state.order.point);
@@ -91,6 +94,7 @@ export default function CouponTable() {
           </td>
         </tr>
         <tr>
+          
           <th className=" text-[14px] text-left text-[#333] h-[68px] pl-[43px] font-sans font-normal">
             <div
               onMouseEnter={handleMouseEnter}
@@ -106,10 +110,12 @@ export default function CouponTable() {
                   style={{
                     background: `url(https://i.ibb.co/JQ1djD8/spr-common.png) -150px -60px no-repeat`,
                   }}
-                  className="text-[14px] cursor-pointer
+
+                className="text-[14px] cursor-pointer
                 inline-block ml-[3px] align-middle
                  w-[16px] h-[16px] "
                 ></span>
+
               </em>
               {showModal ? <PointModal></PointModal> : ""}
             </div>

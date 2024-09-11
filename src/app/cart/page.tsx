@@ -1,4 +1,3 @@
-"use server";
 import Image from "next/image";
 import CartItem from "./cartItem";
 import { Suspense, useEffect, useState } from "react";

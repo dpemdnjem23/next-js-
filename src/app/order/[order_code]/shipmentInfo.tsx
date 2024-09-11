@@ -14,6 +14,8 @@ import {
   setPostModal,
 } from "@/reducers/slices/OrderSlice";
 import { InputHTMLAttributes, useState } from "react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 
 export default function ShipmentInfo() {
   const phoneNumber = useSelector((state) => state.order.phoneNumber);
@@ -21,7 +23,8 @@ export default function ShipmentInfo() {
   const name = useSelector((state) => state.order.name);
   const message = useSelector((state) => state.order.message);
   const dispatch = useDispatch();
-
+  const params = useParams();
+  const router = useRouter();
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -39,6 +42,11 @@ export default function ShipmentInfo() {
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setAddress({ ...address, addressLine: e.target.value }));
+  };
+
+  const handleClick = () => {
+    // router.back();
+    // dispatch(setPostModal(true))
   };
 
   return (
@@ -186,15 +194,17 @@ export default function ShipmentInfo() {
               h-[40px] leading-[38px] bg-[#f2f2f2] border-[#f2f2f2] border-[1px] text-[14px] outline-none align-middle
               "
               ></input>
-              <button
-                onClick={() => dispatch(setPostModal(true))}
+              <Link
+                href={`/order/${params.order_code}/post`}
+                onClick={handleClick}
                 className=" inline-block text-center px-[20px] align-middle
               border-[1px] border-[#7d7d7d] bg-[#7d7d7d] text-[#fff]
-              min-w-[140px] h-[40px] text-[14px] font-medium leading-[14px]"
+              min-w-[140px] h-[40px] text-[14px] font-medium leading-[40px]"
                 type="button"
               >
-                우편번호 찾기
-              </button>
+                <span>우편번호 찾기</span>
+              </Link>
+
               <p className=" block mt-[10px] text-[14px] text-[#000] font-normal font-sans ">
                 <input
                   value={address["road"] || ""}

@@ -15,7 +15,7 @@ import Category from "./(baselayout)/_components/category";
 import Header from "@/app/_component/header";
 import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
-import ShoppingHistoryModal from "./@ modal/shoppingHistory/page";
+import ShoppingHistoryModal from "./shoppinghistory/page";
 import ReactQueryProviders from "@/lib/hooks/useReactQuery";
 import Footer from "./_component/footer";
 import {
@@ -40,18 +40,20 @@ export const metadata: Metadata = {
 // 헤더,검색창 띄우기
 export default async function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   // const isModal = useSelector((state) => state?.home.isModal);
   const user = await getUser();
 
   const queryClient = new QueryClient();
 
-  // await queryClient.prefetchQuery({
-  //   queryKey: ["cart", user?.id || "guest"],
-  //   queryFn: getCartData,
-  // });
+  await queryClient.prefetchQuery({
+    queryKey: ["cart", user?.id || "guest"],
+    queryFn: getCartData,
+  });
 
   // const {
   //   data: cartItems,
@@ -63,22 +65,25 @@ export default async function RootLayout({
   //   queryFn: getCartData,
   // });
 
-  // const dehydratedState = dehydrate(queryClient);
-  // <HydrationBoundary state={dehydratedState}>
-  //   \            </HydrationBoundary>
+  const dehydratedState = dehydrate(queryClient);
+  //
+  //   \
 
   return (
     <html lang="en">
       <body className={inter.className}>
         <ReduxProvider>
           <ReactQueryProviders>
-            <Header></Header>
-            <ScrollButton></ScrollButton>
-            <ShoppingHistoryModal></ShoppingHistoryModal>
+            <HydrationBoundary state={dehydratedState}>
+              <Header></Header>
+              <ScrollButton></ScrollButton>
 
-            {children}
+              {/* <ShoppingHistoryModal></ShoppingHistoryModal> */}
+              {modal}
+              {children}
 
-            <Footer></Footer>
+              <Footer></Footer>
+            </HydrationBoundary>
           </ReactQueryProviders>
         </ReduxProvider>
       </body>

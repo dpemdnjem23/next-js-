@@ -21,8 +21,6 @@ export default function CartPayment({
   const dispatch = useDispatch();
   const params = useParams();
 
-  //cartItema
-  //boxObj를 이용하여 가격
   let totalCost: number = 0;
   let shippingCost: number = 0;
   const [newLeft, setNewLeft] = useState<string>("940px");
@@ -107,7 +105,7 @@ export default function CartPayment({
     mutationFn: fetchData,
 
     onError: (error) => {
-      throw error;
+      console.error(error);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -135,9 +133,7 @@ export default function CartPayment({
     mutation.mutate(randomInteger);
 
     Router.push(`/order/${randomInteger}`);
-    if (Router.isFallback) {
-      return <Loading></Loading>;
-    }
+
     // return <Loading></Loading>;
 
     // dispatch(setPageRouterLoading(true));

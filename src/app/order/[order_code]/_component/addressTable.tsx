@@ -1,4 +1,5 @@
 // "use server";
+"use client";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";

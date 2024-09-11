@@ -1,17 +1,28 @@
-"use state";
-import { useQueryClient } from "@tanstack/react-query";
+"use client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PaymentSystem from "./_component/paymentSystem";
 import { setPageRouterLoading } from "@/reducers/slices/CartSlice";
+import { getOrderData } from "./_lib/getOrderData";
+import { useParams } from "next/navigation";
 
 export default function Checkout() {
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
-  const point = useSelector((state) => state.order.point);
 
+  const point = useSelector((state) => state.order.point);
   const isIntersecting = useSelector((state) => state?.home.isIntersection);
-  const cartItems = queryClient.getQueryData(["order"]);
+  const params = useParams();
+
+  const {
+    data: cartItems,
+    error,
+    isError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["orders", params.order_code],
+    queryFn: getOrderData,
+  });
 
   const [newLeft, setNewLeft] = useState<string>("980px");
   const [newTop, setNewTop] = useState<string>("151px");
@@ -59,7 +70,7 @@ export default function Checkout() {
             </strong>
             <p className="w-[114px] text-right font-normal text-[14px] inline-block">
               <em className=" not-italic mr-[2px] text-[18px] font-sans">
-                {cartItems?.data[0]?.total_cost?.toLocaleString()}
+                {cartItems[0]?.total_cost?.toLocaleString()}
               </em>
               원
             </p>
@@ -114,7 +125,7 @@ export default function Checkout() {
             text-[14px] font-normal text-right inline-block"
             >
               <em className="  text-right not-italic font-medium text-[20px]">
-                {(cartItems?.data[0]?.total_cost - point).toLocaleString()}
+                {(cartItems[0]?.total_cost - point).toLocaleString()}
               </em>
               원
             </p>
@@ -132,7 +143,7 @@ export default function Checkout() {
             text-[14px] font-normal text-right inline-block"
             >
               <em className="text-[14px] mr-[2px] font-normal text-right not-italic text-[#666]">
-                {cartItems?.data[0]?.points.toLocaleString()}
+                {cartItems[0]?.points.toLocaleString()}
               </em>
               p
             </p>
